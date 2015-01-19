@@ -1,0 +1,34 @@
+{
+  "name": "iojs-nanomsg",
+  "version": "0.0.1",
+  "description": "nanomsg for iojs",
+  "dependencies": {
+    "bindings": "~1.2.1",
+    "nan": "~1.5.1"
+  },
+  "devDependencies":{
+    "mocha":  "~2.1.0",
+    "semver": "~4.1.1",
+    "should": "~4.3.1",
+    "after":  "~0.8.1"
+  },
+  "binary": {
+    "module_name" : "nanomsg",
+    "module_path" : "deps/nanomsg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/reqshark/nmsg"
+  },
+  "scripts": {
+    "travis-test": "make check"
+  },
+  "homepage": "http://msg.pub",
+  "keywords": ["nanomsg","native","binding","addon","nn","nanømsg"],
+  "author":{
+    "name":   "Bent Cardan",
+    "email":  "bent@nothingsatisfies.com",
+    "url":    "http://req.link"
+  },
+  "license": "beerware"
+}
