@@ -39,7 +39,7 @@ $ wget https://iojs.org/dist/v1.0.2/iojs-v1.0.2-darwin-x64.tar.gz
 
 # untar and rename the right file inside your .nvm directory...
 $ tar xzvf iojs-v1.xxx.whatever.tar.gz
-$ rm -rf v0.11.13 && rm -rf iojs-v1.xxx.whatever.tar.gz
+$ rm -rf v0.11.2 && rm -rf iojs-v1.xxx.whatever.tar.gz
 $ mv iojs-v1.xxx.whatever v0.11.2
 
 $ node -v
