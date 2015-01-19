@@ -57,10 +57,8 @@ NAN_METHOD(Connect) {
 }
 
 NAN_METHOD(Send){
-  NanScope();
   int64_t s = args[0].As<Number>()->IntegerValue();
   String::Utf8Value str(args[1]);
-  //Local<v8::String> str = args[1].As<String>();
   nn_send (s, *str, strlen(*str), args[2].As<Number>()->IntegerValue());
   NanReturnUndefined();
 }
