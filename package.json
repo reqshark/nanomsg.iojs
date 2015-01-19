@@ -1,6 +1,6 @@
 {
   "name": "iojs-nanomsg",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "nanomsg for iojs",
   "dependencies": {
     "bindings": "~1.2.1",
@@ -9,12 +9,11 @@
   "devDependencies":{
     "mocha":  "~2.1.0",
     "semver": "~4.1.1",
-    "should": "~4.3.1",
-    "after":  "~0.8.1"
+    "should": "~4.3.1"
   },
   "binary": {
     "module_name" : "nanomsg",
-    "module_path" : "deps/nanomsg"
+    "module_path" : "lib/nanomsg"
   },
   "repository": {
     "type": "git",

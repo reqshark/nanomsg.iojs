@@ -1,0 +1,21 @@
+os:
+  - osx
+  - linux
+env:
+  - NODE_V="0.8"
+  - NODE_V="0.10"
+  - NODE_V="0.11"
+before_install:
+  - echo -e "echo nothing to configure" >> configure && chmod a+x configure
+  - rm -rf ~/.nvm
+  - git clone https://github.com/creationix/nvm.git ~/.nvm
+  - source ~/.nvm/nvm.sh
+  - nvm install $NODE_V && node --version
+  - echo -e "require('fs').writeFile('platform.sh','export PLATFORM=\"'+require('os').platform()+'\"')" >> "check.js"
+  - node check.js && chmod a+x platform.sh && source platform.sh
+  - git clone --depth 1 git://github.com/nanomsg/nanomsg.git nanomsg
+  - cd nanomsg && ./autogen.sh && ./configure && make
+  - sudo make install
+  - '[ "$PLATFORM" == "darwin" ] || sudo /sbin/ldconfig'
+  - cd ..
+language: c
