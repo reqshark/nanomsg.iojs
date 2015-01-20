@@ -37,6 +37,8 @@ describe('nanomsg.recv', function() {
 
       msgs++
 
+      msg = String(msg)
+
       if(msg.length > 8){
         msg.should.equal('hello from nanømsg!')
       } else {

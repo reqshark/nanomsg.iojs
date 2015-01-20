@@ -27,6 +27,7 @@
 
 var nn            = require('bindings')('nanomsg.node')
 var EventEmitter  = require('events').EventEmitter
+var duplexify     = require('duplexify')
 require('util').inherits( self, EventEmitter )
 
 var sock = {
@@ -58,28 +59,36 @@ module.exports    = {
     //preflight check
     if(typeof opts == 'string') opts = { fam: opts }
     opts = opts || { fam: 'af' }
+    if(!opts.hasOwnProperty('fam')) opts.fam = 'af'
 
-    return new self( nn.Socket(af[opts.fam],sock[type]), type, opts.fam )
+    return new self( nn.Socket(af[opts.fam],sock[type]), type, opts)
   }
 }
 
-function self (s, t, f) {
+function self (s, t, o) {
   //error handle
   if(s < 0) throw new Error( type + ' socket' + suggestion)
 
   var ctx         = this
 
-  this.fam        = f
+  this.fam        = o.fam
+  this._stream    = o.stream || false
   this.socket     = s
   this.type       = t
   this.close      = close
   this.bind       = bind
   this.connect    = connect
 
-  this.send       = function(msg){ nn.Send( s, Buffer(msg+'\u0000'), 0 ) }
+  this.send       = function(msg){
+    if(typeof msg == 'string') return nn.Send( s, Buffer(msg+'\u0000'), 0 )
+    return nn.Send( s, msg, 0 )
+  }
   this.recv       = function(msg){
+    if(ctx._stream) return ctx.stream.push(msg)
     return EventEmitter.prototype.emit.call(ctx,'msg',msg)
   }
+
+  if(this._stream) this.stream = duplexify()
 
   switch(this.type){
     case 'pub':
