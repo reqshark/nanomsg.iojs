@@ -55,70 +55,89 @@ var suggestion    = ' failed.\nsome config/opt may not be correct.\n'
 module.exports    = {
 
   socket: function ( type, opts ) {
-
-    if(typeof opts == 'string') opts = { fam: opts }
-
     //preflight check
+    if(typeof opts == 'string') opts = { fam: opts }
     opts = opts || { fam: 'af' }
 
     //start socket
-    var s = nn.Socket( af[opts.fam], sock[type])
-
-    //throw on bad socket
-    if(s < 0) throw new Error( type + ' socket' + suggestion)
-
-      return new self(s, type, opts.fam)
-    },
-  wait: function (fn) {
-    return function () {
-      var done=false, err, res;
-      fn.apply(this, Array.prototype.slice.apply(arguments).concat(cb))
-      while (!done) nn.Stall(); if(err)throw err; return res
-      function cb (e, r) { err=e; res=r; done=true }
-    }
+    return new self(nn.Socket( af[opts.fam], sock[type]), type, opts.fam)
   }
 }
 
 function self (s, t, f) {
+
+  //error handle
+  if(s < 0) throw new Error( type + ' socket' + suggestion)
+
+  var ctx         = this
+
   this.fam        = f
   this.socket     = s
   this.type       = t
-  this.open       = false
+  this.closed     = false
   this.close      = close
   this.bind       = bind
   this.connect    = connect
   this.send       = send
-  this.sendBuf    = sendBuf
-  this.recv       = recv
-  this.recvBuf    = recvBuf
+
+  this.recv       = function(msg){
+    return EventEmitter.prototype.emit.call(ctx,'msg',msg)
+  }
+
+  switch(this.type){
+    case 'pub':
+    case 'push':
+      break;
+    case 'sub':
+    case 'bus':
+    case 'pair':
+    case 'surv':
+    case 'surveyor':
+    case 'resp':
+    case 'respondent':
+    case 'req':
+    case 'rep':
+    case 'pull':
+      this.clr = setInterval(select,0)
+      break;
+  }
+
+  function select(){
+    while(nn.GetEventIn(ctx.socket,0) > 0) ctx.recv(nn.Recv(ctx.socket,0));
+  }
 }
 
-function close() { return nn.Close( this.socket ) }
+function close() {
+  this.closed = true
+  clearInterval(this.clr)
+  
+  return nn.Close( this.socket )
+}
 
 function bind (addr) {
   if (nn.Bind( this.socket, addr ) < 0)
-    throw new Error(this.type+ ' bind@' + addr + suggestion)
-    this.open = true
+    throw new Error( this.type+ ' bind@' + addr + suggestion)
 
-    return this
-  }
-
-function connect (addr) {
-  if (nn.Connect( this.socket, addr ) < 0 )
-    throw new Error(this.type + ' connect@' + addr + suggestion )
-  this.open = true
+  this.open = addr
+  this.bound = true
 
   return this
 }
 
-function send(msg){
-  nn.Send(this.socket, msg, 0)
+function connect (addr) {
+  if (nn.Connect( this.socket, addr ) < 0 )
+    throw new Error( this.type + ' connect@' + addr + suggestion )
+
+  this.open = addr
+  this.connected = true
+
+  return this
 }
 
-function sendBuf (msg) {
-  nn.SendBuf( this.socket,
-    new Buffer(msg+'\u0000'), 0 )
+function sendString(msg){
+  nn.SendString( this.socket, msg+'\u0000', 0 )
 }
 
-function recv() { return nn.Recv( this.socket, 0 ) }
-function recvBuf() { return nn.RecvBuf(this.socket, 0) }
+function send (msg) {
+  nn.Send( this.socket,Buffer(msg+'\u0000'), 0 )
+}

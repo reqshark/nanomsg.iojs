@@ -14,8 +14,8 @@ describe('socket.recv', function() {
   it('should have a send method', function(done){
 
     pub.should.be.an.instanceOf(Object)
-    .with.a.property('send')
-    .which.is.a.Function
+      .with.a.property('send')
+      .which.is.a.Function
 
     done()
   })
@@ -31,13 +31,28 @@ describe('socket.recv', function() {
 
   it('should send and receive msgs', function (done) {
 
-    pub.sendBuf('hello from nanømsg!')
+    var msgs = 0
 
-    setTimeout(function(){
+    sub.on('msg',function(msg){
 
-      sub.recv().should.equal('hello from nanømsg!')
-      done()
-    }, 10)
+      msgs++
+
+      if(msg.length > 8){
+        msg.should.equal('hello from nanømsg!')
+      } else {
+        if(msg.length > 7)
+          msg.should.equal('barnacle')
+        else
+          msg.should.equal('foo bar')
+      }
+
+      if(msgs == 3) done()
+
+    })
+
+    pub.send('hello from nanømsg!')
+    pub.send('foo bar')
+    pub.send('barnacle')
 
   })
 

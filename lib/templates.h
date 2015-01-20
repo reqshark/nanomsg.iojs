@@ -25,7 +25,14 @@
  * For more information, please refer to <http://www.wtfpl.net/>
  */
 
+#include "getevents.h"
 #include "wrapstar.h"
+
+#if (NODE_MODULE_VERSION < 10)
+#define RUNLOOP_SEMANTICS ev_run(ev_default_loop(), EVRUN_ONCE)
+#else
+#define RUNLOOP_SEMANTICS uv_run(uv_default_loop(), UV_RUN_ONCE)
+#endif
 
 NAN_METHOD(Socket) {
   NanScope();
@@ -33,8 +40,8 @@ NAN_METHOD(Socket) {
   int ret = nn_socket(args[0].As<Number>()->IntegerValue(), type);
   if(type == NN_SUB)
     nn_setsockopt (ret, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
-    NanReturnValue(NanNew<Number>(ret));
-  }
+  NanReturnValue(NanNew<Number>(ret));
+}
 
 NAN_METHOD(Close){
   NanScope();
@@ -43,30 +50,28 @@ NAN_METHOD(Close){
 }
 
 NAN_METHOD(Bind) {
-  NanScope();
   int64_t s = args[0].As<Number>()->IntegerValue();
   String::Utf8Value addr(args[1]);
   NanReturnValue(NanNew<Number>(nn_bind(s, *addr)));
 }
 
 NAN_METHOD(Connect) {
-  NanScope();
   int64_t s = args[0].As<Number>()->IntegerValue();
   String::Utf8Value addr(args[1]);
   NanReturnValue(NanNew<Number>(nn_connect(s, *addr)));
 }
 
-NAN_METHOD(Send){
-  int64_t s = args[0].As<Number>()->IntegerValue();
-  String::Utf8Value str(args[1]);
-  nn_send (s, *str, strlen(*str), args[2].As<Number>()->IntegerValue());
-  NanReturnUndefined();
-}
-
-NAN_METHOD(SendBuf) {
+NAN_METHOD(Send) {
   Local<Object> obj = args[1]->ToObject();
   nn_send (args[0].As<Number>()->IntegerValue(), node::Buffer::Data(obj),
   node::Buffer::Length(obj), args[2].As<Number>()->IntegerValue());
+  NanReturnUndefined();
+}
+
+NAN_METHOD(SendString){
+  int64_t s = args[0].As<Number>()->IntegerValue();
+  String::Utf8Value str(args[1]);
+  nn_send (s, *str, strlen(*str), args[2].As<Number>()->IntegerValue());
   NanReturnUndefined();
 }
 
@@ -83,9 +88,13 @@ NAN_METHOD(RecvBuf) {
   void *buf = NULL;
   int r = nn_recv(args[0].As<Number>()->IntegerValue(), &buf, NN_MSG,
     args[1].As<Number>()->IntegerValue());
-
   nn_freemsg (buf);
   NanReturnValue(NanNewBufferHandle((char*) buf, r));
+}
+
+NAN_METHOD(GetEventIn){
+  NanReturnValue(getevents(args[0].As<Number>()->IntegerValue(), NN_IN,
+    args[1].As<Number>()->IntegerValue()));
 }
 
 NAN_METHOD(Stall) {

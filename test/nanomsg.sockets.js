@@ -1,4 +1,4 @@
-var nmsg    = require('..')
+var nano    = require('..')
 var should  = require('should')
 var semver  = require('semver')
 
@@ -6,92 +6,128 @@ describe('nanomsg.sockets', function() {
 
   it('should open NN_PUB', function (done) {
 
-    nmsg.socket('pub').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    var pub = nano.socket('pub')
+
+    pub.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    pub.close()
 
     done()
   })
 
   it('should open NN_SUB', function (done) {
 
-    nmsg.socket('sub').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    var sub = nano.socket('sub')
+
+    sub.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    sub.close()
 
     done()
   })
 
   it('should open NN_BUS', function (done) {
 
-    nmsg.socket('bus').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    var bus = nano.socket('bus')
+
+    bus.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    bus.close()
 
     done()
   })
 
   it('should open NN_PAIR', function (done) {
 
-    nmsg.socket('pair').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    var pair = nano.socket('pair')
+
+    pair.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    pair.close()
 
     done()
   })
 
   it('should open NN_SURVEYOR', function (done) {
 
-    nmsg.socket('surv').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    var surv = nano.socket('surv')
+
+    surv.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    surv.close()
 
     done()
   })
 
   it('should open NN_RESPONDENT', function (done) {
 
-    nmsg.socket('resp').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    var resp = nano.socket('resp')
+
+    resp.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    resp.close()
 
     done()
   })
 
   it('should open NN_REQ', function (done) {
+    var req = nano.socket('req')
 
-    nmsg.socket('req').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    req.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    req.close()
 
     done()
   })
 
   it('should open NN_REP', function (done) {
+    var rep = nano.socket('rep')
 
-    nmsg.socket('rep').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    rep.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    rep.close()
 
     done()
   })
 
   it('should open NN_PULL', function (done) {
+    var pull = nano.socket('pull')
 
-    nmsg.socket('pull').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    pull.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    pull.close()
 
     done()
   })
 
   it('should open NN_PUSH', function (done) {
+    var push = nano.socket('push')
 
-    nmsg.socket('push').should.be.an.instanceOf(Object)
-    .and.have.property('socket')
-    .which.is.above(-1)
+    push.should.be.an.instanceOf(Object)
+      .and.have.property('socket')
+      .which.is.above(-1)
+
+    push.close()
 
     done()
   })
-
+  
 })
