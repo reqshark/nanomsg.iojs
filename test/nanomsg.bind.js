@@ -24,17 +24,7 @@ describe('nanomsg.bind', function() {
     setTimeout(function(){
 
       sub.should.be.an.instanceOf(Object)
-        .with.a.property('closed')
-        .which.is.false
-
-      sub.should.be.an.instanceOf(Object)
         .with.a.property('open')
-        .which.is.a.String
-
-      sub.open.should.equal('tcp://127.0.0.1:44444')
-
-      sub.should.be.an.instanceOf(Object)
-        .with.a.property('bound')
         .which.is.true
 
       done()

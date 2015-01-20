@@ -129,5 +129,5 @@ describe('nanomsg.sockets', function() {
 
     done()
   })
-  
+
 })

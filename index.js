@@ -53,19 +53,17 @@ var af = {
 var suggestion    = ' failed.\nsome config/opt may not be correct.\n'
 
 module.exports    = {
-
   socket: function ( type, opts ) {
+
     //preflight check
     if(typeof opts == 'string') opts = { fam: opts }
     opts = opts || { fam: 'af' }
 
-    //start socket
-    return new self(nn.Socket( af[opts.fam], sock[type]), type, opts.fam)
+    return new self( nn.Socket(af[opts.fam],sock[type]), type, opts.fam )
   }
 }
 
 function self (s, t, f) {
-
   //error handle
   if(s < 0) throw new Error( type + ' socket' + suggestion)
 
@@ -74,12 +72,11 @@ function self (s, t, f) {
   this.fam        = f
   this.socket     = s
   this.type       = t
-  this.closed     = false
   this.close      = close
   this.bind       = bind
   this.connect    = connect
-  this.send       = send
 
+  this.send       = function(msg){ nn.Send( s, Buffer(msg+'\u0000'), 0 ) }
   this.recv       = function(msg){
     return EventEmitter.prototype.emit.call(ctx,'msg',msg)
   }
@@ -108,36 +105,21 @@ function self (s, t, f) {
 }
 
 function close() {
-  this.closed = true
   clearInterval(this.clr)
-  
+  this.open = false
   return nn.Close( this.socket )
 }
 
 function bind (addr) {
-  if (nn.Bind( this.socket, addr ) < 0)
+  if (nn.Bind( this.socket, addr ) < 0 || this.open)
     throw new Error( this.type+ ' bind@' + addr + suggestion)
-
-  this.open = addr
-  this.bound = true
-
+  this.open = true
   return this
 }
 
 function connect (addr) {
-  if (nn.Connect( this.socket, addr ) < 0 )
+  if (nn.Connect( this.socket, addr ) < 0 || this.open)
     throw new Error( this.type + ' connect@' + addr + suggestion )
-
-  this.open = addr
-  this.connected = true
-
+  this.open = true
   return this
-}
-
-function sendString(msg){
-  nn.SendString( this.socket, msg+'\u0000', 0 )
-}
-
-function send (msg) {
-  nn.Send( this.socket,Buffer(msg+'\u0000'), 0 )
 }

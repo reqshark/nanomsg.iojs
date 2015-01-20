@@ -88,6 +88,7 @@ NAN_METHOD(RecvBuf) {
   void *buf = NULL;
   int r = nn_recv(args[0].As<Number>()->IntegerValue(), &buf, NN_MSG,
     args[1].As<Number>()->IntegerValue());
+
   nn_freemsg (buf);
   NanReturnValue(NanNewBufferHandle((char*) buf, r));
 }

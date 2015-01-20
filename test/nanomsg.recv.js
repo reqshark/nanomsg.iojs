@@ -6,7 +6,7 @@ var addr = 'tcp://127.0.0.1:54444'
 var pub = nmsg.socket('pub')
 var sub = nmsg.socket('sub')
 
-describe('socket.recv', function() {
+describe('nanomsg.recv', function() {
 
   pub.bind(addr)
   sub.connect(addr)

@@ -2,7 +2,7 @@ var nmsg    = require('..')
 var should  = require('should')
 var semver  = require('semver')
 
-describe('socket.connect', function() {
+describe('nanomsg.connect', function() {
 
   var addr = 'tcp://127.0.0.1:44445'
   var sub = nmsg.socket('sub')
@@ -19,16 +19,12 @@ describe('socket.connect', function() {
 
   it('should be called on a network address', function (done) {
 
-    sub.should.be.an.instanceOf(Object)
-      .with.a.property('closed')
-      .which.is.false
-
     sub.connect(addr)
 
     setTimeout(function(){
 
       sub.should.be.an.instanceOf(Object)
-        .with.a.property('connected')
+        .with.a.property('open')
         .which.is.true
 
       pub.close()
