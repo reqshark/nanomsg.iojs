@@ -41,13 +41,8 @@ extern "C" {
 #include "node.h"
 #include "node_buffer.h"
 #include "nan.h"
-#define EXPORT_METHOD(C, S) C->Set(NanNew(# S), NanNew<FunctionTemplate>(S)->GetFunction());
 
-#if (NODE_MODULE_VERSION < 10)
-#define RUNLOOP_SEMANTICS ev_run(ev_default_loop(), EVRUN_ONCE)
-#else
-#define RUNLOOP_SEMANTICS uv_run(uv_default_loop(), UV_RUN_ONCE)
-#endif
+#define EXPORT_METHOD(C, S) C->Set(NanNew(# S), NanNew<FunctionTemplate>(S)->GetFunction());
 
 //using v8::Array;
 using v8::Function;
@@ -62,18 +57,58 @@ using v8::Value;
 
 #include "templates.h"
 
-void boom(Handle<Object> exports) {
+void module(Handle<Object> exports) {
+
+  // Functions
   EXPORT_METHOD(exports, Socket);
   EXPORT_METHOD(exports, Close);
   EXPORT_METHOD(exports, Connect);
   EXPORT_METHOD(exports, Bind);
   EXPORT_METHOD(exports, Send);
-  EXPORT_METHOD(exports, SendBuf);
+  EXPORT_METHOD(exports, SendString);
   EXPORT_METHOD(exports, Recv);
   EXPORT_METHOD(exports, RecvBuf);
+  EXPORT_METHOD(exports, GetEventIn);
 
+  // SP address families
   NODE_DEFINE_CONSTANT(exports, AF_SP);
   NODE_DEFINE_CONSTANT(exports, AF_SP_RAW);
+
+  // Max size of an SP address
+  NODE_DEFINE_CONSTANT(exports, NN_SOCKADDR_MAX);
+
+  // Socket option levels
+  NODE_DEFINE_CONSTANT(exports, NN_SOL_SOCKET);
+
+  // Generic socket options (NN_SOL_SOCKET level)
+  NODE_DEFINE_CONSTANT(exports, NN_LINGER);
+  NODE_DEFINE_CONSTANT(exports, NN_SNDBUF);
+  NODE_DEFINE_CONSTANT(exports, NN_RCVBUF);
+  NODE_DEFINE_CONSTANT(exports, NN_SNDTIMEO);
+  NODE_DEFINE_CONSTANT(exports, NN_RCVTIMEO);
+  NODE_DEFINE_CONSTANT(exports, NN_RECONNECT_IVL);
+  NODE_DEFINE_CONSTANT(exports, NN_RECONNECT_IVL_MAX);
+  NODE_DEFINE_CONSTANT(exports, NN_SNDPRIO);
+  NODE_DEFINE_CONSTANT(exports, NN_RCVPRIO);
+  NODE_DEFINE_CONSTANT(exports, NN_SNDFD);
+  NODE_DEFINE_CONSTANT(exports, NN_RCVFD);
+  NODE_DEFINE_CONSTANT(exports, NN_DOMAIN);
+  NODE_DEFINE_CONSTANT(exports, NN_PROTOCOL);
+  NODE_DEFINE_CONSTANT(exports, NN_IPV4ONLY);
+  NODE_DEFINE_CONSTANT(exports, NN_SOCKET_NAME);
+
+  // Send/recv options
+  NODE_DEFINE_CONSTANT(exports, NN_DONTWAIT);
+
+  // Ancillary data.
+  NODE_DEFINE_CONSTANT(exports, PROTO_SP);
+  NODE_DEFINE_CONSTANT(exports, SP_HDR);
+
+  // Mutliplexing support
+  NODE_DEFINE_CONSTANT(exports, NN_POLLIN);
+  NODE_DEFINE_CONSTANT(exports, NN_POLLOUT);
+
+  // Socket types
   NODE_DEFINE_CONSTANT(exports, NN_SURVEYOR);
   NODE_DEFINE_CONSTANT(exports, NN_RESPONDENT);
   NODE_DEFINE_CONSTANT(exports, NN_REQ);
@@ -84,21 +119,6 @@ void boom(Handle<Object> exports) {
   NODE_DEFINE_CONSTANT(exports, NN_PUB);
   NODE_DEFINE_CONSTANT(exports, NN_SUB);
   NODE_DEFINE_CONSTANT(exports, NN_BUS);
-  NODE_DEFINE_CONSTANT(exports, NN_SOL_SOCKET);
-  NODE_DEFINE_CONSTANT(exports, NN_LINGER);
-  NODE_DEFINE_CONSTANT(exports, NN_SNDBUF);
-  NODE_DEFINE_CONSTANT(exports, NN_RCVBUF);
-  NODE_DEFINE_CONSTANT(exports, NN_SNDTIMEO);
-  NODE_DEFINE_CONSTANT(exports, NN_RCVTIMEO);
-  NODE_DEFINE_CONSTANT(exports, NN_RECONNECT_IVL);
-  NODE_DEFINE_CONSTANT(exports, NN_RECONNECT_IVL_MAX);
-  NODE_DEFINE_CONSTANT(exports, NN_SNDPRIO);
-  NODE_DEFINE_CONSTANT(exports, NN_SNDFD);
-  NODE_DEFINE_CONSTANT(exports, NN_RCVFD);
-  NODE_DEFINE_CONSTANT(exports, NN_DOMAIN);
-  NODE_DEFINE_CONSTANT(exports, NN_PROTOCOL);
-  NODE_DEFINE_CONSTANT(exports, NN_IPV4ONLY);
-  NODE_DEFINE_CONSTANT(exports, NN_DONTWAIT);
 }
 
-NODE_MODULE(nmsg, boom)
+NODE_MODULE(nanomsg, module)
