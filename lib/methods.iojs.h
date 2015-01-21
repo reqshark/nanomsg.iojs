@@ -49,7 +49,7 @@ NAN_METHOD(RecvStr){
 }
 
 #if (NODE_MAJOR_VERSION < 1)
-NAN_METHOD(Getevts){ NanScope(); ret(getevents(S, NN_IN, 0));}
+NAN_METHOD(multiplexer){ NanScope(); ret(getevents(S, NN_IN, 0));}
 #else
-NAN_METHOD(Getevts){ ret(getevents(S, NN_IN, 0));}
+NAN_METHOD(multiplexer){ ret(getevents(S, NN_IN, 0));}
 #endif

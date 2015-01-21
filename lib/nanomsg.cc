@@ -29,14 +29,8 @@ using v8::Object;
 using v8::String;
 using v8::Value;
 
-#if (NODE_MODULE_VERSION < 10)
-#define RUNLOOP_SEMANTICS ev_run(ev_default_loop(), EVRUN_ONCE);
-#else
-#define RUNLOOP_SEMANTICS uv_run(uv_default_loop(), UV_RUN_ONCE);
-#endif
 #define S args[0].As<Number>()-> IntegerValue()
 #define ret NanReturnValue
-#define unret NanReturnUndefined();
 #define utf8 v8::String::Utf8Value
 #define METHOD(C, S) C->Set(NanNew(# S), NanNew<FunctionTemplate>(S)->GetFunction());
 #define CONSTANT(C, S) C->Set(NanNew(# S), NanNew<Number>(S));
@@ -52,9 +46,6 @@ using v8::Value;
 
 extern "C" void
 exports(v8::Handle<v8::Object> e) {
-  NanScope();
-
-  // Functions
   METHOD(e, Socket)
   METHOD(e, Close)
   METHOD(e, Connect)
@@ -62,7 +53,7 @@ exports(v8::Handle<v8::Object> e) {
   METHOD(e, Send)
   METHOD(e, Recv)
   METHOD(e, RecvStr)
-  METHOD(e, Getevts)
+  METHOD(e, multiplexer)
 
   // SP address families
   CONSTANT(e, AF_SP)

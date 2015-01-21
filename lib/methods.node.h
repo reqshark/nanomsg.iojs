@@ -69,7 +69,7 @@ NAN_METHOD(RecvStr){
   ret(str);
 }
 
-NAN_METHOD(Getevts){
+NAN_METHOD(multiplexer){
   NanScope();
   ret(NanNew<Number>(getevents(S, NN_IN, 0)));
 }
