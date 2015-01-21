@@ -53,7 +53,7 @@ exports(v8::Handle<v8::Object> e) {
   METHOD(e, Send)
   METHOD(e, Recv)
   METHOD(e, RecvStr)
-  METHOD(e, multiplexer)
+  METHOD(e, Multiplexer)
 
   // SP address families
   CONSTANT(e, AF_SP)

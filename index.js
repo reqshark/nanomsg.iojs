@@ -95,11 +95,11 @@ function self (s, t, o) {
   }
 
   function select(){
-    while(nn.multiplexer(ctx.socket) > 0) ctx.recv(nn.Recv(ctx.socket))
+    while(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.Recv(ctx.socket))
   }
 
   function select_s(){
-    while(nn.multiplexer(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
+    while(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
   }
 }
 
