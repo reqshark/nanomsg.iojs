@@ -1,10 +1,10 @@
-var nmsg    = require('..')
+var nano    = require('..')
 var should  = require('should')
 var semver  = require('semver')
 
 var addr = 'tcp://127.0.0.1:54444'
-var pub = nmsg.socket('pub')
-var sub = nmsg.socket('sub')
+var pub = nano.socket('pub')
+var sub = nano.socket('sub')
 
 describe('nanomsg.recv', function() {
 

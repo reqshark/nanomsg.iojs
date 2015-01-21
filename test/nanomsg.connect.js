@@ -1,12 +1,12 @@
-var nmsg    = require('..')
+var nano    = require('..')
 var should  = require('should')
 var semver  = require('semver')
 
 describe('nanomsg.connect', function() {
 
   var addr = 'tcp://127.0.0.1:44445'
-  var sub = nmsg.socket('sub')
-  var pub = nmsg.socket('pub')
+  var sub = nano.socket('sub')
+  var pub = nano.socket('pub')
 
   it('should have a connect method', function(done){
 

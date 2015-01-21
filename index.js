@@ -89,17 +89,17 @@ function self (s, t, o) {
       if(this.asBuffer){
         this.clr = setInterval(select, 0)
       } else {
-        this.clr = setInterval(selectStr, 0)
+        this.clr = setInterval(select_s, 0)
       }
       break;
   }
 
   function select(){
-    while(nn.GetEventIn(ctx.socket, 0) > 0) ctx.recv(nn.Recv(ctx.socket));
+    while(nn.Getevts(ctx.socket, 0) > 0) ctx.recv(nn.Recv(ctx.socket))
   }
 
-  function selectStr(){
-    while(nn.GetEventIn(ctx.socket, 0) > 0) ctx.recv(nn.RecvStr(ctx.socket));
+  function select_s(){
+    while(nn.Getevts(ctx.socket, 0) > 0) ctx.recv(nn.RecvStr(ctx.socket))
   }
 }
 

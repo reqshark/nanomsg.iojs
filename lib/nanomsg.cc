@@ -17,20 +17,9 @@ extern "C" {
   #include <nanomsg/ipc.h>
   #include <nanomsg/tcp.h>
   #include <nanomsg/inproc.h>
+  #include "getevents.h"
 }
 
-#include <string>
-
-#if (NODE_MODULE_VERSION < 10)
-#define RUNLOOP_SEMANTICS ev_run(ev_default_loop(), EVRUN_ONCE)
-#else
-#define RUNLOOP_SEMANTICS uv_run(uv_default_loop(), UV_RUN_ONCE)
-#endif
-
-#define S args[0].As<Number>()-> IntegerValue()
-#define EXPORT_METHOD(C, S) C->Set(NanNew(# S), NanNew<FunctionTemplate>(S)->GetFunction());
-
-//using v8::Array;
 using v8::Function;
 using v8::FunctionTemplate;
 using v8::Handle;
@@ -38,151 +27,85 @@ using v8::Local;
 using v8::Number;
 using v8::Object;
 using v8::String;
-using v8::StringObject;
 using v8::Value;
 
-#include "getevents.h"
-#include "wrapstar.h"
+#if (NODE_MODULE_VERSION < 10)
+#define RUNLOOP_SEMANTICS ev_run(ev_default_loop(), EVRUN_ONCE);
+#else
+#define RUNLOOP_SEMANTICS uv_run(uv_default_loop(), UV_RUN_ONCE);
+#endif
+#define S args[0].As<Number>()-> IntegerValue()
+#define ret NanReturnValue
+#define unret NanReturnUndefined();
+#define METHOD(C, S) C->Set(NanNew(# S), NanNew<FunctionTemplate>(S)->GetFunction());
+#define CONSTANT(C, S) C->Set(NanNew(# S), NanNew<Number>(S));
 
-NAN_METHOD(Socket) {
+#include <string>
+
+#if (NODE_MINOR_VERSION < 11)
+#include "methods.node.h"
+#else
+#include "methods.iojs.h"
+#endif
+
+
+extern "C" void
+exports(v8::Handle<v8::Object> e) {
   NanScope();
-  int64_t type = args[1].As<Number>()->IntegerValue();
-  int ret = nn_socket(S, type);
-  if(type == NN_SUB) nn_setsockopt (ret, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
-  NanReturnValue(NanNew<Number>(ret));
-}
-
-NAN_METHOD(Close) {
-  NanReturnValue(NanNew<Number>(nn_close(S)));
-}
-
-NAN_METHOD(Bind) {
-  String::Utf8Value addr(args[1]);
-  NanReturnValue(NanNew<Number>(nn_bind(S, *addr)));
-}
-
-NAN_METHOD(Connect) {
-  String::Utf8Value addr(args[1]);
-  NanReturnValue(NanNew<Number>(nn_connect(S, *addr)));
-}
-
-NAN_METHOD(Send) {
-
-  std::string *input;
-
-  if (node::Buffer::HasInstance(args[1]->ToObject())) {
-    v8::Handle<v8::Object> object = args[1]->ToObject();
-    const char *data = node::Buffer::Data(object);
-    input = new std::string(data, node::Buffer::Length(object));
-  } else {
-    v8::String::Utf8Value str (args[1]->ToString());
-    input = new std::string(*str);
-  }
-
-  NanReturnValue(nn_send (S, input->c_str(), input->length(), 0));
-}
-
-NAN_METHOD(SendString) {
-  String::Utf8Value str(args[1]);
-  nn_send (S, *str, strlen(*str), args[2].As<Number>()->IntegerValue());
-  NanReturnValue(1);
-}
-
-NAN_METHOD(Recv){
-  NanScope();
-  char *buf = NULL;
-
-  int len = nn_recv(S, &buf, NN_MSG, 0);
-  v8::Local<v8::Value> res = NanNewBufferHandle(len);
-  memcpy(node::Buffer::Data(res), buf, len);
-
-  nn_freemsg (buf);
-  NanReturnValue(res);
-}
-
-NAN_METHOD(RecvStr){
-  NanScope();
-  char *buf = NULL;
-
-  int len = nn_recv(S, &buf, NN_MSG, 0);
-  buf[len] = 0;
-
-  v8::Local<v8::Value> res = NanNew<v8::String>(buf, len);
-  nn_freemsg (buf);
-  NanReturnValue(res);
-}
-
-NAN_METHOD(GetEventIn) {
-  NanReturnValue(getevents(S, NN_IN, args[1].As<Number>()->IntegerValue()));
-}
-
-NAN_METHOD(Stall) {
-  RUNLOOP_SEMANTICS;
-  NanReturnUndefined();
-}
-
-void i(v8::Handle<Object>e) {
 
   // Functions
-  EXPORT_METHOD(e, Socket)
-  EXPORT_METHOD(e, Close)
-  EXPORT_METHOD(e, Connect)
-  EXPORT_METHOD(e, Bind)
-  EXPORT_METHOD(e, Send)
-  EXPORT_METHOD(e, SendString)
-  EXPORT_METHOD(e, Recv)
-  EXPORT_METHOD(e, RecvStr)
-  EXPORT_METHOD(e, GetEventIn)
+  METHOD(e, Socket)
+  METHOD(e, Close)
+  METHOD(e, Connect)
+  METHOD(e, Bind)
+  METHOD(e, Send)
+  METHOD(e, Recv)
+  METHOD(e, RecvStr)
+  METHOD(e, Getevts)
 
   // SP address families
-  NODE_DEFINE_CONSTANT(e, AF_SP);
-  NODE_DEFINE_CONSTANT(e, AF_SP_RAW);
-
-  // Max size of an SP address
-  NODE_DEFINE_CONSTANT(e, NN_SOCKADDR_MAX);
+  CONSTANT(e, AF_SP)
+  CONSTANT(e, AF_SP_RAW)
 
   // Socket option levels
-  NODE_DEFINE_CONSTANT(e, NN_SOL_SOCKET);
+  CONSTANT(e, NN_SOL_SOCKET)
 
   // Generic socket options (NN_SOL_SOCKET level)
-  NODE_DEFINE_CONSTANT(e, NN_LINGER);
-  NODE_DEFINE_CONSTANT(e, NN_SNDBUF);
-  NODE_DEFINE_CONSTANT(e, NN_RCVBUF);
-  NODE_DEFINE_CONSTANT(e, NN_SNDTIMEO);
-  NODE_DEFINE_CONSTANT(e, NN_RCVTIMEO);
-  NODE_DEFINE_CONSTANT(e, NN_RECONNECT_IVL);
-  NODE_DEFINE_CONSTANT(e, NN_RECONNECT_IVL_MAX);
-  NODE_DEFINE_CONSTANT(e, NN_SNDPRIO);
-  NODE_DEFINE_CONSTANT(e, NN_RCVPRIO);
-  NODE_DEFINE_CONSTANT(e, NN_SNDFD);
-  NODE_DEFINE_CONSTANT(e, NN_RCVFD);
-  NODE_DEFINE_CONSTANT(e, NN_DOMAIN);
-  NODE_DEFINE_CONSTANT(e, NN_PROTOCOL);
-  NODE_DEFINE_CONSTANT(e, NN_IPV4ONLY);
-  NODE_DEFINE_CONSTANT(e, NN_SOCKET_NAME);
+  CONSTANT(e, NN_LINGER)
+  CONSTANT(e, NN_SNDBUF)
+  CONSTANT(e, NN_RCVBUF)
+  CONSTANT(e, NN_SNDTIMEO)
+  CONSTANT(e, NN_RCVTIMEO)
+  CONSTANT(e, NN_RECONNECT_IVL)
+  CONSTANT(e, NN_RECONNECT_IVL_MAX)
+  CONSTANT(e, NN_SNDPRIO)
+  CONSTANT(e, NN_RCVPRIO)
+  CONSTANT(e, NN_SNDFD)
+  CONSTANT(e, NN_RCVFD)
+  CONSTANT(e, NN_DOMAIN)
+  CONSTANT(e, NN_PROTOCOL)
+  CONSTANT(e, NN_IPV4ONLY)
+  CONSTANT(e, NN_SOCKET_NAME)
 
-  // Send/recv options
-  NODE_DEFINE_CONSTANT(e, NN_DONTWAIT);
-
-  // Ancillary data.
-  NODE_DEFINE_CONSTANT(e, PROTO_SP);
-  NODE_DEFINE_CONSTANT(e, SP_HDR);
+  // Ancillary data
+  CONSTANT(e, PROTO_SP)
+  CONSTANT(e, SP_HDR)
 
   // Mutliplexing support
-  NODE_DEFINE_CONSTANT(e, NN_POLLIN);
-  NODE_DEFINE_CONSTANT(e, NN_POLLOUT);
+  CONSTANT(e, NN_POLLIN)
+  CONSTANT(e, NN_POLLOUT)
 
   // Socket types
-  NODE_DEFINE_CONSTANT(e, NN_SURVEYOR);
-  NODE_DEFINE_CONSTANT(e, NN_RESPONDENT);
-  NODE_DEFINE_CONSTANT(e, NN_REQ);
-  NODE_DEFINE_CONSTANT(e, NN_REP);
-  NODE_DEFINE_CONSTANT(e, NN_PAIR);
-  NODE_DEFINE_CONSTANT(e, NN_PUSH);
-  NODE_DEFINE_CONSTANT(e, NN_PULL);
-  NODE_DEFINE_CONSTANT(e, NN_PUB);
-  NODE_DEFINE_CONSTANT(e, NN_SUB);
-  NODE_DEFINE_CONSTANT(e, NN_BUS);
+  CONSTANT(e, NN_SURVEYOR)
+  CONSTANT(e, NN_RESPONDENT)
+  CONSTANT(e, NN_REQ)
+  CONSTANT(e, NN_REP)
+  CONSTANT(e, NN_PAIR)
+  CONSTANT(e, NN_PUSH)
+  CONSTANT(e, NN_PULL)
+  CONSTANT(e, NN_PUB)
+  CONSTANT(e, NN_SUB)
+  CONSTANT(e, NN_BUS)
 }
 
-NODE_MODULE(nanomsg, i)
+NODE_MODULE(nanomsg, exports)

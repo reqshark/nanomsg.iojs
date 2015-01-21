@@ -21,19 +21,30 @@ var addr = 'tcp://127.0.0.1:5555'
 
 pub.bind(addr)
 
-//start an interval for broadcasts
+//start a broadcast interval
 setInterval(function(){
   pub.send('hello from nanømsg!')
 }, 100)
 
-//if you want a pipeable stream pass `{ stream: true }` with the socket type
-var sub = nano.socket('sub', { stream: true} )
+var sub1 = nano.socket('sub',{
+  //set asBuffer option for strings. default is true
+  asBuffer:false
+})
+sub1.on('msg',function(msg){
+  //coverts local handle directly to V8::String from nanomsg nn_recv()
+  console.log(msg)
+})
+sub1.connect(addr)
+
+var sub2 = nano.socket('sub', {
+  //for a pipeable stream pass `{ stream: true }` with the socket type
+  stream: true
+})
 
 //stream option disables onmessage emitter (for perf reasons)
 //there's a readable/writable stream depending on the socket type
-var subStream = sub.stream
-
-sub.connect(addr)
+var subStream = sub2.stream
+sub2.connect(addr)
 
 subStream.on('data',function(msg){
   console.log(String(msg))
