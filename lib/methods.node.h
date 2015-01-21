@@ -13,11 +13,7 @@ NAN_METHOD(Socket) {
 }
 
 NAN_METHOD(Err){ NanScope(); ret(NanNew<String>(nn_strerror(nn_errno()))); }
-
-NAN_METHOD(Close) {
-  NanScope();
-  ret(NanNew<Number>(nn_close(S)));
-}
+NAN_METHOD(Close) { NanScope(); ret(NanNew<Number>(nn_close(S))); }
 
 NAN_METHOD(Shutdown) {
   NanScope();

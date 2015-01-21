@@ -32,8 +32,8 @@ using v8::Value;
 #define ret NanReturnValue
 #define utf8 v8::String::Utf8Value
 #define S args[0].As<Number>()-> IntegerValue()
-#define CONSTANT(C,S) C->Set(NanNew(# S), NanNew<Number>(S));
-#define METHOD(C,S)C->Set(NanNew(# S),NanNew<FunctionTemplate>(S)->GetFunction());
+#define NC(C,S) C->Set(NanNew(# S), NanNew<Number>(S));
+#define T(C,S)C->Set(NanNew(# S),NanNew<FunctionTemplate>(S)->GetFunction());
 
 #include <string>
 
@@ -45,60 +45,60 @@ using v8::Value;
 
 extern "C" void
 exports(v8::Handle<v8::Object> e) {
-  METHOD(e, Socket)
-  METHOD(e, Err)
-  METHOD(e, Shutdown)
-  METHOD(e, Close)
-  METHOD(e, Connect)
-  METHOD(e, Bind)
-  METHOD(e, Send)
-  METHOD(e, Recv)
-  METHOD(e, RecvStr)
-  METHOD(e, Multiplexer)
+  T(e, Socket)
+  T(e, Err)
+  T(e, Shutdown)
+  T(e, Close)
+  T(e, Connect)
+  T(e, Bind)
+  T(e, Send)
+  T(e, Recv)
+  T(e, RecvStr)
+  T(e, Multiplexer)
 
   // SP address families
-  CONSTANT(e, AF_SP)
-  CONSTANT(e, AF_SP_RAW)
+  NC(e, AF_SP)
+  NC(e, AF_SP_RAW)
 
   // Socket option levels
-  CONSTANT(e, NN_SOL_SOCKET)
+  NC(e, NN_SOL_SOCKET)
 
   // Generic socket options (NN_SOL_SOCKET level)
-  CONSTANT(e, NN_LINGER)
-  CONSTANT(e, NN_SNDBUF)
-  CONSTANT(e, NN_RCVBUF)
-  CONSTANT(e, NN_SNDTIMEO)
-  CONSTANT(e, NN_RCVTIMEO)
-  CONSTANT(e, NN_RECONNECT_IVL)
-  CONSTANT(e, NN_RECONNECT_IVL_MAX)
-  CONSTANT(e, NN_SNDPRIO)
-  CONSTANT(e, NN_RCVPRIO)
-  CONSTANT(e, NN_SNDFD)
-  CONSTANT(e, NN_RCVFD)
-  CONSTANT(e, NN_DOMAIN)
-  CONSTANT(e, NN_PROTOCOL)
-  CONSTANT(e, NN_IPV4ONLY)
-  CONSTANT(e, NN_SOCKET_NAME)
+  NC(e, NN_LINGER)
+  NC(e, NN_SNDBUF)
+  NC(e, NN_RCVBUF)
+  NC(e, NN_SNDTIMEO)
+  NC(e, NN_RCVTIMEO)
+  NC(e, NN_RECONNECT_IVL)
+  NC(e, NN_RECONNECT_IVL_MAX)
+  NC(e, NN_SNDPRIO)
+  NC(e, NN_RCVPRIO)
+  NC(e, NN_SNDFD)
+  NC(e, NN_RCVFD)
+  NC(e, NN_DOMAIN)
+  NC(e, NN_PROTOCOL)
+  NC(e, NN_IPV4ONLY)
+  NC(e, NN_SOCKET_NAME)
 
   // Ancillary data
-  CONSTANT(e, PROTO_SP)
-  CONSTANT(e, SP_HDR)
+  NC(e, PROTO_SP)
+  NC(e, SP_HDR)
 
   // Mutliplexing support
-  CONSTANT(e, NN_POLLIN)
-  CONSTANT(e, NN_POLLOUT)
+  NC(e, NN_POLLIN)
+  NC(e, NN_POLLOUT)
 
   // Socket types
-  CONSTANT(e, NN_SURVEYOR)
-  CONSTANT(e, NN_RESPONDENT)
-  CONSTANT(e, NN_REQ)
-  CONSTANT(e, NN_REP)
-  CONSTANT(e, NN_PAIR)
-  CONSTANT(e, NN_PUSH)
-  CONSTANT(e, NN_PULL)
-  CONSTANT(e, NN_PUB)
-  CONSTANT(e, NN_SUB)
-  CONSTANT(e, NN_BUS)
+  NC(e, NN_SURVEYOR)
+  NC(e, NN_RESPONDENT)
+  NC(e, NN_REQ)
+  NC(e, NN_REP)
+  NC(e, NN_PAIR)
+  NC(e, NN_PUSH)
+  NC(e, NN_PULL)
+  NC(e, NN_PUB)
+  NC(e, NN_SUB)
+  NC(e, NN_BUS)
 }
 
 NODE_MODULE(nanomsg, exports)
