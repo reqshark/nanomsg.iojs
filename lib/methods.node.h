@@ -71,12 +71,5 @@ NAN_METHOD(RecvStr){
 
 NAN_METHOD(Getevts){
   NanScope();
-  int poll = args[1].As<Number>()->IntegerValue();
-  ret(NanNew<Number>(getevents(S, NN_IN, poll)));
-}
-
-//runtime utility method
-NAN_METHOD(Stall) {
-  RUNLOOP_SEMANTICS
-  unret
+  ret(NanNew<Number>(getevents(S, NN_IN, 0)));
 }

@@ -48,10 +48,8 @@ NAN_METHOD(RecvStr){
   ret(str);
 }
 
+#if (NODE_MAJOR_VERSION < 1)
+NAN_METHOD(Getevts){ NanScope(); ret(getevents(S, NN_IN, 0));}
+#else
 NAN_METHOD(Getevts){ ret(getevents(S, NN_IN, 0));}
-
-//runtime utility method
-NAN_METHOD(Stall) {
-  RUNLOOP_SEMANTICS
-  unret
-}
+#endif

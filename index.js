@@ -95,11 +95,11 @@ function self (s, t, o) {
   }
 
   function select(){
-    while(nn.Getevts(ctx.socket, 0) > 0) ctx.recv(nn.Recv(ctx.socket))
+    while(nn.Getevts(ctx.socket) > 0) ctx.recv(nn.Recv(ctx.socket))
   }
 
   function select_s(){
-    while(nn.Getevts(ctx.socket, 0) > 0) ctx.recv(nn.RecvStr(ctx.socket))
+    while(nn.Getevts(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
   }
 }
 
