@@ -29,11 +29,11 @@ using v8::Object;
 using v8::String;
 using v8::Value;
 
-#define S args[0].As<Number>()-> IntegerValue()
 #define ret NanReturnValue
 #define utf8 v8::String::Utf8Value
-#define METHOD(C, S) C->Set(NanNew(# S), NanNew<FunctionTemplate>(S)->GetFunction());
-#define CONSTANT(C, S) C->Set(NanNew(# S), NanNew<Number>(S));
+#define S args[0].As<Number>()-> IntegerValue()
+#define CONSTANT(C,S) C->Set(NanNew(# S), NanNew<Number>(S));
+#define METHOD(C,S)C->Set(NanNew(# S),NanNew<FunctionTemplate>(S)->GetFunction());
 
 #include <string>
 
@@ -43,10 +43,11 @@ using v8::Value;
 #include "methods.iojs.h"
 #endif
 
-
 extern "C" void
 exports(v8::Handle<v8::Object> e) {
   METHOD(e, Socket)
+  METHOD(e, Err)
+  METHOD(e, Shutdown)
   METHOD(e, Close)
   METHOD(e, Connect)
   METHOD(e, Bind)

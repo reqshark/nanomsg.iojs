@@ -24,9 +24,8 @@ describe('nanomsg.bind', function() {
     setTimeout(function(){
 
       sub.should.be.an.instanceOf(Object)
-        .with.a.property('open')
-        .which.is.true
-
+        .with.a.property('how')
+        .which.is.an.instanceOf(Array)
       done()
     }, 10)
 

@@ -2,7 +2,7 @@ var nano    = require('..')
 var should  = require('should')
 var semver  = require('semver')
 
-describe('nanomsg.recvperf', function() {
+describe('nanomsg.sendperf', function() {
 
   var pub    = nano.socket('pub')
   var sub    = nano.socket('sub',{

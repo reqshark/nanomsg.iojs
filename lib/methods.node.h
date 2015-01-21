@@ -12,9 +12,17 @@ NAN_METHOD(Socket) {
   ret(NanNew<Number>(s));
 }
 
+NAN_METHOD(Err){ NanScope(); ret(NanNew<String>(nn_strerror(nn_errno()))); }
+
 NAN_METHOD(Close) {
   NanScope();
   ret(NanNew<Number>(nn_close(S)));
+}
+
+NAN_METHOD(Shutdown) {
+  NanScope();
+  int64_t how = args[1].As<Number>()->IntegerValue();
+  ret(NanNew<Number>(nn_shutdown(S, how)));
 }
 
 NAN_METHOD(Bind) {

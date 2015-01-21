@@ -9,9 +9,10 @@ NAN_METHOD(Socket) {
   ret(s);
 }
 
-NAN_METHOD(Close)  { ret(nn_close(S)); }
-NAN_METHOD(Bind)   { utf8 addr(args[1]); ret(nn_bind(S, *addr)); }
-NAN_METHOD(Connect){ utf8 addr(args[1]); ret(nn_connect(S, *addr)); }
+NAN_METHOD(Close)   { ret(nn_close(S)); }
+NAN_METHOD(Shutdown){ ret(nn_shutdown(S,args[1].As<Number>()->IntegerValue()));}
+NAN_METHOD(Bind)    { utf8 addr(args[1]); ret(nn_bind(S, *addr)); }
+NAN_METHOD(Connect) { utf8 addr(args[1]); ret(nn_connect(S, *addr)); }
 
 NAN_METHOD(Send) {
   std::string *input;
@@ -49,7 +50,9 @@ NAN_METHOD(RecvStr){
 }
 
 #if (NODE_MAJOR_VERSION < 1)
-NAN_METHOD(Multiplexer){NanScope();ret(getevents(S, NN_IN, 0));}
+NAN_METHOD(Multiplexer){ NanScope();ret(getevents(S, NN_IN, 0)); }
+NAN_METHOD(Err){ ret(NanNew<String>(nn_strerror(nn_errno()))); }
 #else
-NAN_METHOD(Multiplexer){ ret(getevents(S, NN_IN, 0));}
+NAN_METHOD(Multiplexer){ ret(getevents(S, NN_IN, 0)); }
+NAN_METHOD(Err){ ret(nn_strerror(nn_errno())); }
 #endif

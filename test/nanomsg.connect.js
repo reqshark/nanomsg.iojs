@@ -24,8 +24,8 @@ describe('nanomsg.connect', function() {
     setTimeout(function(){
 
       sub.should.be.an.instanceOf(Object)
-        .with.a.property('open')
-        .which.is.true
+        .with.a.property('how')
+        .which.is.an.instanceOf(Array)
 
       pub.close()
 
