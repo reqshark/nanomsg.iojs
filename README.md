@@ -31,7 +31,7 @@ var sub1 = nano.socket('sub',{
   asBuffer:false
 })
 sub1.on('msg',function(msg){
-  //coverts local handle directly to V8::String from nanomsg nn_recv()
+  //local handle converted to V8::String direct from nanomsg nn_recv()
   console.log(msg)
 })
 sub1.connect(addr)
