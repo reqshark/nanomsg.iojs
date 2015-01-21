@@ -58,9 +58,10 @@ function self (s, t, o) {
   this.socket     = s
   this.type       = t
   this.close      = close
+  this.shutdown   = shutdown
   this.bind       = bind
   this.connect    = connect
-  this.how        = []
+  this.how        = {}
 
   this.send       = function(msg){
     return nn.Send( s, msg )
@@ -120,7 +121,7 @@ function close() {
   return nn.Close( this.socket )
 }
 
-function shutdown(){
+function shutdown(addr) {
 /*
  * nn_shutdown() call will return immediately, however, the library will
  * try to deliver any outstanding outbound messages to the endpoint
@@ -130,7 +131,12 @@ function shutdown(){
  *
  */
   clearInterval(this.clr); this.open = false
-  return nn.Shutdown(this.socket, this.how)
+  var ret = nn.Shutdown(this.socket, this.how[addr])
+  if(ret < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
+
+  this.how[addr] = 'shut'
+
+  return ret
 }
 
 function bind (addr) {
@@ -148,7 +154,7 @@ function bind (addr) {
   var eid = nn.Bind( this.socket, addr )
   if(eid < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
 
-  this.how.push(eid)
+  this.how[addr] = eid
 
   return this
 }
@@ -157,7 +163,7 @@ function connect (addr) {
   var eid = nn.Connect( this.socket, addr )
   if(eid < 0) throw new Error(nn.Err() +': '+this.type+' connect@' + addr+'\n')
 
-  this.how.push(eid)
+  this.how[addr] = eid
 
   return this
 }

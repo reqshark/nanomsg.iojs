@@ -84,10 +84,6 @@ exports(v8::Handle<v8::Object> e) {
   NC(e, PROTO_SP)
   NC(e, SP_HDR)
 
-  // Mutliplexing support
-  NC(e, NN_POLLIN)
-  NC(e, NN_POLLOUT)
-
   // Socket types
   NC(e, NN_SURVEYOR)
   NC(e, NN_RESPONDENT)

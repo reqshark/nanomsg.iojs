@@ -1,5 +1,5 @@
 # nanomsg.iojs
-nanomsg for iojs  https://github.com/nanomsg/nanomsg
+nanomsg for iøjs  https://github.com/nanomsg/nanomsg
 
 # description
 an iojs interface to nanomsg sockets with a pipeable stream option.

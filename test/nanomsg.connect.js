@@ -29,10 +29,9 @@ describe('nanomsg.connect', function() {
 
       sub.should.be.an.instanceOf(Object)
         .with.a.property('how')
-        .which.is.an.instanceOf(Array)
 
       done()
-    }, 100)
+    }, 20)
 
   })
 
@@ -61,7 +60,8 @@ describe('nanomsg.connect', function() {
           msg.should.equal('hello from one publisher')
       }
 
-      if(msgs == 3) done()
+      if(msgs > 2)
+        done()
 
     })
 
@@ -69,7 +69,7 @@ describe('nanomsg.connect', function() {
       pub.send('hello from one publisher')
       pub2.send('hello from another publisher')
       pub3.send('hello from yet another publisher')
-    },100)
+    }, 300)
 
   })
 

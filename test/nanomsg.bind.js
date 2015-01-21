@@ -25,7 +25,7 @@ describe('nanomsg.bind', function() {
 
       sub.should.be.an.instanceOf(Object)
         .with.a.property('how')
-        .which.is.an.instanceOf(Array)
+        .which.is.an.instanceOf(Object)
       done()
     }, 10)
 
