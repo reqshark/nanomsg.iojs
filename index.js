@@ -138,8 +138,7 @@ function bind (addr) {
  * Adds a local endpoint to the socket s.
  * The endpoint can be then used by other applications to connect to.
  * Note that nn_bind and nn_connect(3) may be called multiple times
- * on the same socket thus allowing the socket to communicate with multiple
- * times on the same socket thus allowing the socket to communicate
+ * on the same socket thus allowing the socket to communicate
  * with multiple heterogeneous endpoints.
  *
  * `int nn_bind (int s, const char *addr);`

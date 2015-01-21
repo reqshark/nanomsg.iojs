@@ -1,7 +1,7 @@
 {
   "name": "iojs-nanomsg",
-  "version": "0.0.6",
-  "description": "nanomsg for iojs",
+  "version": "0.0.7",
+  "description": "nanømsg for iojs",
   "dependencies": {
     "bindings": "~1.2.1",
     "nan": "~1.5.1",
