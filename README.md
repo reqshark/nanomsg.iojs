@@ -21,7 +21,7 @@ var addr = 'tcp://127.0.0.1:5555'
 
 pub.bind(addr)
 
-//star an interval for broadcasts
+//start an interval for broadcasts
 setInterval(function(){
   pub.send('hello from nanømsg!')
 }, 100)
