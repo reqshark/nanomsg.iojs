@@ -130,7 +130,6 @@ function shutdown(addr) {
  * `int nn_shutdown (int s, int how);`
  *
  */
-  clearInterval(this.clr); this.open = false
   var ret = nn.Shutdown(this.socket, this.how[addr])
   if(ret < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
 
