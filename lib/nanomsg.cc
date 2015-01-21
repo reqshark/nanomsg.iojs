@@ -37,6 +37,7 @@ using v8::Value;
 #define S args[0].As<Number>()-> IntegerValue()
 #define ret NanReturnValue
 #define unret NanReturnUndefined();
+#define utf8 v8::String::Utf8Value
 #define METHOD(C, S) C->Set(NanNew(# S), NanNew<FunctionTemplate>(S)->GetFunction());
 #define CONSTANT(C, S) C->Set(NanNew(# S), NanNew<Number>(S));
 

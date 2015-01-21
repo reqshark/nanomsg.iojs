@@ -7,9 +7,7 @@ NAN_METHOD(Socket) {
 
   int64_t type = args[1].As<Number>()->IntegerValue();
   int s = nn_socket(S, type);
-
-  if(type == NN_SUB)
-    nn_setsockopt (s, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+  if(type == NN_SUB) nn_setsockopt (s, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 
   ret(NanNew<Number>(s));
 }
@@ -21,13 +19,13 @@ NAN_METHOD(Close) {
 
 NAN_METHOD(Bind) {
   NanScope();
-  String::Utf8Value addr(args[1]);
+  utf8 addr(args[1]);
   ret(NanNew<Number>(nn_bind(S, *addr)));
 }
 
 NAN_METHOD(Connect) {
   NanScope();
-  String::Utf8Value addr(args[1]->ToString());
+  utf8 addr(args[1]);
   ret(NanNew<Number>(nn_connect(S, *addr)));
 }
 
@@ -40,7 +38,7 @@ NAN_METHOD(Send) {
     const char *data = node::Buffer::Data(object);
     input = new std::string(data, node::Buffer::Length(object));
   } else {
-    v8::String::Utf8Value str (args[1]->ToString());
+    utf8 str (args[1]->ToString());
     input = new std::string(*str);
   }
 

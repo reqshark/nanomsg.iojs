@@ -9,17 +9,9 @@ NAN_METHOD(Socket) {
   ret(s);
 }
 
-NAN_METHOD(Close) {ret(nn_close(S));}
-
-NAN_METHOD(Bind) {
-  String::Utf8Value addr(args[1]);
-  ret(nn_bind(S, *addr));
-}
-
-NAN_METHOD(Connect) {
-  String::Utf8Value addr(args[1]->ToString());
-  ret(nn_connect(S, *addr));
-}
+NAN_METHOD(Close)  { ret(nn_close(S)); }
+NAN_METHOD(Bind)   { utf8 addr(args[1]); ret(nn_bind(S, *addr)); }
+NAN_METHOD(Connect){ utf8 addr(args[1]); ret(nn_connect(S, *addr)); }
 
 NAN_METHOD(Send) {
   std::string *input;
@@ -29,8 +21,7 @@ NAN_METHOD(Send) {
     const char *data = node::Buffer::Data(object);
     input = new std::string(data, node::Buffer::Length(object));
   } else {
-    v8::String::Utf8Value str (args[1]->ToString());
-    input = new std::string(*str);
+    utf8 str (args[1]->ToString()); input = new std::string(*str);
   }
 
   ret(nn_send (S, input->c_str(), input->length(), 0));
@@ -57,10 +48,7 @@ NAN_METHOD(RecvStr){
   ret(str);
 }
 
-NAN_METHOD(Getevts){
-  int poll = args[1].As<Number>()->IntegerValue();
-  ret(getevents(S, NN_IN, poll));
-}
+NAN_METHOD(Getevts){ ret(getevents(S, NN_IN, 0));}
 
 //runtime utility method
 NAN_METHOD(Stall) {
