@@ -90,37 +90,26 @@ NAN_METHOD(SendString) {
 
 NAN_METHOD(Recv){
   NanScope();
-
   char *buf = NULL;
 
   int len = nn_recv(S, &buf, NN_MSG, 0);
-  v8::Local<v8::Value> res;
-
-  res = NanNewBufferHandle(len);
+  v8::Local<v8::Value> res = NanNewBufferHandle(len);
   memcpy(node::Buffer::Data(res), buf, len);
 
   nn_freemsg (buf);
   NanReturnValue(res);
 }
 
-//res = NanNew<v8::String>(dst.c_str(), dst.length());
-
-
-//NAN_METHOD(Recv) {
-//  NanScope();
-//  char *buf = NULL;
-//  nn_recv (S, &buf, NN_MSG, 0);
-//  //nn_freemsg (buf);
-//  NanReturnValue(NanNew<String>(buf));
-//}
-
-NAN_METHOD(RecvBuf) {
+NAN_METHOD(RecvStr){
   NanScope();
+  char *buf = NULL;
 
-  void *buf = NULL;
-  int r = nn_recv(S, &buf, NN_MSG, 0);
-  //nn_freemsg (buf);
-  NanReturnValue(NanNewBufferHandle((char*) buf, r));
+  int len = nn_recv(S, &buf, NN_MSG, 0);
+  buf[len] = 0;
+
+  v8::Local<v8::Value> res = NanNew<v8::String>(buf, len);
+  nn_freemsg (buf);
+  NanReturnValue(res);
 }
 
 NAN_METHOD(GetEventIn) {
@@ -142,7 +131,7 @@ void i(v8::Handle<Object>e) {
   EXPORT_METHOD(e, Send)
   EXPORT_METHOD(e, SendString)
   EXPORT_METHOD(e, Recv)
-  EXPORT_METHOD(e, RecvBuf)
+  EXPORT_METHOD(e, RecvStr)
   EXPORT_METHOD(e, GetEventIn)
 
   // SP address families

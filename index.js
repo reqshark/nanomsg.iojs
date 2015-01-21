@@ -48,6 +48,12 @@ function self (s, t, o) {
 
   var ctx         = this
 
+  if(o.hasOwnProperty('asBuffer')){
+    this.asBuffer = o.asBuffer
+  } else {
+    this.asBuffer = true
+  }
+
   this.fam        = o.fam
   this._stream    = o.stream || false
   this.socket     = s
@@ -80,12 +86,20 @@ function self (s, t, o) {
     case 'req':
     case 'rep':
     case 'pull':
-      this.clr = setInterval(select, 0)
+      if(this.asBuffer){
+        this.clr = setInterval(select, 0)
+      } else {
+        this.clr = setInterval(selectStr, 0)
+      }
       break;
   }
 
   function select(){
     while(nn.GetEventIn(ctx.socket, 0) > 0) ctx.recv(nn.Recv(ctx.socket));
+  }
+
+  function selectStr(){
+    while(nn.GetEventIn(ctx.socket, 0) > 0) ctx.recv(nn.RecvStr(ctx.socket));
   }
 }
 
