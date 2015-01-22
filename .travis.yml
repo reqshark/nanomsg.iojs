@@ -10,7 +10,7 @@ before_install:
   - rm -rf ~/.nvm
   - git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
-  - nvm install $NODE_V
+  - nvm install $NODE_VERSION
   - node -v
   - git clone --depth 1 git://github.com/nanomsg/nanomsg.git nanomsg
   - cd nanomsg && ./autogen.sh && ./configure && make

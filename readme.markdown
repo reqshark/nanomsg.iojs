@@ -1,6 +1,5 @@
 # nanomsg for iøjs
 [![Build Status](https://travis-ci.org/reqshark/nanomsg.iojs.svg?branch=master)](https://travis-ci.org/reqshark/nanomsg.iojs) &nbsp;&nbsp;&nbsp;&nbsp; [![npmbadge](https://nodei.co/npm/iojs-nanomsg.png?mini=true)](https://www.npmjs.com/package/iojs-nanomsg)
-  https://github.com/nanomsg/nanomsg
 
 # description
 an iojs interface to nanomsg sockets with a pipeable stream option.
