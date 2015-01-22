@@ -21,12 +21,10 @@ before_install:
   - source ~/.nvm/nvm.sh
   - nvm install $NODE_VERSION
   - node -v
-  - git clone $NANOMSG nanomsg
+  - git clone $NANOMSG
   - cd nanomsg && ./autogen.sh && ./configure && make
   - sudo make install && sudo /sbin/ldconfig
   - cd ..
-git:
-  depth: 1
 branches:
   only:
     - master

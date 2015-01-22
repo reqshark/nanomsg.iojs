@@ -90,7 +90,9 @@ exports(v8::Handle<v8::Object> e) {
   NC(e, NN_RECONNECT_IVL)
   NC(e, NN_RECONNECT_IVL_MAX)
   NC(e, NN_SNDPRIO)
+#if NN_VERSION > 3
   NC(e, NN_RCVPRIO)
+#endif
   NC(e, NN_SNDFD)
   NC(e, NN_RCVFD)
   NC(e, NN_DOMAIN)

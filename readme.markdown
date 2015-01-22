@@ -55,4 +55,4 @@ subStream.on('data',function(msg){
 ```bash
 $ make clean && make && make check
 ```
-tested on node v0.08.x and up
+<sub>*disabling node v0.08.x for now. v0.10 and up should be fine*</sub>
