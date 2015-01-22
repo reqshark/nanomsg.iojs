@@ -99,8 +99,10 @@ exports(v8::Handle<v8::Object> e) {
   NC(e, NN_SOCKET_NAME)
 
   // Ancillary data
+#if NN_VERSION > 4
   NC(e, PROTO_SP)
   NC(e, SP_HDR)
+#endif
 
   // Socket types
   NC(e, NN_SURVEYOR)
