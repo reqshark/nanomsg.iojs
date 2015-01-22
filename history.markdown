@@ -1,4 +1,4 @@
-0.0.9 / 2014-01-21
+0.0.9 / 2015-01-21
 ==================
 
  * asBuffer option to support native switches between strings and buffers
