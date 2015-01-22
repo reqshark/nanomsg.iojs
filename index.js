@@ -3,8 +3,6 @@
  */
 
 var nn            = require('bindings')('nanomsg.node')
-var EventEmitter  = require('events').EventEmitter
-var duplexify     = require('duplexify')
 var sock = {
   pub             : nn.NN_PUB,
   sub             : nn.NN_SUB,
@@ -27,7 +25,7 @@ var af = {
   af              : nn.AF_SP
 }
 
-require('util').inherits( self, EventEmitter )
+require('util').inherits( self, require('events').EventEmitter )
 
 module.exports    = {
   socket: function ( type, opts ) {
@@ -68,10 +66,10 @@ function self (s, t, o) {
   }
   this.recv       = function(msg){
     if(ctx._stream) return ctx.stream.push(msg)
-    return EventEmitter.prototype.emit.call(ctx,'msg',msg)
+    return ctx.emit('msg', msg)
   }
 
-  if(this._stream) this.stream = duplexify()
+  if(this._stream) this.stream = require('duplexify')()
 
   switch(this.type){
     case 'pub':
