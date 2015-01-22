@@ -77,3 +77,6 @@ NAN_METHOD(Multiplexer){
   NanScope();
   ret(NanNew<Number>(getevents(S, NN_IN, 0)));
 }
+
+//NAN_METHOD(Term) {nn_term();}
+//NAN_METHOD(Device) {nn_device(S, args[1].As<Number>()->IntegerValue());}

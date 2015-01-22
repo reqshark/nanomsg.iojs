@@ -56,3 +56,6 @@ NAN_METHOD(Err){ ret(NanNew<String>(nn_strerror(nn_errno()))); }
 NAN_METHOD(Multiplexer){ ret(getevents(S, NN_IN, 0)); }
 NAN_METHOD(Err){ ret(nn_strerror(nn_errno())); }
 #endif
+
+//NAN_METHOD(Term) {nn_term();}
+//NAN_METHOD(Device) {nn_device(S, args[1].As<Number>()->IntegerValue());}

@@ -55,6 +55,8 @@ exports(v8::Handle<v8::Object> e) {
   T(e, Recv)
   T(e, RecvStr)
   T(e, Multiplexer)
+  //T(e, Device)
+  //T(e, Term)
 
   // SP address families
   NC(e, AF_SP)
