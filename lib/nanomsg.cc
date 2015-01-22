@@ -20,6 +20,22 @@ extern "C" {
   #include "getevents.h"
 }
 
+#if NN_VERSION_CURRENT < 1
+  #if NN_VERSION_REVISION < 1
+  #define NN_VERSION 1
+  #else
+  #define NN_VERSION 2
+  #endif
+#else
+  #if NN_VERSION_CURRENT < 2
+  #define NN_VERSION 3
+  #elif NN_VERSION_REVISION < 1
+  #define NN_VERSION 4
+  #else
+  #define NN_VERSION 5
+  #endif
+#endif
+
 using v8::Function;
 using v8::FunctionTemplate;
 using v8::Handle;
@@ -97,6 +113,13 @@ exports(v8::Handle<v8::Object> e) {
   NC(e, NN_PUB)
   NC(e, NN_SUB)
   NC(e, NN_BUS)
+
+  NC(e, NN_VERSION_CURRENT)
+  NC(e, NN_VERSION_REVISION)
+  NC(e, NN_VERSION_AGE)
+  NC(e, NN_VERSION)
+
+  NC(e, NN_TCP_NODELAY)
 }
 
 NODE_MODULE(nanomsg, exports)
