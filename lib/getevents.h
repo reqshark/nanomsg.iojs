@@ -8,7 +8,7 @@
 #define NN_OUT 2
 
 int getevents (int s, int events, int timeout){
-  int rcvfd, maxfd, grc, revents;
+  int rcvfd, maxfd, revents;
   size_t fdsz;
   struct timeval tv;
 
@@ -18,7 +18,7 @@ int getevents (int s, int events, int timeout){
 
   if (events & NN_IN) {
     fdsz = sizeof (rcvfd);
-    grc = nn_getsockopt (s, NN_SOL_SOCKET, NN_RCVFD, (char*) &rcvfd, &fdsz);
+    nn_getsockopt (s, NN_SOL_SOCKET, NN_RCVFD, (char*) &rcvfd, &fdsz);
     FD_SET (rcvfd, &pollset);
     if (rcvfd + 1 > maxfd)
       maxfd = rcvfd + 1;
