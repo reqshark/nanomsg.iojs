@@ -2,15 +2,16 @@ os:
   - linux
 env:
 #  - NODE_V="0.8"
-  - NODE_V="0.10"
-  - NODE_V="0.11"
-  - NODE_v="iojs"
+  - NODE_VERSION="0.10"
+  - NODE_VERSION="0.11"
+  - NODE_VERSION="iojs-v1.0.3"
 before_install:
   - echo -e "echo nothing to configure" >> configure && chmod a+x configure
   - rm -rf ~/.nvm
   - git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
-  - nvm install $NODE_V && node --version
+  - nvm install $NODE_V
+  - node -v
   - git clone --depth 1 git://github.com/nanomsg/nanomsg.git nanomsg
   - cd nanomsg && ./autogen.sh && ./configure && make
   - sudo make install && sudo /sbin/ldconfig
