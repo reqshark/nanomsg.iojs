@@ -3,7 +3,7 @@
 
  * asBuffer option to support native switches between strings and buffers
  * update send/recv functions for better buffer handling
- * force buffer lengths to be exact measurments passed to nn_send/nn_recv
+ * force buffer lengths to be exact measurements passed to nn_send/nn_recv
  * ensure data sent as C strings are null/zero terminated
  * port a kernel multiplexer function to javascript (lib/getevent.h)
  * test multiple heterogeneous endpoints and add other cool tests

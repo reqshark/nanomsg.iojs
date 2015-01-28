@@ -8,7 +8,10 @@ describe('nanomsg.stream', function() {
   it('should stream a hundred inbound messages', function(done){
 
     var pub    = nano.socket('pub'), recv = 0
-    var sub    = nano.socket('sub',{ stream: true })
+    var sub    = nano.socket('sub',{
+      stream: true,
+      stopBufferOverflow:true
+    })
     sub.connect('inproc://stream')
     pub.bind('inproc://stream')
 
