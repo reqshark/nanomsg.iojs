@@ -6,7 +6,8 @@ describe('nanomsg.sendperf', function() {
 
   var pub    = nano.socket('pub')
   var sub    = nano.socket('sub',{
-    asBuffer:true
+    asBuffer:true,
+    stopBufferOverflow: true
   })
   var recv    = 0
   var addr    = 'inproc://whatever'

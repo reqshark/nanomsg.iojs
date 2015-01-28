@@ -86,9 +86,18 @@ function self (s, t, o) {
     case 'rep':
     case 'pull':
       if(this.asBuffer){
-        this.clr = setInterval(select, 0)
+        //check for a buffer overflow option before i/o multiplexing
+        if(o.hasOwnProperty('stopBufferOverflow')){
+          this.clr = setInterval(select_buf, 0)
+        } else {
+          this.clr = setInterval(select, 0)
+        }
       } else {
-        this.clr = setInterval(select_s, 0)
+        if(o.hasOwnProperty('stopBufferOverflow')){
+          this.clr = setInterval(select_s_buf, 0)
+        } else {
+          this.clr = setInterval(select_s, 0)
+        }
       }
       break;
   }
@@ -99,6 +108,14 @@ function self (s, t, o) {
 
   function select_s(){
     while(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
+  }
+
+  function select_buf(){
+    if(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.Recv(ctx.socket))
+  }
+
+  function select_s_buf(){
+    if(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
   }
 }
 
