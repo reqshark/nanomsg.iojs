@@ -51,7 +51,8 @@ subStream.on('data',function(msg){
 })
 ```
 
-#test
+# test
+on **unix** systems:
 ```bash
 $ make clean && make && make check
 ```
