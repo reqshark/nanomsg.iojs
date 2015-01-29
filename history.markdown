@@ -1,3 +1,8 @@
+0.0.10 / 2015-01-28
+==================
+
+* add an option (stopBufferOverflow: true) to prevent the buffer overflow crash
+
 0.0.9 / 2015-01-21
 ==================
 
