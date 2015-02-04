@@ -14,11 +14,10 @@ before_install:
   - source ~/.nvm/nvm.sh
   - nvm install $NODE_VERSION && node -v
   - echo -e "require('fs').writeFile('platform.sh','export PLATFORM=\"'+require('os').platform()+'\"')" >> "check.js"
-  - node check.js && chmod a+x platform.sh && source platform.sh
+  - node check && chmod a+x platform.sh && source platform.sh
   - git clone $NANOMSG
   - cd nanomsg && ./autogen.sh && ./configure && make
   - sudo make install
-  - sudo /sbin/ldconfig
   - '[ "$PLATFORM" == "darwin" ] || sudo /sbin/ldconfig'
   - cd ..
 branches:
