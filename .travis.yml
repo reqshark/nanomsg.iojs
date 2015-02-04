@@ -1,29 +1,25 @@
 os:
+  - osx
   - linux
 env:
-  - NODE_VERSION="0.10" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.3-beta"
-  - NODE_VERSION="0.11" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.3-beta"
-  - NODE_VERSION="iojs-v1.0.3" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.3-beta"
-  - NODE_VERSION="0.10" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.4-beta"
-  - NODE_VERSION="0.11" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.4-beta"
-  - NODE_VERSION="iojs-v1.0.3" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.4-beta"
-  - NODE_VERSION="0.10" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.5-beta"
-  - NODE_VERSION="0.11" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.5-beta"
-  - NODE_VERSION="iojs-v1.0.3" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.5-beta"
   - NODE_VERSION="0.10" NANOMSG="git://github.com/nanomsg/nanomsg.git"
   - NODE_VERSION="0.11" NANOMSG="git://github.com/nanomsg/nanomsg.git"
-  - NODE_VERSION="iojs-v1.0.3" NANOMSG="git://github.com/nanomsg/nanomsg.git"
+  - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git"
+  - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.3-beta"
+  - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.4-beta"
+  - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.5-beta"
 before_install:
-  - pwd
-  - ls -la
   - rm -rf ~/.nvm
   - git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
-  - nvm install $NODE_VERSION
-  - node -v
+  - nvm install $NODE_VERSION && node -v
+  - echo -e "require('fs').writeFile('platform.sh','export PLATFORM=\"'+require('os').platform()+'\"')" >> "check.js"
+  - node check.js && chmod a+x platform.sh && source platform.sh
   - git clone $NANOMSG
   - cd nanomsg && ./autogen.sh && ./configure && make
-  - sudo make install && sudo /sbin/ldconfig
+  - sudo make install
+  - sudo /sbin/ldconfig
+  - '[ "$PLATFORM" == "darwin" ] || sudo /sbin/ldconfig'
   - cd ..
 branches:
   only:
