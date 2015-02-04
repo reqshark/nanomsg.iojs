@@ -28,6 +28,10 @@ var af = {
 require('util').inherits( self, require('events').EventEmitter )
 
 module.exports    = {
+
+  version: nn.NN_VERSION,
+  versionstr: '0.'+nn.NN_VERSION+'-beta',
+
   socket: function ( type, opts ) {
 
     //preflight check
