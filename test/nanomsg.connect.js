@@ -31,7 +31,7 @@ describe('nanomsg.connect', function() {
         .with.a.property('how')
 
       done()
-    }, 20)
+    }, 100)
 
   })
 
@@ -54,14 +54,14 @@ describe('nanomsg.connect', function() {
       if(msg.length > 30){
         msg.should.equal('hello from yet another publisher')
       } else {
-        if(msg.length > 26)
+        if(msg.length > 26){
           msg.should.equal('hello from another publisher')
-        else
+        } else {
           msg.should.equal('hello from one publisher')
+        }
       }
 
-      if(msgs > 2)
-        done()
+      if(msgs > 2) done()
 
     })
 
