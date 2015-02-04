@@ -49,12 +49,6 @@ function self (s, t, o) {
 
   var ctx         = this
 
-  if(o.hasOwnProperty('asBuffer')){
-    this.asBuffer = o.asBuffer
-  } else {
-    this.asBuffer = true
-  }
-
   this.fam        = o.fam
   this._stream    = o.stream || false
   this.socket     = s
@@ -64,6 +58,9 @@ function self (s, t, o) {
   this.bind       = bind
   this.connect    = connect
   this.how        = {}
+
+  this.asBuffer   = true
+  if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
 
   this.send       = function(msg){
     return nn.Send( s, msg )
