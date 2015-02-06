@@ -57,6 +57,7 @@ function self (s, t, o) {
   this.shutdown   = shutdown
   this.bind       = bind
   this.connect    = connect
+  this.setsockopt = setsockopt
   this.how        = {}
 
   this.asBuffer   = true
@@ -181,4 +182,8 @@ function connect (addr) {
   this.how[addr] = eid
 
   return this
+}
+
+function setsockopt(level, option, value){
+  return nn.Setsockopt(this.socket, nn[level], nn[option], value)
 }

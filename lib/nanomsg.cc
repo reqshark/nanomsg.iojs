@@ -59,6 +59,21 @@ using v8::Value;
 #include "methods.iojs.h"
 #endif
 
+NAN_METHOD(Setsockopt) {
+  NanScope();
+
+  int level = args[1]->Uint32Value();
+  int option = args[2]->Uint32Value();
+
+  if(option == NN_SOCKET_NAME){
+    utf8 str(args[3]);
+    ret(NanNew<Number>(nn_setsockopt(S, level, option, *str, str.length())));
+  } else {
+    int optval = args[3]->Uint32Value();
+    ret(NanNew<Number>(nn_setsockopt(S, level, option, &optval, sizeof(optval))));
+  }
+}
+
 extern "C" void
 exports(v8::Handle<v8::Object> e) {
   T(e, Socket)
@@ -71,6 +86,7 @@ exports(v8::Handle<v8::Object> e) {
   T(e, Recv)
   T(e, RecvStr)
   T(e, Multiplexer)
+  T(e, Setsockopt)
   //T(e, Device)
   //T(e, Term)
 
