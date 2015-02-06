@@ -4,6 +4,7 @@ os:
 env:
   - NODE_VERSION="0.10" NANOMSG="git://github.com/nanomsg/nanomsg.git"
   - NODE_VERSION="0.11" NANOMSG="git://github.com/nanomsg/nanomsg.git"
+  - NODE_VERSION="0.12" NANOMSG="git://github.com/nanomsg/nanomsg.git"
   - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git"
   - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.3-beta"
   - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.4-beta"
