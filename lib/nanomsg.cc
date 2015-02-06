@@ -44,7 +44,6 @@ using v8::Number;
 using v8::Object;
 using v8::String;
 using v8::Value;
-using v8::Array;
 
 #define ret NanReturnValue
 #define utf8 v8::String::Utf8Value
@@ -76,33 +75,22 @@ NAN_METHOD(Setsockopt) {
 }
 
 NAN_METHOD(Getsockopt) {
-    NanScope();
+  NanScope();
 
-    int level = args[1]->Uint32Value();
-    int option = args[2]->Uint32Value();
-    int optval[64];
+  int level = args[1]->Uint32Value();
+  int option = args[2]->Uint32Value();
+  int optval[64];
 
-    size_t optsize = sizeof(optval);
-    int get = nn_getsockopt(S, level, option, optval, &optsize);
+  size_t optsize = sizeof(optval);
 
-    Local<Array> obj = NanNew<Array>(2);
-    obj->Set(0, NanNew<Number>(get));
+  if(nn_getsockopt(S, level, option, optval, &optsize) == 0) {
 
-    if(get == 0) {
-      switch(option) {
-        /* string return values */
-        case NN_SOCKET_NAME:
-          obj->Set(1, NanNew<String>((char *)optval));
-          break;
-        /* int return values */
-        default:
-          obj->Set(1, NanNew<Number>(optval[0]));
-          break;
-      }
-    }
+    if(option == NN_SOCKET_NAME) ret(NanNew<String>((char *)optval));
 
-    // otherwise pass the error back
-    ret(obj);
+    ret(NanNew<Number>(optval[0]));
+  } else {
+    //pass the error back
+  }
 }
 
 extern "C" void

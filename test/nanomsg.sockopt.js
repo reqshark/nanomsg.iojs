@@ -19,11 +19,8 @@ describe('nanomsg.sockopt', function() {
 
   it('should get tcp nodelay setting', function (done){
 
-    var get = req.getsockopt('NN_TCP','NN_TCP_NODELAY')
+    req.getsockopt('NN_TCP','NN_TCP_NODELAY').should.equal(1)
 
-    get[0].should.equal(0)
-    get[1].should.equal(1)
-    
     done()
   })
 })
