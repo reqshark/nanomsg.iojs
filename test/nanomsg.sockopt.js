@@ -23,4 +23,13 @@ describe('nanomsg.sockopt', function() {
 
     done()
   })
+
+  it('should return undefined if there was a getsockopt error', function (done){
+
+    if(req.getsockopt('NN_TCP','NN_TCP_DELAY') == undefined){
+      done()
+    } else {
+      throw 'it'
+    }
+  })
 })

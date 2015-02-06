@@ -89,7 +89,8 @@ NAN_METHOD(Getsockopt) {
 
     ret(NanNew<Number>(optval[0]));
   } else {
-    //pass the error back
+    //pass the error back as an undefined return
+    NanReturnUndefined();
   }
 }
 
