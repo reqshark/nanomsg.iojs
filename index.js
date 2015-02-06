@@ -58,6 +58,7 @@ function self (s, t, o) {
   this.bind       = bind
   this.connect    = connect
   this.setsockopt = setsockopt
+  this.getsockopt = getsockopt
   this.how        = {}
 
   this.asBuffer   = true
@@ -186,4 +187,8 @@ function connect (addr) {
 
 function setsockopt(level, option, value){
   return nn.Setsockopt(this.socket, nn[level], nn[option], value)
+}
+
+function getsockopt(level, option){
+  return nn.Getsockopt(this.socket, nn[level], nn[option])
 }
