@@ -5,7 +5,7 @@
 NAN_METHOD(Socket) {
   NanScope();
 
-  int64_t type = args[1].As<Number>()->IntegerValue();
+  int type = args[1].integer;
   int s = nn_socket(S, type);
   if(type == NN_SUB) nn_setsockopt (s, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 
@@ -17,7 +17,7 @@ NAN_METHOD(Close) { NanScope(); ret(NanNew<Number>(nn_close(S))); }
 
 NAN_METHOD(Shutdown) {
   NanScope();
-  int64_t how = args[1].As<Number>()->IntegerValue();
+  int how = args[1].integer;
   ret(NanNew<Number>(nn_shutdown(S, how)));
 }
 

@@ -47,7 +47,8 @@ using v8::Value;
 
 #define ret NanReturnValue
 #define utf8 v8::String::Utf8Value
-#define S args[0].As<Number>()-> IntegerValue()
+#define integer As<Number>()->IntegerValue()
+#define S args[0].integer
 #define NC(C,S) C->Set(NanNew(# S), NanNew<Number>(S));
 #define T(C,S)C->Set(NanNew(# S),NanNew<FunctionTemplate>(S)->GetFunction());
 
@@ -62,14 +63,14 @@ using v8::Value;
 NAN_METHOD(Setsockopt) {
   NanScope();
 
-  int level = args[1]->Uint32Value();
-  int option = args[2]->Uint32Value();
+  int level = args[1].integer;
+  int option = args[2].integer;
 
   if(option == NN_SOCKET_NAME){
     utf8 str(args[3]);
     ret(NanNew<Number>(nn_setsockopt(S, level, option, *str, str.length())));
   } else {
-    int optval = args[3]->Uint32Value();
+    int optval = args[3].integer;
     ret(NanNew<Number>(nn_setsockopt(S, level, option, &optval, sizeof(optval))));
   }
 }
@@ -77,17 +78,16 @@ NAN_METHOD(Setsockopt) {
 NAN_METHOD(Getsockopt) {
   NanScope();
 
-  int level = args[1]->Uint32Value();
-  int option = args[2]->Uint32Value();
   int optval[64];
-
+  int option = args[2].integer;
   size_t optsize = sizeof(optval);
 
-  if(nn_getsockopt(S, level, option, optval, &optsize) == 0) {
+  if(nn_getsockopt(S, args[1].integer, option, optval, &optsize) == 0){
 
     if(option == NN_SOCKET_NAME) ret(NanNew<String>((char *)optval));
 
     ret(NanNew<Number>(optval[0]));
+
   } else {
     //pass the error back as an undefined return
     NanReturnUndefined();

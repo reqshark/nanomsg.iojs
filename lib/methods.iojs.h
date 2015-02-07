@@ -3,14 +3,14 @@
  */
 
 NAN_METHOD(Socket) {
-  int64_t type = args[1].As<Number>()->IntegerValue();
+  int type = args[1].integer;
   int s = nn_socket(S, type);
   if(type == NN_SUB) nn_setsockopt (s, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
   ret(s);
 }
 
 NAN_METHOD(Close)   { ret(nn_close(S)); }
-NAN_METHOD(Shutdown){ ret(nn_shutdown(S,args[1].As<Number>()->IntegerValue()));}
+NAN_METHOD(Shutdown){ ret(nn_shutdown(S,args[1].integer));}
 NAN_METHOD(Bind)    { utf8 addr(args[1]); ret(nn_bind(S, *addr)); }
 NAN_METHOD(Connect) { utf8 addr(args[1]); ret(nn_connect(S, *addr)); }
 
