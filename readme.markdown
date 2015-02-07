@@ -43,10 +43,9 @@ var sub2 = nano.socket('sub', {
 
 //stream option disables onmessage emitter (for perf reasons)
 //there's a readable/writable stream depending on the socket type
-var subStream = sub2.stream
 sub2.connect(addr)
 
-subStream.on('data',function(msg){
+sub2.on('data',function(msg){
   console.log(String(msg))
 })
 ```

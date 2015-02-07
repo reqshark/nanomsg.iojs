@@ -15,7 +15,7 @@ describe('nanomsg.stream', function() {
     sub.connect('inproc://stream')
     pub.bind('inproc://stream')
 
-    sub.stream.should.have.a.property('readable')
+    sub.should.have.a.property('readable')
 
     //apply pressure and get some msgs out
     var publisher = setInterval(function(){
@@ -42,7 +42,7 @@ describe('nanomsg.stream', function() {
       this.queue(null)
     })
 
-    sub.stream.pipe(bufToStr).pipe(strToBuf).pipe(backToBuf)
+    sub.pipe(bufToStr).pipe(strToBuf).pipe(backToBuf)
 
   })
 

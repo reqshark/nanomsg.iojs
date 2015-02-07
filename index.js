@@ -25,8 +25,6 @@ var af = {
   af              : nn.AF_SP
 }
 
-require('util').inherits( self, require('events').EventEmitter )
-
 module.exports    = {
 
   version: nn.NN_VERSION,
@@ -47,34 +45,36 @@ function self (s, t, o) {
   //error handle
   if(s < 0) throw new Error(nn.Err() + ': ' + t + ' creating socket'+'\n')
 
-  var ctx         = this
+  //plug in a nice duplex stream (i think this will end up being the socket)
+  var dup        = require('duplexify')()
+  dup._stream    = o.stream || false
 
-  this.fam        = o.fam
-  this._stream    = o.stream || false
-  this.socket     = s
-  this.type       = t
-  this.close      = close
-  this.shutdown   = shutdown
-  this.bind       = bind
-  this.connect    = connect
-  this.setsockopt = setsockopt
-  this.getsockopt = getsockopt
-  this.how        = {}
+  dup.socket     = s
+  dup.type       = t
+  dup.fam        = o.fam
+  dup.how        = {}
 
-  this.asBuffer   = true
-  if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
+  if(o.hasOwnProperty('asBuffer')) dup.asBuffer = o.asBuffer
 
-  this.send       = function(msg){
+  //nanomsg functions
+  dup.close      = close
+  dup.shutdown   = shutdown
+  dup.bind       = bind
+  dup.connect    = connect
+  dup.setsockopt = setsockopt
+  dup.getsockopt = getsockopt
+
+  dup.send       = function(msg){
     return nn.Send( s, msg )
   }
-  this.recv       = function(msg){
-    if(ctx._stream) return ctx.stream.push(msg)
-    return ctx.emit('msg', msg)
+
+  //need optimize recv, b/c seems sluggish to re-check something on each msg
+  dup.recv       = function(msg){
+    if(dup._stream) return dup.push(msg)
+    return dup.emit('msg', msg)
   }
 
-  if(this._stream) this.stream = require('duplexify')()
-
-  switch(this.type){
+  switch(t){
     case 'pub':
     case 'push':
       break;
@@ -88,37 +88,39 @@ function self (s, t, o) {
     case 'req':
     case 'rep':
     case 'pull':
-      if(this.asBuffer){
+      if(dup.asBuffer){
         //check for a buffer overflow option before i/o multiplexing
         if(o.hasOwnProperty('stopBufferOverflow')){
-          this.clr = setInterval(select_buf, 0)
+          dup.clr = setInterval(select_buf, 0)
         } else {
-          this.clr = setInterval(select, 0)
+          dup.clr = setInterval(select, 0)
         }
       } else {
         if(o.hasOwnProperty('stopBufferOverflow')){
-          this.clr = setInterval(select_s_buf, 0)
+          dup.clr = setInterval(select_s_buf, 0)
         } else {
-          this.clr = setInterval(select_s, 0)
+          dup.clr = setInterval(select_s, 0)
         }
       }
       break;
   }
 
+  return dup
+
   function select(){
-    while(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.Recv(ctx.socket))
+    while(nn.Multiplexer(s) > 0) dup.recv(nn.Recv(s))
   }
 
   function select_s(){
-    while(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
+    while(nn.Multiplexer(s) > 0) dup.recv(nn.RecvStr(s))
   }
 
   function select_buf(){
-    if(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.Recv(ctx.socket))
+    if(nn.Multiplexer(s) > 0) dup.recv(nn.Recv(s))
   }
 
   function select_s_buf(){
-    if(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
+    if(nn.Multiplexer(s) > 0) dup.recv(nn.RecvStr(s))
   }
 }
 
