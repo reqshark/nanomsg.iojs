@@ -7,25 +7,25 @@ describe('nanomsg.connect', function() {
   var addr  = 'tcp://127.0.0.1:44445'
   var addr2 = 'tcp://127.0.0.1:44446'
   var addr3 = 'tcp://127.0.0.1:44447'
-  var sub   = nano.socket('sub')
-  var pub   = nano.socket('pub')
-  var pub2  = nano.socket('pub')
-  var pub3  = nano.socket('pub')
+  var pull  = nano.socket('pull')
+  var push  = nano.socket('push')
+  var push2 = nano.socket('push')
+  var push3 = nano.socket('push')
 
-  sub.connect(addr)
-  sub.connect(addr2)
-  sub.connect(addr3)
-  pub.bind(addr)
-  pub2.bind(addr2)
-  pub3.bind(addr3)
+  pull.connect(addr)
+  pull.connect(addr2)
+  pull.connect(addr3)
+  push.bind(addr)
+  push2.bind(addr2)
+  push3.bind(addr3)
 
   it('should be called on a network address', function (done) {
 
-    pub.should.be.an.instanceOf(Object)
+    push.should.be.an.instanceOf(Object)
       .with.a.property('connect')
       .which.is.a.Function
 
-    sub.should.be.an.instanceOf(Object)
+    pull.should.be.an.instanceOf(Object)
       .with.a.property('how')
 
     done()
@@ -36,31 +36,36 @@ describe('nanomsg.connect', function() {
 
     var msgs = 0
 
-    sub.on('msg', function(msg){
-
-      msgs++
+    pull.on('msg', function(msg){
 
       msg = String(msg)
 
-      if(msg.length > 30){
-        msg.should.equal('hello from yet another publisher')
+      if(msg.length > 27){
+        msg.should.equal('hello from yet another source')
       } else {
-        if(msg.length > 26){
-          msg.should.equal('hello from another publisher')
+        if(msg.length > 23){
+          msg.should.equal('hello from another source')
         } else {
-          msg.should.equal('hello from one publisher')
+          msg.should.equal('hello from one source')
         }
       }
 
-      if(msgs > 2) done()
+      if(++msgs > 2) {
+
+        push.close(); push2.close(); push3.close();
+
+        pull.close()
+
+        done()
+      }
 
     })
 
-    setTimeout(function(){
-      pub.send('hello from one publisher')
-      pub2.send('hello from another publisher')
-      pub3.send('hello from yet another publisher')
-    }, 500)
+    setImmediate(function(){
+      push.send('hello from one source')
+      push2.send('hello from another source')
+      push3.send('hello from yet another source')
+    })
 
   })
 
