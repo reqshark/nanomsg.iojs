@@ -5,9 +5,11 @@ var through = require('through')
 
 describe('nanomsg.stream', function() {
 
-  it('should stream a hundred inbound messages', function(done){
+  it('should stream a hundred messages', function(done){
 
-    var pub    = nano.socket('pub'), recv = 0
+    var recv = 0
+
+    var pub    = nano.socket('pub',{ stream: true })
     var sub    = nano.socket('sub',{
       stream: true,
       stopBufferOverflow:true
@@ -19,7 +21,7 @@ describe('nanomsg.stream', function() {
 
     //apply pressure and get some msgs out
     var publisher = setInterval(function(){
-      pub.send('count it')
+      pub.stream.write('count it')
     }, 5)
 
     var bufToStr = through(function(msg){

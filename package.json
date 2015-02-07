@@ -5,7 +5,8 @@
   "dependencies": {
     "bindings": "~1.2.1",
     "nan": "~1.6.2",
-    "duplexify":"~3.2.0"
+    "duplexify":"~3.2.0",
+    "through2":"~0.6.3"
   },
   "devDependencies":{
     "through":"~2.3.6",

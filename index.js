@@ -63,15 +63,15 @@ function self (s, t, o) {
   this.asBuffer   = true
   if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
 
-  this.send       = function(msg){
-    return nn.Send( s, msg )
-  }
-
   if(o.stream){
     this.stream   = require('duplexify')()
+    this.send     = function(msg,next){ nn.Send( s, msg ); next() }
     this.recv     = function(msg){ return ctx.stream.push(msg) }
+
+    this.stream.setWritable(require('through2')(write, end))
   } else {
     this.recv     = function(msg){ return ctx.emit('msg', msg) }
+    this.send     = function(msg){ nn.Send( s, msg ) }
   }
 
   switch(t){
@@ -109,6 +109,14 @@ function self (s, t, o) {
   function select_s(){ while(nn.Multiplexer(s) > 0) ctx.recv(nn.RecvStr(s)) }
   function select_buf(){ if(nn.Multiplexer(s) > 0) ctx.recv(nn.Recv(s)) }
   function select_s_buf(){ if(nn.Multiplexer(s) > 0) ctx.recv(nn.RecvStr(s)) }
+
+  function write(chunk, enc, next) {
+    ctx.send(chunk, next)
+  }
+  function end(done) {
+    ctx.close()
+    done()
+  }
 }
 
 function close() {
