@@ -75,7 +75,7 @@ NAN_METHOD(RecvStr){
 
 NAN_METHOD(Multiplexer){
   NanScope();
-  ret(NanNew<Number>(getevents(S, NN_IN, 0)));
+  ret(NanNew<Number>(getevents(S)));
 }
 
 //NAN_METHOD(Term) {nn_term();}

@@ -50,10 +50,10 @@ NAN_METHOD(RecvStr){
 }
 
 #if (NODE_MAJOR_VERSION < 1)
-NAN_METHOD(Multiplexer){ NanScope();ret(getevents(S, NN_IN, 0)); }
+NAN_METHOD(Multiplexer){ NanScope();ret(getevents(S)); }
 NAN_METHOD(Err){ ret(NanNew<String>(nn_strerror(nn_errno()))); }
 #else
-NAN_METHOD(Multiplexer){ ret(getevents(S, NN_IN, 0)); }
+NAN_METHOD(Multiplexer){ ret(getevents(S)); }
 NAN_METHOD(Err){ ret(nn_strerror(nn_errno())); }
 #endif
 

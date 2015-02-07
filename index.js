@@ -66,7 +66,7 @@ function self (s, t, o) {
   this.send       = function(msg){
     return nn.Send( s, msg )
   }
-  
+
   if(o.stream){
     this.stream   = require('duplexify')()
     this.recv     = function(msg){ return ctx.stream.push(msg) }
@@ -108,10 +108,7 @@ function self (s, t, o) {
   function select(){ while(nn.Multiplexer(s) > 0) ctx.recv(nn.Recv(s)) }
   function select_s(){ while(nn.Multiplexer(s) > 0) ctx.recv(nn.RecvStr(s)) }
   function select_buf(){ if(nn.Multiplexer(s) > 0) ctx.recv(nn.Recv(s)) }
-
-  function select_s_buf(){
-    if(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
-  }
+  function select_s_buf(){ if(nn.Multiplexer(s) > 0) ctx.recv(nn.RecvStr(s)) }
 }
 
 function close() {

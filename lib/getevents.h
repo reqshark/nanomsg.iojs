@@ -7,31 +7,27 @@
 #define NN_IN 1
 #define NN_OUT 2
 
-int getevents (int s, int events, int timeout){
+struct timeval tv;
+
+
+int getevents (int s){
   int rcvfd, maxfd, revents;
   size_t fdsz;
-  struct timeval tv;
 
   fd_set pollset;
   maxfd = 0;
   FD_ZERO (&pollset);
+  fdsz = sizeof (rcvfd);
+  nn_getsockopt (s, NN_SOL_SOCKET, NN_RCVFD, (char*) &rcvfd, &fdsz);
+  FD_SET (rcvfd, &pollset);
 
-  if (events & NN_IN) {
-    fdsz = sizeof (rcvfd);
-    nn_getsockopt (s, NN_SOL_SOCKET, NN_RCVFD, (char*) &rcvfd, &fdsz);
-    FD_SET (rcvfd, &pollset);
-    if (rcvfd + 1 > maxfd)
-      maxfd = rcvfd + 1;
-  }
+  tv.tv_sec = 0; tv.tv_usec = 0;
 
-  if (timeout >= 0) {
-    tv.tv_sec = timeout / 1000;
-    tv.tv_usec = (timeout % 1000) * 1000;
-  }
+  if (rcvfd + 1 > maxfd) maxfd = rcvfd + 1;
 
-  select (maxfd, &pollset, NULL, NULL, timeout < 0 ? NULL : &tv);
+  select (maxfd, &pollset, NULL, NULL, &tv);
   revents = 0;
-  if ((events & NN_IN) && FD_ISSET (rcvfd, &pollset))
-    revents |= NN_IN;
+  if (FD_ISSET (rcvfd, &pollset))
+    revents |= 1;
   return revents;
 }
