@@ -3,8 +3,8 @@ var should  = require('should')
 var semver  = require('semver')
 
 describe('nanomsg.shutdown', function() {
-  var RAM = nano.socket('pair', { stopBufferOverflow: true })
-  var CPU = nano.socket('pair', { stopBufferOverflow: true })
+  var RAM = nano.socket('pair')
+  var CPU = nano.socket('pair')
 
   it('should be able to shutdown', function(done){
 

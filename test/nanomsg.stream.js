@@ -12,10 +12,10 @@ describe('nanomsg.stream', function() {
       stream: true,
       stopBufferOverflow:true
     })
-    sub.connect('inproc://stream',{stopBufferOverflow: true})
+    sub.connect('inproc://stream')
     pub.bind('inproc://stream')
 
-    sub.should.have.a.property('readable')
+    sub.stream.should.have.a.property('readable')
 
     //apply pressure and get some msgs out
     var publisher = setInterval(function(){
@@ -42,7 +42,7 @@ describe('nanomsg.stream', function() {
       this.queue(null)
     })
 
-    sub.pipe(bufToStr).pipe(strToBuf).pipe(backToBuf)
+    sub.stream.pipe(bufToStr).pipe(strToBuf).pipe(backToBuf)
 
   })
 

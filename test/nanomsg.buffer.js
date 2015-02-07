@@ -7,13 +7,11 @@ describe('nanomsg.bufferopt', function() {
 
     var req   = nano.socket('req',{
       //the default, so we dont have to set it to true
-      asBuffer:true,
-      stopBufferOverflow: true
+      asBuffer:true
     })
 
     var rep   = nano.socket('rep',{
-      asBuffer:false,
-      stopBufferOverflow: true
+      asBuffer:false
     })
 
     var addr  = 'tcp://127.0.0.1:44443'
