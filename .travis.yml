@@ -2,18 +2,14 @@ os:
   - osx
   - linux
 env:
-  - NODE_VERSION="0.10" NANOMSG="git://github.com/nanomsg/nanomsg.git"
-  - NODE_VERSION="0.11" NANOMSG="git://github.com/nanomsg/nanomsg.git"
-  - NODE_VERSION="0.12" NANOMSG="git://github.com/nanomsg/nanomsg.git"
-  - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git"
-  - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.3-beta"
-  - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.4-beta"
-  - NODE_VERSION="iojs-v1.1.0" NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.5-beta"
+  - NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.3-beta"
+  - NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.4-beta"
+  - NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.5-beta"
+  - NANOMSG="git://github.com/nanomsg/nanomsg.git"
 before_install:
-  - rm -rf ~/.nvm
-  - git clone https://github.com/creationix/nvm.git ~/.nvm
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
-  - nvm install $NODE_VERSION && node -v
+  - nvm i 0.10 && node -v
   - echo -e "require('fs').writeFile('platform.sh','export PLATFORM=\"'+require('os').platform()+'\"')" >> "check.js"
   - node check && chmod a+x platform.sh && source platform.sh
   - git clone $NANOMSG
@@ -21,6 +17,13 @@ before_install:
   - sudo make install
   - '[ "$PLATFORM" == "darwin" ] || sudo /sbin/ldconfig'
   - cd ..
+  - make && make check
+  - nvm i 0.11 && node -v
+  - make clean && make && make check
+  - nvm i 0.12 && node -v
+  - make clean && make && make check
+  - nvm i iojs && node -v
+  - make clean
 branches:
   only:
     - master

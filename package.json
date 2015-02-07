@@ -4,7 +4,7 @@
   "description": "nanømsg for iojs",
   "dependencies": {
     "bindings": "~1.2.1",
-    "nan": "~1.5.1",
+    "nan": "~1.6.2",
     "duplexify":"~3.2.0"
   },
   "devDependencies":{
