@@ -50,7 +50,6 @@ function self (s, t, o) {
   var ctx         = this
 
   this.fam        = o.fam
-  this._stream    = o.stream || false
   this.socket     = s
   this.type       = t
   this.close      = close
@@ -67,7 +66,8 @@ function self (s, t, o) {
   this.send       = function(msg){
     return nn.Send( s, msg )
   }
-  if(this._stream){
+  
+  if(o.stream){
     this.stream   = require('duplexify')()
     this.recv     = function(msg){ return ctx.stream.push(msg) }
   } else {
