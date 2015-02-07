@@ -67,14 +67,14 @@ function self (s, t, o) {
   this.send       = function(msg){
     return nn.Send( s, msg )
   }
-  this.recv       = function(msg){
-    if(ctx._stream) return ctx.stream.push(msg)
-    return ctx.emit('msg', msg)
+  if(this._stream){
+    this.stream   = require('duplexify')()
+    this.recv     = function(msg){ return ctx.stream.push(msg) }
+  } else {
+    this.recv     = function(msg){ return ctx.emit('msg', msg) }
   }
 
-  if(this._stream) this.stream = require('duplexify')()
-
-  switch(this.type){
+  switch(t){
     case 'pub':
     case 'push':
       break;
@@ -105,24 +105,14 @@ function self (s, t, o) {
       break;
   }
 
-  function select(){
-    while(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.Recv(ctx.socket))
-  }
-
-  function select_s(){
-    while(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
-  }
-
-  function select_buf(){
-    if(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.Recv(ctx.socket))
-  }
+  function select(){ while(nn.Multiplexer(s) > 0) ctx.recv(nn.Recv(s)) }
+  function select_s(){ while(nn.Multiplexer(s) > 0) ctx.recv(nn.RecvStr(s)) }
+  function select_buf(){ if(nn.Multiplexer(s) > 0) ctx.recv(nn.Recv(s)) }
 
   function select_s_buf(){
     if(nn.Multiplexer(ctx.socket) > 0) ctx.recv(nn.RecvStr(ctx.socket))
   }
 }
-
-
 
 function close() {
 /*
