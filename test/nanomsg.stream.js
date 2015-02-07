@@ -12,7 +12,7 @@ describe('nanomsg.stream', function() {
       stream: true,
       stopBufferOverflow:true
     })
-    sub.connect('inproc://stream')
+    sub.connect('inproc://stream',{stopBufferOverflow: true})
     pub.bind('inproc://stream')
 
     sub.should.have.a.property('readable')

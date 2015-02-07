@@ -9,7 +9,7 @@ var sub = nano.socket('sub')
 describe('nanomsg.recv', function() {
 
   pub.bind(addr)
-  sub.connect(addr)
+  sub.connect(addr, { stopBufferOverflow: true } )
 
   it('should have a send method', function(done){
 

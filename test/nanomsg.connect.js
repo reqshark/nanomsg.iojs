@@ -7,7 +7,7 @@ describe('nanomsg.connect', function() {
   var addr  = 'tcp://127.0.0.1:44445'
   var addr2 = 'tcp://127.0.0.1:44446'
   var addr3 = 'tcp://127.0.0.1:44447'
-  var pull  = nano.socket('pull')
+  var pull  = nano.socket('pull', { stopBufferOverflow: true } )
   var push  = nano.socket('push')
   var push2 = nano.socket('push')
   var push3 = nano.socket('push')
