@@ -12,38 +12,29 @@ describe('nanomsg.connect', function() {
   var pub2  = nano.socket('pub')
   var pub3  = nano.socket('pub')
 
-  it('should have a connect method', function(done){
+  sub.connect(addr)
+  sub.connect(addr2)
+  sub.connect(addr3)
+  pub.bind(addr)
+  pub2.bind(addr2)
+  pub3.bind(addr3)
+
+  it('should be called on a network address', function (done) {
 
     pub.should.be.an.instanceOf(Object)
       .with.a.property('connect')
       .which.is.a.Function
 
+    sub.should.be.an.instanceOf(Object)
+      .with.a.property('how')
+
     done()
-  })
-
-  it('should be called on a network address', function (done) {
-
-    sub.connect(addr)
-
-    setTimeout(function(){
-
-      sub.should.be.an.instanceOf(Object)
-        .with.a.property('how')
-
-      done()
-    }, 100)
 
   })
 
   it('should communicate with multiple heterogeneous endpoints', function(done){
 
     var msgs = 0
-
-    sub.connect(addr2)
-    sub.connect(addr3)
-    pub.bind(addr)
-    pub2.bind(addr2)
-    pub3.bind(addr3)
 
     sub.on('msg', function(msg){
 
@@ -69,7 +60,7 @@ describe('nanomsg.connect', function() {
       pub.send('hello from one publisher')
       pub2.send('hello from another publisher')
       pub3.send('hello from yet another publisher')
-    }, 300)
+    }, 500)
 
   })
 
