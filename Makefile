@@ -1,4 +1,4 @@
-.PHONY: clean check test
+.PHONY: clean check test perf
 
 TESTS = $(wildcard test/test.*.js)
 MOCHA = node_modules/.bin/mocha
@@ -16,3 +16,7 @@ test:
 clean:
 	rm -fr build
 	rm -rf node_modules
+
+perf:
+	#node perf/local_lat.js tcp://127.0.0.1:5555 1 100000& node perf/remote_lat.js tcp://127.0.0.1:5555 1 100000
+	node perf/local_thr.js tcp://127.0.0.1:5556 1 100000& node perf/remote_thr.js tcp://127.0.0.1:5556 1 100000
