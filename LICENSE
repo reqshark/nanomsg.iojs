@@ -1,4 +1,6 @@
-some pieces from builtins taken from node/iojs, node-gyp, node-nanomsg, etc:
+this is free and unencumbered software released into the public domain.
+
+notwithstanding, some pieces from builtins began with several others:
 
 ----
 MIT License:
@@ -37,14 +39,10 @@ Copyright (c) 2014, Nick Desaulniers, Tim Cameron Ryan. All rights reserved.
 ----
 Copyright (c) 2012 Nathan Rajlich <nathan@tootallnate.net> (The MIT License)
 
+----
+Copyright (c) 2011 - 2014 David Björklund & contributors (The MIT License)
+
 ---
 Copyright (c) 2015 NAN contributors (The MIT License)
 
 NAN contributors listed at https://github.com/rvagg/nan#contributors
-
----
-this package, nanomsg.iøjs itself, may be interpreted in some jurisdictions
-as bearing the unequivocal markings of intellectual and/or property interests,
-thus any/all copyright plus all other rights therein are deallocated as such:
-
-this is free and unencumbered software released into the public domain.
