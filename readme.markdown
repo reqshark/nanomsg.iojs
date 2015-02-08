@@ -47,7 +47,7 @@ all new sockets, like `var s = nano.socket('req')`, accept an options param to s
 
 ### nano.socket(type, [options,])
 
-Starts a new socket. The nanomsg socket can bind or connect to multiple heterogenius endpoints.
+Starts a new socket. The nanomsg socket can bind or connect to multiple heterogeneous endpoints.
 
 #### `options`
 * `'fam'` *(String, default: `'af_sp'`, or just `'af'` for short)*: determines the domain of the socket. `AF_SP` creates a standard full-blown SP socket. `AF_SP_RAW` is a raw SP socket. Pass `fam` string in lowercase if you don't want to use uppercase. The following strings are acceptable for setting up `raw`: `'raw'`, `'af_sp_raw'`, `'AF_SP_RAW'`. `Raw` sockets omit the end-to-end functionality found in `AF_SP` sockets and thus can be used to implement intermediary devices in SP topologies, see [nanomsg docs](http://nanomsg.org/v0.5/nn_socket.3.html) for additional info. Here's an example setting fam: `AF_SP` or `AF_SP_RAW`, and if fam is the only option, then pass a string like:
