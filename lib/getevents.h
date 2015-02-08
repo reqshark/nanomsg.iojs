@@ -4,11 +4,7 @@
 
 #include <sys/select.h>
 
-#define NN_IN 1
-#define NN_OUT 2
-
 struct timeval tv;
-
 
 int getevents (int s){
   int rcvfd, maxfd, revents;

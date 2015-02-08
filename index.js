@@ -165,19 +165,13 @@ function bind (addr) {
 
   var eid = nn.Bind( this.socket, addr )
   if(eid < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
-
-  this.how[addr] = eid
-
-  return this
+  this.how[addr] = eid; return this
 }
 
 function connect (addr) {
   var eid = nn.Connect( this.socket, addr )
   if(eid < 0) throw new Error(nn.Err() +': '+this.type+' connect@' + addr+'\n')
-
-  this.how[addr] = eid
-
-  return this
+  this.how[addr] = eid; return this
 }
 
 function setsockopt(level, option, value){

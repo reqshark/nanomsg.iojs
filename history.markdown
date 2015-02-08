@@ -1,3 +1,14 @@
+0.1.0 / 2015-2-8
+==================
+* introduce Writeable stream for `send()` (complements `Readable` used in recv)
+* improve `test/nanomsg.stream.js` by writing data to the new `Writeable`
+* add osx coverage to Travis and overall improvements to the CI matrix
+* add Node's new 0.12 release to test coverage
+* add `getsockopt()` and `setsockopt()` native functions
+* new dependency on `through2` module
+* start API doc with `nano.socket()` function (begun within the readme)
+* minor language fix in LICENSE
+
 0.0.10 / 2015-01-28
 ==================
 

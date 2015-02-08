@@ -37,8 +37,8 @@ setInterval(function(){
 
 # philosophy: `setsockopts` early
 all new sockets, like `var s = nano.socket('req')`, accept an options param to set the socket's:
-* `send`/`recv` mechanisms: *a classic `'msg'` event listener, `send()`, or a `Readable`/`Writeable` stream*
-* message formats: get V8's `utf8` `String` or a node `Buffer` (default) on inbound socket `recv()`
+* `send`/`recv` mechanisms: *event listener, `send()`, or a `Readable`/`Writeable` stream*
+* msg formats: get V8's `utf8` `String` or a node `Buffer` on inbound socket `recv()`
 * standard `sockopt` values and other protocol settings
 
 *<sub>adjust any libnanomsg custom socket options later using `setsockopt()` and `getsockopt()`</sub>*
@@ -50,7 +50,7 @@ all new sockets, like `var s = nano.socket('req')`, accept an options param to s
 Starts a new socket. The nanomsg socket can bind or connect to multiple heterogenius endpoints.
 
 #### `options`
-* `'fam'` *(String, default: `'af_sp'`, or just `'af'` for short)*: determines the domain of the socket. `AF_SP` creates a standard full-blown SP socket. `AF_SP_RAW` is a raw SP socket. Pass `fam` string in lowercase if you don't want to use uppercase. The following strings are acceptable for setting up `raw`: `'raw'`, `'af_sp_raw'`, `'AF_SP_RAW'`. `Raw` sockets omit the end-to-end functionality found in `AF_SP` sockets and thus can be used to implement intermediary devices in SP topologies, see [http://nanomsg.org/v0.5/nn_socket.3.html](nanomsg docs) for additional info. Here's an example setting fam: `AF_SP` or `AF_SP_RAW`, and if fam is the only option, then pass a string like:
+* `'fam'` *(String, default: `'af_sp'`, or just `'af'` for short)*: determines the domain of the socket. `AF_SP` creates a standard full-blown SP socket. `AF_SP_RAW` is a raw SP socket. Pass `fam` string in lowercase if you don't want to use uppercase. The following strings are acceptable for setting up `raw`: `'raw'`, `'af_sp_raw'`, `'AF_SP_RAW'`. `Raw` sockets omit the end-to-end functionality found in `AF_SP` sockets and thus can be used to implement intermediary devices in SP topologies, see [nanomsg docs](http://nanomsg.org/v0.5/nn_socket.3.html) for additional info. Here's an example setting fam: `AF_SP` or `AF_SP_RAW`, and if fam is the only option, then pass a string like:
 ```js
 nano.socket('bus','raw') || nano.socket('bus', { fam: 'AF_SP_RAW' } ) //raw
 nano.socket('bus', {fam:'af'}) //default AF_SP family socket
