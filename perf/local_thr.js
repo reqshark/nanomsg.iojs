@@ -12,7 +12,7 @@ var message_count = Number(process.argv[4]);
 var counter = 0;
 
 var sock = nano.socket('pull',{
-//  stopBufferOverflow:true
+  //stopBufferOverflow:true
 });
 sock.bind(bind_to);
 
@@ -39,5 +39,5 @@ function finish(){
   console.log('mean throughput: %d [msg/s]', throughput.toFixed(0));
   console.log('mean throughput: %d [Mbit/s]', megabits.toFixed(0));
   console.log('overall time: %d secs and %d nanoseconds', endtime[0], endtime[1]);
-  sock.close();
+  //sock.close();
 }
