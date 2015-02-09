@@ -2,15 +2,15 @@ var nano = require('../')
 var assert = require('assert')
 
 if (process.argv.length != 5) {
-  console.log('usage: remote_thr <bind-to> <msg-size> <msg-count>')
+  console.log('usage: remote_thr <bind-to> <message-size> <message-count>')
   process.exit(1)
 }
 
 var connect_to = process.argv[2]
 var message_size = Number(process.argv[3])
 var message_count = Number(process.argv[4])
-var msg = new Buffer(message_size)
-msg.fill('h')
+var message = new Buffer(message_size)
+message.fill('h')
 
 var counter = 0
 
@@ -19,7 +19,7 @@ sock.connect(connect_to)
 
 function send(){
   for (var i = 0; i < message_count; i++) {
-    sock.send(msg)
+    sock.send(message)
   }
 
   // all messages may not be received by local_thr if closed immediately
