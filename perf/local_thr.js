@@ -2,7 +2,7 @@ var nano = require('../');
 var assert = require('assert');
 
 if (process.argv.length != 5) {
-  console.log('usage: local_thr <bind-to> <msg-size> <msg-count>');
+  console.log('usage: local_thr <bind-to> <message-size> <message-count>');
   process.exit(1);
 }
 
@@ -11,9 +11,7 @@ var message_size = Number(process.argv[3]);
 var message_count = Number(process.argv[4]);
 var counter = 0;
 
-var sock = nano.socket('pull',{
-  //stopBufferOverflow:true
-});
+var sock = nano.socket('pull');
 sock.bind(bind_to);
 
 var timer;
@@ -24,7 +22,7 @@ sock.on('msg', function (data) {
     timer = process.hrtime();
   }
 
-  assert.equal(data.length, message_size, 'msg-size did not match');
+  assert.equal(data.length, message_size, 'message-size did not match');
   if (++counter === message_count) finish();
 })
 
@@ -34,8 +32,8 @@ function finish(){
   var throughput = message_count / sec;
   var megabits = (throughput * message_size * 8) / 1000000;
 
-  console.log('msg size: %d [B]', message_size);
-  console.log('msg count: %d', message_count);
+  console.log('message size: %d [B]', message_size);
+  console.log('message count: %d', message_count);
   console.log('mean throughput: %d [msg/s]', throughput.toFixed(0));
   console.log('mean throughput: %d [Mbit/s]', megabits.toFixed(0));
   console.log('overall time: %d secs and %d nanoseconds', endtime[0], endtime[1]);
