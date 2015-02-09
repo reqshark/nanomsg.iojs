@@ -42,7 +42,7 @@ function finish() {
   console.log('roundtrip count: %d', roundtrip_count);
   console.log('mean latency: %d [msecs]', millis / (roundtrip_count * 2));
   console.log('overall time: %d secs and %d nanoseconds', duration[0], duration[1]);
-  req.close()
+  process.exit(0)
 }
 
 function send() {

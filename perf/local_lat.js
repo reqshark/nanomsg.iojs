@@ -20,6 +20,7 @@ rep.on('msg', function (data) {
   if (++counter === roundtrip_count){
     setTimeout( function(){
       rep.close();
+      process.exit(0);
     }, 1000);
   }
 })
