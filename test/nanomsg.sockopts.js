@@ -42,7 +42,7 @@ describe('nanomsg.sockopts', function() {
 
   it('should verify linger', function(done){
 
-    req.check('linger').should.equal(5000)
+    req.linger().should.equal(5000)
 
     done()
   })
@@ -56,9 +56,22 @@ describe('nanomsg.sockopts', function() {
 
   it('should verify sndbuf', function(done){
 
-    req.check('sndbuf').should.equal(1024)
+    req.sndbuf().should.equal(1024)
 
     done()
+  })
 
+  it('should set rcvbuf', function(done){
+
+    req.rcvbuf(102400).should.equal('rcvbuf set to 102400 bytes')
+
+    done()
+  })
+
+  it('should verify rcvbuf', function(done){
+
+    req.rcvbuf().should.equal(102400)
+
+    done()
   })
 })

@@ -135,19 +135,10 @@ Socket address strings consist of two parts as follows: `transport://address`. T
 
 ```js
 socket.linger(5000)
+console.log(socket.linger()) //5000
 ```
 
 Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds.
-
-### socket.check(option)
-
-*(Function, param: String)*
-
-```js
-socket.check('linger')
-```
-
-Returns a value for the option you check.
 
 ### socket.sndbuf(size)
 
@@ -155,10 +146,25 @@ Returns a value for the option you check.
 
 ```js
 socket.sndbuf(131072)
+console.log(socket.sndbuf()) // 131072
 ```
 
 Size of the send buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the send buffer.
 
+Pass no parameter for the socket's send buffer size.
+
+### socket.rcvbuf(size)
+
+*(Function, param: Number, default: `128kB`)*
+
+```js
+socket.rcvbuf(20480)
+console.log(socket.rcvbuf()) // 20480
+```
+
+Size of the receive buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the receive buffer.
+
+Pass no parameter for the socket's send buffer size.
 
 # test
 on **unix** systems:

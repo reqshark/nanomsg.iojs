@@ -26,7 +26,8 @@ var af = {
 }
 var sol = {
   linger          : nn.NN_LINGER,
-  sndbuf          : nn.NN_SNDBUF
+  sndbuf          : nn.NN_SNDBUF,
+  rcvbuf          : nn.NN_RCVBUF
 }
 
 require('util').inherits( self, require('events').EventEmitter )
@@ -63,15 +64,16 @@ function self (s, t, o) {
   this.how        = {}
   this.setsockopt = setsockopt
   this.getsockopt = getsockopt
-  this.check      = check
   this.linger     = linger
   this.sndbuf     = sndbuf
+  this.rcvbuf     = rcvbuf
 
   this.asBuffer   = true
   if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
 
   if(o.hasOwnProperty('linger')) linger(o.linger)
   if(o.hasOwnProperty('sndbuf')) sndbuf(o.sndbuf)
+  if(o.hasOwnProperty('rcvbuf')) rcvbuf(o.rcvbuf)
 
 
   if(o.stream){
@@ -164,23 +166,39 @@ function getsockopt(level, option){
   return nn.Getsockopt(this.socket, nn[level], nn[option])
 }
 
-function check(option){
-  return getsol(this.socket, option)
-}
-
 function linger(number){
-  if(setsol(this.socket, 'linger', number) > -1){
-    return 'linger set to ' + number + 'ms'
+  if(number){
+    if(setsol(this.socket, 'linger', number) > -1){
+      return 'linger set to ' + number + 'ms'
+    } else {
+      throw new Error(nn.Err() + ': '+this.type+' linger@'+number+'\n')
+    }
   } else {
-    throw new Error(nn.Err() + ': '+this.type+' linger@'+number+'\n')
+    return getsol(this.socket, 'linger')
   }
 }
 
 function sndbuf(number){
-  if(setsol(this.socket, 'sndbuf', number) > -1){
-    return 'sndbuf set to ' + number + ' bytes'
+  if(number){
+    if(setsol(this.socket, 'sndbuf', number) > -1){
+      return 'sndbuf set to ' + number + ' bytes'
+    } else {
+      throw new Error(nn.Err() + ': '+this.type+' sndbuf@'+number+'\n')
+    }
   } else {
-    throw new Error(nn.Err() + ': '+this.type+' sndbuf@'+number+'\n')
+    return getsol(this.socket, 'sndbuf')
+  }
+}
+
+function rcvbuf(number){
+  if(number){
+    if(setsol(this.socket, 'rcvbuf', number) > -1){
+      return 'rcvbuf set to ' + number + ' bytes'
+    } else {
+      throw new Error(nn.Err() + ': '+this.type+' rcvbuf@'+number+'\n')
+    }
+  } else {
+    return getsol(this.socket, 'rcvbuf')
   }
 }
 
