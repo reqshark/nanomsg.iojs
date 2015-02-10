@@ -145,4 +145,18 @@ describe('nanomsg.sockopts', function() {
     done()
   })
 
+  it('should set rcvprio', function(done){
+
+    if(nano.version > 3) req.rcvprio(10).should.equal('rcvprio set to 10')
+
+    done()
+  })
+
+  it('should verify rcvprio', function(done){
+
+    if(nano.version > 3) req.rcvprio().should.equal(10)
+
+    done()
+  })
+
 })

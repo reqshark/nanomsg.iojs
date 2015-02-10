@@ -35,6 +35,8 @@ var sol = {
   sndprio         : nn.NN_SNDPRIO
 }
 
+if(nn.NN_VERSION > 3) sol.rcvprio = nn.NN_RCVPRIO
+
 require('util').inherits( self, require('events').EventEmitter )
 
 module.exports    = {
@@ -77,6 +79,7 @@ function self (s, t, o) {
   this.reconn     = reconn
   this.maxreconn  = maxreconn
   this.sndprio    = sndprio
+  this.rcvprio    = rcvprio
 
   this.asBuffer   = true
   if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
@@ -91,6 +94,7 @@ function self (s, t, o) {
     reconn(o.reconn); if(o.hasOwnProperty('maxreconn')) maxreconn(o.maxreconn)
   }
   if(o.hasOwnProperty('sndprio')) sndprio(o.sndprio)
+  if(o.hasOwnProperty('rcvprio')) rcvprio(o.rcvprio)
 
 
   if(o.stream){
@@ -260,6 +264,22 @@ function sndprio(number){
     throw new Error(nn.Err() + ': '+this.type+' sndprio@'+number+'\n')
   } else {
     return getsol(this.socket, 'sndprio')
+  }
+}
+
+function rcvprio(number){
+  if(nn.NN_VERSION > 3){
+    if(number){
+      if(setsol(this.socket, 'rcvprio', number) > -1)
+        return 'rcvprio set to ' + number
+      throw new Error(nn.Err() + ': '+this.type+' rcvprio@'+number+'\n')
+    } else {
+      return getsol(this.socket, 'rcvprio')
+    }
+  } else {
+    var version = 'current lib version: '+ nn.versionstr + '\n'
+    var err = 'rcvprio: available in nanomsg beta-0.4 and higher.'
+    throw new Error(version + err + ':' +this.type+' rcvprio@'+number+'\n')
   }
 }
 
