@@ -56,7 +56,15 @@ nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 * `'stream'` *(boolean, default: `false`)*: when true, we'll get an iojs interface to nanomsg sockets with a pipeable stream. It's officially a NodeJS Streams 1 and Streams 2 full duplex, meaning `Readable` and `Writeable` compatibility extends from `node v0.10 - v0.12`. However, the principal stability target is always `iojs streams`, a.k.a. the `readable-stream` module fathered by Isaacs. See example section above.
 * `'asBuffer'` *(boolean, default: `true`)*: return the `value` of a received message as a `String` or a NodeJS `Buffer` object. Note that converting from a `Buffer` to a `String` incurs a cost so if you need a `String` (and the `value` can legitimately become a UFT8 string) then you should fetch it as one with `asBuffer: false` and you'll avoid this conversion cost.
 * `'stopBufferOverflow'` *(boolean, default: `false`)*: this is real bad. you try to get a message out and the kernel abort traps your process. this option must be set to true on certain modern kernels. this sucks and will be removed as soon as the `WIP` i/o multiplexing approach is improved and the fix is verified.
-* `'linger'` *(number, default: `1000`)*: Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds. Once `nano.socket()` gets called use `socket.linger()` function to adjust the number.
+* `'linger'` *(number, default: `1000`)*: see [`socket.linger(duration)`](https://github.com/reqshark/nanomsg.iojs#socketlingerduration).
+* `'sndbuf'` *(number, default: `128kB`)*: see [`socket.sndbuf(size)`](https://github.com/reqshark/nanomsg.iojs#socketsndbufsize).
+* `'rcvbuf'` *(number, default: `128kB`)*: see [`socket.rcvbuf(size)`](https://github.com/reqshark/nanomsg.iojs#socketrcvbufsize).
+* `'sndtimeo'` *(number, default: `-1`)*: see [`socket.sndtimeo(duration)`](https://github.com/reqshark/nanomsg.iojs#socketsndtimeoduration).
+* `'rcvtimeo'` *(number, default: `-1`)*: see [`socket.rcvtimeo(duration)`](https://github.com/reqshark/nanomsg.iojs#socketrcvtimeoduration).
+* `'reconn'` *(number, default: `100`)*: see [`socket.reconn(duration)`](https://github.com/reqshark/nanomsg.iojs#socketreconnduration).
+* `'maxreconn'` *(number, default: `0`)*: see [`socket.maxreconn(duration)`](https://github.com/reqshark/nanomsg.iojs#socketmaxreconnduration).
+* `'maxreconn'` *(number, default: `0`)*: see [`socket.maxreconn(duration)`](https://github.com/reqshark/nanomsg.iojs#socketmaxreconnduration).
+* `'sndprio'` *(number, default: `0`)*: see [`socket.sndprio(priority)`](https://github.com/reqshark/nanomsg.iojs#socketsndpriopriority).
 
 ### nano.version
 
@@ -78,7 +86,7 @@ nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 
 ### socket.shutdown(address)
 
-*(Function, param: String)*: Endpoint specific revert of calls to `bind()` or `connect()`. The nanomsg library will try to deliver any outstanding outbound messages to the endpoint for the time specified by `linger`.
+*(Function, param: String)*: Removes an endpoint established  by calls to `bind()` or `connect()`. The nanomsg library will try to deliver any outstanding outbound messages to the endpoint for the time specified by `linger`.
 
 ```js
 socket.shutdown('tcp://127.0.0.1:5555')
@@ -117,7 +125,7 @@ Socket address strings consist of two parts as follows: `transport://address`. T
 * *in-process transport mechanism*: `'inproc://bar'` The `inproc` transport allows messages between threads or modules inside a process. In-process address is an arbitrary case-sensitive string preceded by `inproc://` protocol specifier. All in-process addresses are visible from any module within the process. They are not visible from outside of the process. The overall buffer size for an inproc connection is determined by `rcvbuf` socket option on the receiving end of the connection. `sndbuf` is ignored. In addition to the buffer, one message of arbitrary size will fit into the buffer. That way, even messages larger than the buffer can be transfered via inproc connection.
 * *inter-process transport mechanism*: `'ipc:///tmp/foo.ipc'` The `ipc` transport allows for sending messages between processes within a single box. The nanomsg implementation uses native IPC mechanism provided by the local operating system and the IPC addresses are thus OS-specific. On POSIX-compliant systems, UNIX domain sockets are used and IPC addresses are file references. Note that both relative (`ipc://test.ipc`) and absolute (`ipc:///tmp/test.ipc`) paths may be used. Also note that access rights on the IPC files must be set in such a way that the appropriate applications can actually use them. On Windows, named pipes are used for IPC. The Windows IPC address is an arbitrary case-insensitive string containing any character except for backslash: internally, address `ipc://test` means that named pipe `\\.\pipe\test` will be used.
 
-### socket.linger(amount)
+### socket.linger(duration)
 
 *(Function, param: Number, default: `1000`)*: Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds.
 
@@ -148,7 +156,7 @@ socket.rcvbuf(20480)
 console.log(socket.rcvbuf()) // 20480
 ```
 
-### socket.sndtimeo(timeout)
+### socket.sndtimeo(duration)
 
 *(Function, param: Number, default: `-1`)*: The timeout for send operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
 
@@ -159,7 +167,7 @@ socket.sndtimeo(200)
 console.log(socket.sndtimeo()) // 200
 ```
 
-### socket.rcvtimeo(timeout)
+### socket.rcvtimeo(duration)
 
 *(Function, param: Number, default: `-1`)*: The timeout for recv operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
 
@@ -170,7 +178,7 @@ socket.rcvtimeo(50)
 console.log(socket.rcvtimeo()) // 50
 ```
 
-### socket.reconn(timeout)
+### socket.reconn(duration)
 
 *(Function, param: Number, default: `100`)*: For connection-based transports such as TCP, this option specifies how long to wait, in milliseconds, when connection is broken before trying to re-establish it. Note that actual reconnect interval may be randomized to some extent to prevent severe reconnection storms.
 
