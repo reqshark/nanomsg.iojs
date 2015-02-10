@@ -32,4 +32,18 @@ describe('nanomsg.sockopt', function() {
       throw 'it'
     }
   })
+
+  it('should set linger', function(done){
+
+    req.linger(5000).should.equal('linger set to 5000')
+
+    done()
+  })
+
+  it('should verify linger', function(done){
+
+    req.check('linger').should.equal(5000)
+
+    done()
+  })
 })

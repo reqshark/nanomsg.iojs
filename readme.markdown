@@ -58,6 +58,7 @@ nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 * `'stream'` *(boolean, default: `false`)*: when true, we'll get an iojs interface to nanomsg sockets with a pipeable stream. It's officially a NodeJS Streams 1 and Streams 2 full duplex, meaning `Readable` and `Writeable` compatibility extends from `node v0.10 - v0.12`. However, the principal stability target is always `iojs streams`, a.k.a. the `readable-stream` module fathered by Isaacs. See example section above.
 * `'asBuffer'` *(boolean, default: `true`)*: return the `value` of a received message as a `String` or a NodeJS `Buffer` object. Note that converting from a `Buffer` to a `String` incurs a cost so if you need a `String` (and the `value` can legitimately become a UFT8 string) then you should fetch it as one with `asBuffer: false` and you'll avoid this conversion cost.
 * `'stopBufferOverflow'` *(boolean, default: `false`)*: this is real bad. you try to get a message out and the kernel abort traps your process. this option must be set to true on certain modern kernels. this sucks and will be removed as soon as the `WIP` i/o multiplexing approach is improved and the fix is verified.
+* `'linger'` *(number, default: `1000`)*: Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds. Once `nano.socket()` gets called use `socket.linger()` function to adjust the number.
 
 ### nano.version
 
@@ -117,7 +118,7 @@ Adds a remote endpoint to the socket. The nanomsg library would then try to conn
 
 `connect()` (as well as `bind()`) may be called multiple times on the same socket thus allowing the socket to communicate with multiple heterogeneous endpoints.
 
-When binding over TCP, allow up to `100ms` (milliseconds) for the operation to complete, or more time depending on roundtrip latency and network conditions.
+When connecting over TCP, allow up to `100ms` (milliseconds) for the operation to complete, or more time depending on roundtrip latency and network conditions.
 
 ### socket addresses
 
@@ -127,6 +128,27 @@ Socket address strings consist of two parts as follows: `transport://address`. T
 * *TCP transport mechanism*: `'tcp://127.0.0.1:65000'` When binding a TCP socket, address of the form `tcp://interface:port` should be used. Port is the TCP port number to use. Interface is either: `IPv4` or `IPv6` address of a local network interface, or DNS name of the remote box. It is possible to use named interfaces like `eth0`. For more info see [nanomsg docs](http://nanomsg.org/v0.5/nn_tcp.7.html).
 * *in-process transport mechanism*: `'inproc://bar'` The `inproc` transport allows messages between threads or modules inside a process. In-process address is an arbitrary case-sensitive string preceded by `inproc://` protocol specifier. All in-process addresses are visible from any module within the process. They are not visible from outside of the process. The overall buffer size for an inproc connection is determined by `NN_RCVBUF` socket option on the receiving end of the connection. `NN_SNDBUF` socket option is ignored. In addition to the buffer, one message of arbitrary size will fit into the buffer. That way, even messages larger than the buffer can be transfered via inproc connection.
 * *inter-process transport mechanism*: `'ipc:///tmp/foo.ipc'` The `ipc` transport allows for sending messages between processes within a single box. The nanomsg implementation uses native IPC mechanism provided by the local operating system and the IPC addresses are thus OS-specific. On POSIX-compliant systems, UNIX domain sockets are used and IPC addresses are file references. Note that both relative (`ipc://test.ipc`) and absolute (`ipc:///tmp/test.ipc`) paths may be used. Also note that access rights on the IPC files must be set in such a way that the appropriate applications can actually use them. On Windows, named pipes are used for IPC. The Windows IPC address is an arbitrary case-insensitive string containing any character except for backslash: internally, address `ipc://test` means that named pipe `\\.\pipe\test` will be used.
+
+### socket.linger(amount)
+
+*(Function, param: Number)*
+
+```js
+socket.linger(5000)
+```
+
+Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds.
+
+### socket.check(option)
+
+*(Function, param: String)*
+
+```js
+socket.check('linger')
+```
+
+Returns a value for the option you check.
+
 
 # test
 on **unix** systems:

@@ -24,6 +24,9 @@ var af = {
   raw             : nn.AF_SP_RAW,
   af              : nn.AF_SP
 }
+var nn_opt = {
+  linger          : nn.NN_LINGER
+}
 
 require('util').inherits( self, require('events').EventEmitter )
 
@@ -52,16 +55,20 @@ function self (s, t, o) {
   this.fam        = o.fam
   this.socket     = s
   this.type       = t
-  this.close      = close
-  this.shutdown   = shutdown
   this.bind       = bind
   this.connect    = connect
+  this.close      = close
+  this.shutdown   = shutdown
+  this.how        = {}
   this.setsockopt = setsockopt
   this.getsockopt = getsockopt
-  this.how        = {}
+  this.check      = check
+  this.linger     = linger
 
   this.asBuffer   = true
   if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
+
+  if(o.hasOwnProperty('linger')) linger(o.linger)
 
   if(o.stream){
     this.stream   = require('duplexify')()
@@ -120,29 +127,11 @@ function self (s, t, o) {
 }
 
 function close() {
-/*
- * Closes the socket s. Any buffered inbound messages that were not yet
- * received by the application will be discarded.
- * The library will try to deliver any outstanding outbound messages
- * for the time specified by NN_LINGER socket option.
- * The call will block in the meantime.
- *
- * `int nn_close (int s);`
- *
- */
   clearInterval(this.clr); this.open = false
   return nn.Close( this.socket )
 }
 
 function shutdown(addr) {
-/*
- * nn_shutdown() call will return immediately, however, the library will
- * try to deliver any outstanding outbound messages to the endpoint
- * for the time specified by NN_LINGER socket option.
- *
- * `int nn_shutdown (int s, int how);`
- *
- */
   var ret = nn.Shutdown(this.socket, this.how[addr])
   if(ret < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
 
@@ -152,17 +141,6 @@ function shutdown(addr) {
 }
 
 function bind (addr) {
-/*
- * Adds a local endpoint to the socket s.
- * The endpoint can be then used by other applications to connect to.
- * Note that nn_bind and nn_connect(3) may be called multiple times
- * on the same socket thus allowing the socket to communicate
- * with multiple heterogeneous endpoints.
- *
- * `int nn_bind (int s, const char *addr);`
- *
- */
-
   var eid = nn.Bind( this.socket, addr )
   if(eid < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
   this.how[addr] = eid; return this
@@ -180,4 +158,16 @@ function setsockopt(level, option, value){
 
 function getsockopt(level, option){
   return nn.Getsockopt(this.socket, nn[level], nn[option])
+}
+
+function linger(number){
+  if(nn.Setsockopt(this.socket, nn.NN_SOL_SOCKET, nn.NN_LINGER, number) > -1){
+    return 'linger set to ' + number
+  } else {
+    throw new Error(nn.Err() + ': '+this.type+' linger@'+number+'\n')
+  }
+}
+
+function check(option){
+  return nn.Getsockopt(this.socket, nn.NN_SOL_SOCKET, nn_opt[option])
 }
