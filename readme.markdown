@@ -41,8 +41,6 @@ all new sockets, like `var s = nano.socket('req')`, accept an options param to s
 * msg formats: get V8's `utf8` `String` or a node `Buffer` on inbound socket `recv()`
 * standard `sockopt` values and other protocol settings
 
-*<sub>adjust any libnanomsg custom socket options later using `setsockopt()` and `getsockopt()`</sub>*
-
 # API
 
 ### nano.socket(type, [options,])
@@ -72,53 +70,43 @@ nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 
 ### socket.type
 
-*(String)*
-
-Indicates what type of socket you have.
+*(String)*: Indicates what type of socket you have.
 
 ### socket.close()
 
-*(Function)*
-
-Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `linger`.
+*(Function)*: Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `linger`.
 
 ### socket.shutdown(address)
 
-*(Function, param: String)*
+*(Function, param: String)*: Endpoint specific revert of calls to `bind()` or `connect()`. The nanomsg library will try to deliver any outstanding outbound messages to the endpoint for the time specified by `linger`.
 
 ```js
 socket.shutdown('tcp://127.0.0.1:5555')
 ```
 
-Endpoint specific revert of calls to `bind()` or `connect()`. The nanomsg library will try to deliver any outstanding outbound messages to the endpoint for the time specified by `linger`.
-
 ### socket.bind(address)
 
-*(Function, param: String)*
+*(Function, param: String)*: Adds a local endpoint to the socket. The endpoint can be then used by other applications to connect.
+
+`bind()` (or `connect()`) may be called multiple times on the same socket thus allowing the socket to communicate with multiple heterogeneous endpoints.
 
 ```js
 socket.bind('tcp://127.0.0.1:5555')
 ```
 
-Adds a local endpoint to the socket. The endpoint can be then used by other applications to connect.
-
-`bind()` (or `connect()`) may be called multiple times on the same socket thus allowing the socket to communicate with multiple heterogeneous endpoints.
-
-When binding over TCP, allow up to `50ms` (milliseconds) for the operation to complete.
+*<sub>When binding over TCP, allow up to `50ms` (milliseconds) for the operation to complete.</sub>*
 
 ### socket.connect(address)
 
-*(Function, param: String)*
+*(Function, param: String)*: Adds a remote endpoint to the socket. The nanomsg library would then try to connect to the specified remote endpoint.
+
+`connect()` (as well as `bind()`) may be called multiple times on the same socket thus allowing the socket to communicate with multiple heterogeneous endpoints.
 
 ```js
 socket.connect('tcp:127.0.0.1:5555')
 ```
 
-Adds a remote endpoint to the socket. The nanomsg library would then try to connect to the specified remote endpoint.
-
-`connect()` (as well as `bind()`) may be called multiple times on the same socket thus allowing the socket to communicate with multiple heterogeneous endpoints.
-
-When connecting over TCP, allow up to `100ms` (milliseconds) for the operation to complete, or more time depending on roundtrip latency and network conditions.
+*<sub>When connecting over TCP, allow up to `100ms` (milliseconds) for the operation to complete, or more time depending on roundtrip latency and network conditions.</sub>*
 
 ### socket addresses
 
@@ -131,109 +119,91 @@ Socket address strings consist of two parts as follows: `transport://address`. T
 
 ### socket.linger(amount)
 
-*(Function, param: Number, default: `1000`)*
+*(Function, param: Number, default: `1000`)*: Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds.
 
 ```js
 socket.linger(5000)
 console.log(socket.linger()) //5000
 ```
 
-Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds.
-
 ### socket.sndbuf(size)
 
-*(Function, param: Number, default: `128kB`)*
+*(Function, param: Number, default: `128kB`)*: Size of the send buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the send buffer.
+
+Pass no parameter for the socket's send buffer size.
 
 ```js
 socket.sndbuf(131072)
 console.log(socket.sndbuf()) // 131072
 ```
 
-Size of the send buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the send buffer.
-
-Pass no parameter for the socket's send buffer size.
-
 ### socket.rcvbuf(size)
 
-*(Function, param: Number, default: `128kB`)*
+*(Function, param: Number, default: `128kB`)*: Size of the receive buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the receive buffer.
+
+Pass no parameter for the socket's send buffer size.
 
 ```js
 socket.rcvbuf(20480)
 console.log(socket.rcvbuf()) // 20480
 ```
 
-Size of the receive buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the receive buffer.
-
-Pass no parameter for the socket's send buffer size.
-
 ### socket.sndtimeo(timeout)
 
-*(Function, param: Number, default: `-1`)*
+*(Function, param: Number, default: `-1`)*: The timeout for send operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
+
+Pass no parameter for the socket's send timeout.
 
 ```js
 socket.sndtimeo(200)
 console.log(socket.sndtimeo()) // 200
 ```
 
-The timeout for send operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
-
-Pass no parameter for the socket's send timeout.
-
 ### socket.rcvtimeo(timeout)
 
-*(Function, param: Number, default: `-1`)*
+*(Function, param: Number, default: `-1`)*: The timeout for recv operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
+
+Pass no parameter for the socket's recv timeout.
 
 ```js
 socket.rcvtimeo(50)
 console.log(socket.rcvtimeo()) // 50
 ```
 
-The timeout for recv operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
-
-Pass no parameter for the socket's recv timeout.
-
 ### socket.reconn(timeout)
 
-*(Function, param: Number, default: `100`)*
+*(Function, param: Number, default: `100`)*: For connection-based transports such as TCP, this option specifies how long to wait, in milliseconds, when connection is broken before trying to re-establish it. Note that actual reconnect interval may be randomized to some extent to prevent severe reconnection storms.
+
+Pass no parameter for the socket's `reconnect` interval.
 
 ```js
 socket.reconn(600)
 console.log(socket.reconn()) // 600
 ```
 
-For connection-based transports such as TCP, this option specifies how long to wait, in milliseconds, when connection is broken before trying to re-establish it. Note that actual reconnect interval may be randomized to some extent to prevent severe reconnection storms.
-
-Pass no parameter for the socket's `reconnect` interval.
-
 ### socket.maxreconn(timeout)
 
-*(Function, param: Number, default: `0`)*
+*(Function, param: Number, default: `0`)*: <strong>Only to be used in addition to `socket.reconn()`.</strong> `maxreconn()` specifies maximum reconnection interval. On each reconnect attempt, the previous interval is doubled until `maxreconn` is reached. Value of zero means that no exponential backoff is performed and reconnect interval is based only on `reconn`. If `maxreconn` is less than `reconn`, it is ignored.
+
+Pass no parameter for the socket's `maxreconn` interval.
 
 ```js
 socket.maxreconn(60000)
 console.log(socket.maxreconn()) // 60000
 ```
 
-<strong>Only to be used in addition to `socket.reconn()`.</strong> `maxreconn()` specifies maximum reconnection interval. On each reconnect attempt, the previous interval is doubled until `maxreconn` is reached. Value of zero means that no exponential backoff is performed and reconnect interval is based only on `reconn`. If `maxreconn` is less than `reconn`, it is ignored.
-
-Pass no parameter for the socket's `maxreconn` interval.
-
 ### socket.sndprio(priority)
 
-*(Function, param: Number, default: `8`)*
+*(Function, param: Number, default: `8`)*: Sets outbound priority for endpoints subsequently added to the socket.
+
+This option has no effect on socket types that send messages to all the peers. However, if the socket type sends each message to a single peer (or a limited set of peers), peers with high priority take precedence over peers with low priority.
+
+Highest priority is 1, lowest is 16. Pass no parameter for the socket's current outbound priority.
 
 ```js
 socket.sndprio(2)
 console.log(socket.sndprio()) // 2
 ```
-
-Sets outbound priority for endpoints subsequently added to the socket.
-
-This option has no effect on socket types that send messages to all the peers. However, if the socket type sends each message to a single peer (or a limited set of peers), peers with high priority take precedence over peers with low priority.
-
-Highest priority is 1, lowest priority is 16. Default value is 8.
-
-Pass no parameter for the socket's current outbound priority.
 
 # test
 on **unix** systems:
