@@ -9,7 +9,7 @@ env:
 before_install:
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
-  - nvm i 0.10 && node -v
+  - nvm i 0.10 && nvm i 0.11 && nvm i 0.12 && nvm i iojs
   - echo -e "require('fs').writeFile('platform.sh','export PLATFORM=\"'+require('os').platform()+'\"')" >> "check.js"
   - node check && chmod a+x platform.sh && source platform.sh
   - git clone $NANOMSG
@@ -17,15 +17,12 @@ before_install:
   - sudo make install
   - '[ "$PLATFORM" == "darwin" ] || sudo /sbin/ldconfig'
   - cd ..
-  - make && make check
-  - nvm i 0.11 && node -v
-  - make clean && make && make check
-  - nvm i 0.12 && node -v
-  - make clean && make && make check
-  - nvm i iojs && node -v
-  - make clean
 branches:
   only:
     - master
 language: c
-script: make && make check
+script:
+  - nvm use 0.10 && make && make check
+  - nvm use 0.11 && make clean && make && make check
+  - nvm use 0.12 && make clean && make && make check
+  - nvm use iojs && make clean && make && make check
