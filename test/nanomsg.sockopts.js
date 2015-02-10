@@ -74,4 +74,75 @@ describe('nanomsg.sockopts', function() {
 
     done()
   })
+
+  it('should set sndtimeo', function(done){
+
+    req.sndtimeo(500).should.equal('sndtimeo set to 500ms')
+
+    done()
+  })
+
+  it('should verify sndtimeo', function(done){
+
+    req.sndtimeo().should.equal(500)
+
+    done()
+  })
+
+  it('should set rcvtimeo', function(done){
+
+    req.rcvtimeo(200).should.equal('rcvtimeo set to 200ms')
+
+    done()
+  })
+
+  it('should verify rcvtimeo', function(done){
+
+    req.rcvtimeo().should.equal(200)
+
+    done()
+  })
+
+  it('should set reconn', function(done){
+
+    req.reconn(500).should.equal('reconn set to 500ms')
+
+    done()
+  })
+
+  it('should verify reconn', function(done){
+
+    req.reconn().should.equal(500)
+
+    done()
+  })
+
+  it('should set maxreconn', function(done){
+
+    req.maxreconn(100000).should.equal('maxreconn set to 100000ms')
+
+    done()
+  })
+
+  it('should verify maxreconn', function(done){
+
+    req.maxreconn().should.equal(100000)
+
+    done()
+  })
+
+  it('should set sndprio', function(done){
+
+    req.sndprio(3).should.equal('sndprio set to 3')
+
+    done()
+  })
+
+  it('should verify sndprio', function(done){
+
+    req.sndprio().should.equal(3)
+
+    done()
+  })
+
 })

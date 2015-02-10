@@ -27,7 +27,12 @@ var af = {
 var sol = {
   linger          : nn.NN_LINGER,
   sndbuf          : nn.NN_SNDBUF,
-  rcvbuf          : nn.NN_RCVBUF
+  rcvbuf          : nn.NN_RCVBUF,
+  sndtimeo        : nn.NN_SNDTIMEO,
+  rcvtimeo        : nn.NN_RCVTIMEO,
+  reconn          : nn.NN_RECONNECT_IVL,
+  maxreconn       : nn.NN_RECONNECT_IVL_MAX,
+  sndprio         : nn.NN_SNDPRIO
 }
 
 require('util').inherits( self, require('events').EventEmitter )
@@ -67,13 +72,25 @@ function self (s, t, o) {
   this.linger     = linger
   this.sndbuf     = sndbuf
   this.rcvbuf     = rcvbuf
+  this.sndtimeo   = sndtimeo
+  this.rcvtimeo   = rcvtimeo
+  this.reconn     = reconn
+  this.maxreconn  = maxreconn
+  this.sndprio    = sndprio
 
   this.asBuffer   = true
   if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
 
+  //nanomsg sockopts
   if(o.hasOwnProperty('linger')) linger(o.linger)
   if(o.hasOwnProperty('sndbuf')) sndbuf(o.sndbuf)
   if(o.hasOwnProperty('rcvbuf')) rcvbuf(o.rcvbuf)
+  if(o.hasOwnProperty('sndtimeo')) sndtimeo(o.sndtimeo)
+  if(o.hasOwnProperty('rcvtimeo')) rcvtimeo(o.rcvtimeo)
+  if(o.hasOwnProperty('reconn')){
+    reconn(o.reconn); if(o.hasOwnProperty('maxreconn')) maxreconn(o.maxreconn)
+  }
+  if(o.hasOwnProperty('sndprio')) sndprio(o.sndprio)
 
 
   if(o.stream){
@@ -168,11 +185,9 @@ function getsockopt(level, option){
 
 function linger(number){
   if(number){
-    if(setsol(this.socket, 'linger', number) > -1){
+    if(setsol(this.socket, 'linger', number) > -1)
       return 'linger set to ' + number + 'ms'
-    } else {
-      throw new Error(nn.Err() + ': '+this.type+' linger@'+number+'\n')
-    }
+    throw new Error(nn.Err() + ': '+this.type+' linger@'+number+'\n')
   } else {
     return getsol(this.socket, 'linger')
   }
@@ -180,11 +195,9 @@ function linger(number){
 
 function sndbuf(number){
   if(number){
-    if(setsol(this.socket, 'sndbuf', number) > -1){
+    if(setsol(this.socket, 'sndbuf', number) > -1)
       return 'sndbuf set to ' + number + ' bytes'
-    } else {
-      throw new Error(nn.Err() + ': '+this.type+' sndbuf@'+number+'\n')
-    }
+    throw new Error(nn.Err() + ': '+this.type+' sndbuf@'+number+'\n')
   } else {
     return getsol(this.socket, 'sndbuf')
   }
@@ -192,13 +205,61 @@ function sndbuf(number){
 
 function rcvbuf(number){
   if(number){
-    if(setsol(this.socket, 'rcvbuf', number) > -1){
+    if(setsol(this.socket, 'rcvbuf', number) > -1)
       return 'rcvbuf set to ' + number + ' bytes'
-    } else {
-      throw new Error(nn.Err() + ': '+this.type+' rcvbuf@'+number+'\n')
-    }
+    throw new Error(nn.Err() + ': '+this.type+' rcvbuf@'+number+'\n')
   } else {
     return getsol(this.socket, 'rcvbuf')
+  }
+}
+
+function sndtimeo(number){
+  if(number){
+    if(setsol(this.socket, 'sndtimeo', number) > -1)
+      return 'sndtimeo set to ' + number + 'ms'
+    throw new Error(nn.Err() + ': '+this.type+' reconn@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'sndtimeo')
+  }
+}
+
+function rcvtimeo(number){
+  if(number){
+    if(setsol(this.socket, 'rcvtimeo', number) > -1)
+      return 'rcvtimeo set to ' + number + 'ms'
+    throw new Error(nn.Err() + ': '+this.type+' reconn@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'rcvtimeo')
+  }
+}
+
+function reconn(number){
+  if(number){
+    if(setsol(this.socket, 'reconn', number) > -1)
+      return 'reconn set to ' + number + 'ms'
+    throw new Error(nn.Err() + ': '+this.type+' reconn@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'reconn')
+  }
+}
+
+function maxreconn(number){
+  if(number){
+    if(setsol(this.socket, 'maxreconn', number) > -1)
+      return 'maxreconn set to ' + number + 'ms'
+    throw new Error(nn.Err() + ': '+this.type+' maxreconn@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'maxreconn')
+  }
+}
+
+function sndprio(number){
+  if(number){
+    if(setsol(this.socket, 'sndprio', number) > -1)
+      return 'sndprio set to ' + number
+    throw new Error(nn.Err() + ': '+this.type+' sndprio@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'sndprio')
   }
 }
 
