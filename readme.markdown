@@ -80,7 +80,7 @@ Indicates what type of socket you have.
 
 *(Function)*
 
-Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `NN_LINGER` socket option.
+Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `linger`.
 
 ### socket.shutdown(address)
 
@@ -90,7 +90,7 @@ Closes the socket. Any buffered inbound messages that were not yet received by t
 socket.shutdown('tcp://127.0.0.1:5555')
 ```
 
-Endpoint specific revert of calls to `bind()` or `connect()`. The nanomsg library will try to deliver any outstanding outbound messages to the endpoint for the time specified by `NN_LINGER` socket option.
+Endpoint specific revert of calls to `bind()` or `connect()`. The nanomsg library will try to deliver any outstanding outbound messages to the endpoint for the time specified by `linger`.
 
 ### socket.bind(address)
 
@@ -126,12 +126,12 @@ When connecting over TCP, allow up to `100ms` (milliseconds) for the operation t
 
 Socket address strings consist of two parts as follows: `transport://address`. The transport specifies the underlying transport protocol to use. The meaning of the address part is specific to the underlying transport protocol.
 * *TCP transport mechanism*: `'tcp://127.0.0.1:65000'` When binding a TCP socket, address of the form `tcp://interface:port` should be used. Port is the TCP port number to use. Interface is either: `IPv4` or `IPv6` address of a local network interface, or DNS name of the remote box. It is possible to use named interfaces like `eth0`. For more info see [nanomsg docs](http://nanomsg.org/v0.5/nn_tcp.7.html).
-* *in-process transport mechanism*: `'inproc://bar'` The `inproc` transport allows messages between threads or modules inside a process. In-process address is an arbitrary case-sensitive string preceded by `inproc://` protocol specifier. All in-process addresses are visible from any module within the process. They are not visible from outside of the process. The overall buffer size for an inproc connection is determined by `NN_RCVBUF` socket option on the receiving end of the connection. `NN_SNDBUF` socket option is ignored. In addition to the buffer, one message of arbitrary size will fit into the buffer. That way, even messages larger than the buffer can be transfered via inproc connection.
+* *in-process transport mechanism*: `'inproc://bar'` The `inproc` transport allows messages between threads or modules inside a process. In-process address is an arbitrary case-sensitive string preceded by `inproc://` protocol specifier. All in-process addresses are visible from any module within the process. They are not visible from outside of the process. The overall buffer size for an inproc connection is determined by `NN_RCVBUF` socket option on the receiving end of the connection. `sndbuf` is ignored. In addition to the buffer, one message of arbitrary size will fit into the buffer. That way, even messages larger than the buffer can be transfered via inproc connection.
 * *inter-process transport mechanism*: `'ipc:///tmp/foo.ipc'` The `ipc` transport allows for sending messages between processes within a single box. The nanomsg implementation uses native IPC mechanism provided by the local operating system and the IPC addresses are thus OS-specific. On POSIX-compliant systems, UNIX domain sockets are used and IPC addresses are file references. Note that both relative (`ipc://test.ipc`) and absolute (`ipc:///tmp/test.ipc`) paths may be used. Also note that access rights on the IPC files must be set in such a way that the appropriate applications can actually use them. On Windows, named pipes are used for IPC. The Windows IPC address is an arbitrary case-insensitive string containing any character except for backslash: internally, address `ipc://test` means that named pipe `\\.\pipe\test` will be used.
 
 ### socket.linger(amount)
 
-*(Function, param: Number)*
+*(Function, param: Number, default: `1000`)*
 
 ```js
 socket.linger(5000)
@@ -148,6 +148,16 @@ socket.check('linger')
 ```
 
 Returns a value for the option you check.
+
+### socket.sndbuf(size)
+
+*(Function, param: Number, default: `128kB`)*
+
+```js
+socket.sndbuf(131072)
+```
+
+Size of the send buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the send buffer.
 
 
 # test

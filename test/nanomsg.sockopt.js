@@ -2,7 +2,7 @@ var nano    = require('..')
 var should  = require('should')
 var semver  = require('semver')
 
-describe('nanomsg.sockopt', function() {
+describe('nanomsg.sockopts', function() {
 
   var req = nano.socket('req')
   var rep = nano.socket('rep')
@@ -35,7 +35,7 @@ describe('nanomsg.sockopt', function() {
 
   it('should set linger', function(done){
 
-    req.linger(5000).should.equal('linger set to 5000')
+    req.linger(5000).should.equal('linger set to 5000ms')
 
     done()
   })
@@ -45,5 +45,20 @@ describe('nanomsg.sockopt', function() {
     req.check('linger').should.equal(5000)
 
     done()
+  })
+
+  it('should set sndbuf', function(done){
+
+    req.sndbuf(1024).should.equal('sndbuf set to 1024 bytes')
+
+    done()
+  })
+
+  it('should verify sndbuf', function(done){
+
+    req.check('sndbuf').should.equal(1024)
+
+    done()
+
   })
 })

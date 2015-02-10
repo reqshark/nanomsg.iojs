@@ -2,7 +2,7 @@
  * free and unencumbered software released into the public domain.
  */
 
-var nn            = require('bindings')('nanomsg.node')
+var nn            = require('bindings')('nanomsg.node') //should be .iojs
 var sock = {
   pub             : nn.NN_PUB,
   sub             : nn.NN_SUB,
@@ -24,8 +24,9 @@ var af = {
   raw             : nn.AF_SP_RAW,
   af              : nn.AF_SP
 }
-var nn_opt = {
-  linger          : nn.NN_LINGER
+var sol = {
+  linger          : nn.NN_LINGER,
+  sndbuf          : nn.NN_SNDBUF
 }
 
 require('util').inherits( self, require('events').EventEmitter )
@@ -64,11 +65,14 @@ function self (s, t, o) {
   this.getsockopt = getsockopt
   this.check      = check
   this.linger     = linger
+  this.sndbuf     = sndbuf
 
   this.asBuffer   = true
   if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
 
   if(o.hasOwnProperty('linger')) linger(o.linger)
+  if(o.hasOwnProperty('sndbuf')) sndbuf(o.sndbuf)
+
 
   if(o.stream){
     this.stream   = require('duplexify')()
@@ -160,14 +164,30 @@ function getsockopt(level, option){
   return nn.Getsockopt(this.socket, nn[level], nn[option])
 }
 
+function check(option){
+  return getsol(this.socket, option)
+}
+
 function linger(number){
-  if(nn.Setsockopt(this.socket, nn.NN_SOL_SOCKET, nn.NN_LINGER, number) > -1){
-    return 'linger set to ' + number
+  if(setsol(this.socket, 'linger', number) > -1){
+    return 'linger set to ' + number + 'ms'
   } else {
     throw new Error(nn.Err() + ': '+this.type+' linger@'+number+'\n')
   }
 }
 
-function check(option){
-  return nn.Getsockopt(this.socket, nn.NN_SOL_SOCKET, nn_opt[option])
+function sndbuf(number){
+  if(setsol(this.socket, 'sndbuf', number) > -1){
+    return 'sndbuf set to ' + number + ' bytes'
+  } else {
+    throw new Error(nn.Err() + ': '+this.type+' sndbuf@'+number+'\n')
+  }
+}
+
+function setsol(socket, option, value){
+  return nn.Setsockopt(socket, nn.NN_SOL_SOCKET, sol[option], value)
+}
+
+function getsol(socket, option){
+  return nn.Getsockopt(socket, nn.NN_SOL_SOCKET, sol[option])
 }
