@@ -63,7 +63,6 @@ nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 * `'rcvtimeo'` *(number, default: `-1`)*: see [`socket.rcvtimeo(duration)`](https://github.com/reqshark/nanomsg.iojs#socketrcvtimeoduration).
 * `'reconn'` *(number, default: `100`)*: see [`socket.reconn(duration)`](https://github.com/reqshark/nanomsg.iojs#socketreconnduration).
 * `'maxreconn'` *(number, default: `0`)*: see [`socket.maxreconn(duration)`](https://github.com/reqshark/nanomsg.iojs#socketmaxreconnduration).
-* `'maxreconn'` *(number, default: `0`)*: see [`socket.maxreconn(duration)`](https://github.com/reqshark/nanomsg.iojs#socketmaxreconnduration).
 * `'sndprio'` *(number, default: `0`)*: see [`socket.sndprio(priority)`](https://github.com/reqshark/nanomsg.iojs#socketsndpriopriority).
 
 ### nano.version
