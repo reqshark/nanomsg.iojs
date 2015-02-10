@@ -58,6 +58,7 @@ nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 * `'stream'` *(boolean, default: `false`)*: when true, we'll get an iojs interface to nanomsg sockets with a pipeable stream. It's officially a NodeJS Streams 1 and Streams 2 full duplex, meaning `Readable` and `Writeable` compatibility extends from `node v0.10 - v0.12`. However, the principal stability target is always `iojs streams`, a.k.a. the `readable-stream` module fathered by Isaacs. See example section above.
 * `'asBuffer'` *(boolean, default: `true`)*: return the `value` of a received message as a `String` or a NodeJS `Buffer` object. Note that converting from a `Buffer` to a `String` incurs a cost so if you need a `String` (and the `value` can legitimately become a UFT8 string) then you should fetch it as one with `asBuffer: false` and you'll avoid this conversion cost.
 * `'stopBufferOverflow'` *(boolean, default: `false`)*: this is real bad. you try to get a message out and the kernel abort traps your process. this option must be set to true on certain modern kernels. this sucks and will be removed as soon as the `WIP` i/o multiplexing approach is improved and the fix is verified.
+* `'linger'` *(number, default: `1000`)*: Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds. Once `nano.socket()` gets called use `socket.linger()` function to adjust the number.
 
 ### nano.version
 
@@ -79,7 +80,7 @@ Indicates what type of socket you have.
 
 *(Function)*
 
-Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `NN_LINGER` socket option.
+Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `linger`.
 
 ### socket.shutdown(address)
 
@@ -89,7 +90,7 @@ Closes the socket. Any buffered inbound messages that were not yet received by t
 socket.shutdown('tcp://127.0.0.1:5555')
 ```
 
-Endpoint specific revert of calls to `bind()` or `connect()`. The nanomsg library will try to deliver any outstanding outbound messages to the endpoint for the time specified by `NN_LINGER` socket option.
+Endpoint specific revert of calls to `bind()` or `connect()`. The nanomsg library will try to deliver any outstanding outbound messages to the endpoint for the time specified by `linger`.
 
 ### socket.bind(address)
 
@@ -117,7 +118,7 @@ Adds a remote endpoint to the socket. The nanomsg library would then try to conn
 
 `connect()` (as well as `bind()`) may be called multiple times on the same socket thus allowing the socket to communicate with multiple heterogeneous endpoints.
 
-When binding over TCP, allow up to `100ms` (milliseconds) for the operation to complete, or more time depending on roundtrip latency and network conditions.
+When connecting over TCP, allow up to `100ms` (milliseconds) for the operation to complete, or more time depending on roundtrip latency and network conditions.
 
 ### socket addresses
 
@@ -125,8 +126,114 @@ When binding over TCP, allow up to `100ms` (milliseconds) for the operation to c
 
 Socket address strings consist of two parts as follows: `transport://address`. The transport specifies the underlying transport protocol to use. The meaning of the address part is specific to the underlying transport protocol.
 * *TCP transport mechanism*: `'tcp://127.0.0.1:65000'` When binding a TCP socket, address of the form `tcp://interface:port` should be used. Port is the TCP port number to use. Interface is either: `IPv4` or `IPv6` address of a local network interface, or DNS name of the remote box. It is possible to use named interfaces like `eth0`. For more info see [nanomsg docs](http://nanomsg.org/v0.5/nn_tcp.7.html).
-* *in-process transport mechanism*: `'inproc://bar'` The `inproc` transport allows messages between threads or modules inside a process. In-process address is an arbitrary case-sensitive string preceded by `inproc://` protocol specifier. All in-process addresses are visible from any module within the process. They are not visible from outside of the process. The overall buffer size for an inproc connection is determined by `NN_RCVBUF` socket option on the receiving end of the connection. `NN_SNDBUF` socket option is ignored. In addition to the buffer, one message of arbitrary size will fit into the buffer. That way, even messages larger than the buffer can be transfered via inproc connection.
+* *in-process transport mechanism*: `'inproc://bar'` The `inproc` transport allows messages between threads or modules inside a process. In-process address is an arbitrary case-sensitive string preceded by `inproc://` protocol specifier. All in-process addresses are visible from any module within the process. They are not visible from outside of the process. The overall buffer size for an inproc connection is determined by `rcvbuf` socket option on the receiving end of the connection. `sndbuf` is ignored. In addition to the buffer, one message of arbitrary size will fit into the buffer. That way, even messages larger than the buffer can be transfered via inproc connection.
 * *inter-process transport mechanism*: `'ipc:///tmp/foo.ipc'` The `ipc` transport allows for sending messages between processes within a single box. The nanomsg implementation uses native IPC mechanism provided by the local operating system and the IPC addresses are thus OS-specific. On POSIX-compliant systems, UNIX domain sockets are used and IPC addresses are file references. Note that both relative (`ipc://test.ipc`) and absolute (`ipc:///tmp/test.ipc`) paths may be used. Also note that access rights on the IPC files must be set in such a way that the appropriate applications can actually use them. On Windows, named pipes are used for IPC. The Windows IPC address is an arbitrary case-insensitive string containing any character except for backslash: internally, address `ipc://test` means that named pipe `\\.\pipe\test` will be used.
+
+### socket.linger(amount)
+
+*(Function, param: Number, default: `1000`)*
+
+```js
+socket.linger(5000)
+console.log(socket.linger()) //5000
+```
+
+Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds.
+
+### socket.sndbuf(size)
+
+*(Function, param: Number, default: `128kB`)*
+
+```js
+socket.sndbuf(131072)
+console.log(socket.sndbuf()) // 131072
+```
+
+Size of the send buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the send buffer.
+
+Pass no parameter for the socket's send buffer size.
+
+### socket.rcvbuf(size)
+
+*(Function, param: Number, default: `128kB`)*
+
+```js
+socket.rcvbuf(20480)
+console.log(socket.rcvbuf()) // 20480
+```
+
+Size of the receive buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the receive buffer.
+
+Pass no parameter for the socket's send buffer size.
+
+### socket.sndtimeo(timeout)
+
+*(Function, param: Number, default: `-1`)*
+
+```js
+socket.sndtimeo(200)
+console.log(socket.sndtimeo()) // 200
+```
+
+The timeout for send operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
+
+Pass no parameter for the socket's send timeout.
+
+### socket.rcvtimeo(timeout)
+
+*(Function, param: Number, default: `-1`)*
+
+```js
+socket.rcvtimeo(50)
+console.log(socket.rcvtimeo()) // 50
+```
+
+The timeout for recv operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
+
+Pass no parameter for the socket's recv timeout.
+
+### socket.reconn(timeout)
+
+*(Function, param: Number, default: `100`)*
+
+```js
+socket.reconn(600)
+console.log(socket.reconn()) // 600
+```
+
+For connection-based transports such as TCP, this option specifies how long to wait, in milliseconds, when connection is broken before trying to re-establish it. Note that actual reconnect interval may be randomized to some extent to prevent severe reconnection storms.
+
+Pass no parameter for the socket's `reconnect` interval.
+
+### socket.maxreconn(timeout)
+
+*(Function, param: Number, default: `0`)*
+
+```js
+socket.maxreconn(60000)
+console.log(socket.maxreconn()) // 60000
+```
+
+<strong>Only to be used in addition to `socket.reconn()`.</strong> `maxreconn()` specifies maximum reconnection interval. On each reconnect attempt, the previous interval is doubled until `maxreconn` is reached. Value of zero means that no exponential backoff is performed and reconnect interval is based only on `reconn`. If `maxreconn` is less than `reconn`, it is ignored.
+
+Pass no parameter for the socket's `maxreconn` interval.
+
+### socket.sndprio(priority)
+
+*(Function, param: Number, default: `8`)*
+
+```js
+socket.sndprio(2)
+console.log(socket.sndprio()) // 2
+```
+
+Sets outbound priority for endpoints subsequently added to the socket.
+
+This option has no effect on socket types that send messages to all the peers. However, if the socket type sends each message to a single peer (or a limited set of peers), peers with high priority take precedence over peers with low priority.
+
+Highest priority is 1, lowest priority is 16. Default value is 8.
+
+Pass no parameter for the socket's current outbound priority.
 
 # test
 on **unix** systems:

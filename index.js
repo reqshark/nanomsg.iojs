@@ -2,7 +2,7 @@
  * free and unencumbered software released into the public domain.
  */
 
-var nn            = require('bindings')('nanomsg.node')
+var nn            = require('bindings')('nanomsg.node') //should be .iojs
 var sock = {
   pub             : nn.NN_PUB,
   sub             : nn.NN_SUB,
@@ -23,6 +23,16 @@ var af = {
   af_sp_raw       : nn.AF_SP_RAW,
   raw             : nn.AF_SP_RAW,
   af              : nn.AF_SP
+}
+var sol = {
+  linger          : nn.NN_LINGER,
+  sndbuf          : nn.NN_SNDBUF,
+  rcvbuf          : nn.NN_RCVBUF,
+  sndtimeo        : nn.NN_SNDTIMEO,
+  rcvtimeo        : nn.NN_RCVTIMEO,
+  reconn          : nn.NN_RECONNECT_IVL,
+  maxreconn       : nn.NN_RECONNECT_IVL_MAX,
+  sndprio         : nn.NN_SNDPRIO
 }
 
 require('util').inherits( self, require('events').EventEmitter )
@@ -52,16 +62,36 @@ function self (s, t, o) {
   this.fam        = o.fam
   this.socket     = s
   this.type       = t
-  this.close      = close
-  this.shutdown   = shutdown
   this.bind       = bind
   this.connect    = connect
+  this.close      = close
+  this.shutdown   = shutdown
+  this.how        = {}
   this.setsockopt = setsockopt
   this.getsockopt = getsockopt
-  this.how        = {}
+  this.linger     = linger
+  this.sndbuf     = sndbuf
+  this.rcvbuf     = rcvbuf
+  this.sndtimeo   = sndtimeo
+  this.rcvtimeo   = rcvtimeo
+  this.reconn     = reconn
+  this.maxreconn  = maxreconn
+  this.sndprio    = sndprio
 
   this.asBuffer   = true
   if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
+
+  //nanomsg sockopts
+  if(o.hasOwnProperty('linger')) linger(o.linger)
+  if(o.hasOwnProperty('sndbuf')) sndbuf(o.sndbuf)
+  if(o.hasOwnProperty('rcvbuf')) rcvbuf(o.rcvbuf)
+  if(o.hasOwnProperty('sndtimeo')) sndtimeo(o.sndtimeo)
+  if(o.hasOwnProperty('rcvtimeo')) rcvtimeo(o.rcvtimeo)
+  if(o.hasOwnProperty('reconn')){
+    reconn(o.reconn); if(o.hasOwnProperty('maxreconn')) maxreconn(o.maxreconn)
+  }
+  if(o.hasOwnProperty('sndprio')) sndprio(o.sndprio)
+
 
   if(o.stream){
     this.stream   = require('duplexify')()
@@ -120,29 +150,11 @@ function self (s, t, o) {
 }
 
 function close() {
-/*
- * Closes the socket s. Any buffered inbound messages that were not yet
- * received by the application will be discarded.
- * The library will try to deliver any outstanding outbound messages
- * for the time specified by NN_LINGER socket option.
- * The call will block in the meantime.
- *
- * `int nn_close (int s);`
- *
- */
   clearInterval(this.clr); this.open = false
   return nn.Close( this.socket )
 }
 
 function shutdown(addr) {
-/*
- * nn_shutdown() call will return immediately, however, the library will
- * try to deliver any outstanding outbound messages to the endpoint
- * for the time specified by NN_LINGER socket option.
- *
- * `int nn_shutdown (int s, int how);`
- *
- */
   var ret = nn.Shutdown(this.socket, this.how[addr])
   if(ret < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
 
@@ -152,17 +164,6 @@ function shutdown(addr) {
 }
 
 function bind (addr) {
-/*
- * Adds a local endpoint to the socket s.
- * The endpoint can be then used by other applications to connect to.
- * Note that nn_bind and nn_connect(3) may be called multiple times
- * on the same socket thus allowing the socket to communicate
- * with multiple heterogeneous endpoints.
- *
- * `int nn_bind (int s, const char *addr);`
- *
- */
-
   var eid = nn.Bind( this.socket, addr )
   if(eid < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
   this.how[addr] = eid; return this
@@ -180,4 +181,92 @@ function setsockopt(level, option, value){
 
 function getsockopt(level, option){
   return nn.Getsockopt(this.socket, nn[level], nn[option])
+}
+
+function linger(number){
+  if(number){
+    if(setsol(this.socket, 'linger', number) > -1)
+      return 'linger set to ' + number + 'ms'
+    throw new Error(nn.Err() + ': '+this.type+' linger@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'linger')
+  }
+}
+
+function sndbuf(number){
+  if(number){
+    if(setsol(this.socket, 'sndbuf', number) > -1)
+      return 'sndbuf set to ' + number + ' bytes'
+    throw new Error(nn.Err() + ': '+this.type+' sndbuf@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'sndbuf')
+  }
+}
+
+function rcvbuf(number){
+  if(number){
+    if(setsol(this.socket, 'rcvbuf', number) > -1)
+      return 'rcvbuf set to ' + number + ' bytes'
+    throw new Error(nn.Err() + ': '+this.type+' rcvbuf@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'rcvbuf')
+  }
+}
+
+function sndtimeo(number){
+  if(number){
+    if(setsol(this.socket, 'sndtimeo', number) > -1)
+      return 'sndtimeo set to ' + number + 'ms'
+    throw new Error(nn.Err() + ': '+this.type+' reconn@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'sndtimeo')
+  }
+}
+
+function rcvtimeo(number){
+  if(number){
+    if(setsol(this.socket, 'rcvtimeo', number) > -1)
+      return 'rcvtimeo set to ' + number + 'ms'
+    throw new Error(nn.Err() + ': '+this.type+' reconn@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'rcvtimeo')
+  }
+}
+
+function reconn(number){
+  if(number){
+    if(setsol(this.socket, 'reconn', number) > -1)
+      return 'reconn set to ' + number + 'ms'
+    throw new Error(nn.Err() + ': '+this.type+' reconn@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'reconn')
+  }
+}
+
+function maxreconn(number){
+  if(number){
+    if(setsol(this.socket, 'maxreconn', number) > -1)
+      return 'maxreconn set to ' + number + 'ms'
+    throw new Error(nn.Err() + ': '+this.type+' maxreconn@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'maxreconn')
+  }
+}
+
+function sndprio(number){
+  if(number){
+    if(setsol(this.socket, 'sndprio', number) > -1)
+      return 'sndprio set to ' + number
+    throw new Error(nn.Err() + ': '+this.type+' sndprio@'+number+'\n')
+  } else {
+    return getsol(this.socket, 'sndprio')
+  }
+}
+
+function setsol(socket, option, value){
+  return nn.Setsockopt(socket, nn.NN_SOL_SOCKET, sol[option], value)
+}
+
+function getsol(socket, option){
+  return nn.Getsockopt(socket, nn.NN_SOL_SOCKET, sol[option])
 }
