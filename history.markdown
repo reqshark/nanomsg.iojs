@@ -1,3 +1,9 @@
+0.1.1 / 2015-2-10
+==================
+
+* new options api: `linger`, `sndbuf`, `rcvbuf`, `sndtimeo`, `rcvtimeo`, `reconn`, `maxreconn`, `sndprio`, `rcvprio`
+* port the zeromq.node (zmq module) perf tests
+
 0.1.0 / 2015-2-8
 ==================
 

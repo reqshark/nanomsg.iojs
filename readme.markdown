@@ -111,7 +111,7 @@ socket.bind('tcp://127.0.0.1:5555')
 `connect()` (as well as `bind()`) may be called multiple times on the same socket thus allowing the socket to communicate with multiple heterogeneous endpoints.
 
 ```js
-socket.connect('tcp:127.0.0.1:5555')
+socket.connect('tcp://127.0.0.1:5555')
 ```
 
 *<sub>When connecting over TCP allow `100ms` or more for the operation to complete.</sub>*
@@ -191,7 +191,7 @@ socket.reconn(600)
 console.log(socket.reconn()) // 600
 ```
 
-### socket.maxreconn(timeout)
+### socket.maxreconn(duration)
 
 *(Function, param: Number, default: `0`)*: <strong>Only to be used in addition to `socket.reconn()`.</strong> `maxreconn()` specifies maximum reconnection interval. On each reconnect attempt, the previous interval is doubled until `maxreconn` is reached. Value of zero means that no exponential backoff is performed and reconnect interval is based only on `reconn`. If `maxreconn` is less than `reconn`, it is ignored.
 
@@ -236,3 +236,17 @@ on **unix** systems:
 $ make clean && make && make check
 ```
 <sub>*disabling node v0.08.x for now... but v0.10 and up should be fine*</sub>
+
+# performance
+run benchmarks:
+```bash
+$ make perf
+```
+
+for more info how to do that and your own custom comparisons check out: [running benchmarks](https://github.com/JustinTulloss/zeromq.node#running-benchmarks)
+
+and if you want you can also run:
+```bash
+$ make bench
+```
+:)
