@@ -64,6 +64,7 @@ nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 * `'reconn'` *(number, default: `100`)*: see [`socket.reconn(duration)`](https://github.com/reqshark/nanomsg.iojs#socketreconnduration).
 * `'maxreconn'` *(number, default: `0`)*: see [`socket.maxreconn(duration)`](https://github.com/reqshark/nanomsg.iojs#socketmaxreconnduration).
 * `'sndprio'` *(number, default: `0`)*: see [`socket.sndprio(priority)`](https://github.com/reqshark/nanomsg.iojs#socketsndpriopriority).
+* `'rcvprio'` *(number, default: `0`)*: see [`socket.rcvprio(priority)`](https://github.com/reqshark/nanomsg.iojs#socketrcvpriopriority).
 
 ### nano.version
 
@@ -113,7 +114,7 @@ socket.bind('tcp://127.0.0.1:5555')
 socket.connect('tcp:127.0.0.1:5555')
 ```
 
-*<sub>When connecting over TCP, allow up to `100ms` (milliseconds) for the operation to complete, or more time depending on roundtrip latency and network conditions.</sub>*
+*<sub>When connecting over TCP allow `100ms` or more for the operation to complete.</sub>*
 
 ### socket addresses
 
@@ -127,6 +128,8 @@ Socket address strings consist of two parts as follows: `transport://address`. T
 ### socket.linger(duration)
 
 *(Function, param: Number, default: `1000`)*: Specifies how long the socket should try to send pending outbound messages after `socket.close()` or `socket.shutdown()` is called, in milliseconds.
+
+Pass no parameter for the linger duration.
 
 ```js
 socket.linger(5000)
@@ -148,7 +151,7 @@ console.log(socket.sndbuf()) // 131072
 
 *(Function, param: Number, default: `128kB`)*: Size of the receive buffer, in bytes. To prevent blocking for messages larger than the buffer, exactly one message may be buffered in addition to the data in the receive buffer.
 
-Pass no parameter for the socket's send buffer size.
+Pass no parameter for the socket's receive buffer size.
 
 ```js
 socket.rcvbuf(20480)
@@ -157,7 +160,7 @@ console.log(socket.rcvbuf()) // 20480
 
 ### socket.sndtimeo(duration)
 
-*(Function, param: Number, default: `-1`)*: The timeout for send operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
+*(Function, param: Number, default: `-1`)*: The timeout for send operation on the socket, in milliseconds.
 
 Pass no parameter for the socket's send timeout.
 
@@ -168,7 +171,7 @@ console.log(socket.sndtimeo()) // 200
 
 ### socket.rcvtimeo(duration)
 
-*(Function, param: Number, default: `-1`)*: The timeout for recv operation on the socket, in milliseconds. If message cannot be sent within the specified timeout, EAGAIN error is returned
+*(Function, param: Number, default: `-1`)*: The timeout for recv operation on the socket, in milliseconds.
 
 Pass no parameter for the socket's recv timeout.
 
@@ -210,6 +213,21 @@ Highest priority is 1, lowest is 16. Pass no parameter for the socket's current 
 ```js
 socket.sndprio(2)
 console.log(socket.sndprio()) // 2
+```
+
+### socket.rcvprio(priority)
+
+*(Function, param: Number, default: `8`)*: Sets inbound priority for endpoints subsequently added to the socket.
+
+This option has no effect on socket types that are not able to receive messages.
+
+When receiving a message, messages from peer with higher priority are received before messages from peer with lower priority.
+
+Highest priority is 1, lowest is 16. Pass no parameter for the socket's current inbound priority.
+
+```js
+socket.rcvprio(10)
+console.log(socket.rcvprio()) // 10
 ```
 
 # test
