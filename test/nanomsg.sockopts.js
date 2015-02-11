@@ -5,23 +5,30 @@ var semver  = require('semver')
 describe('nanomsg.sockopts', function() {
 
   var req = nano.socket('req')
-  var rep = nano.socket('rep')
 
-  req.bind('tcp://127.0.0.1:44449')
-  rep.connect('tcp://127.0.0.1:44449')
+  //set tcp nodelay from `socket(type, opts)`
+  var rep = nano.socket('rep', {
+    tcpnodelay: true
+  })
 
-  it('should set tcp nodelay', function (done){
+  req.bind('tcp://127.0.0.1:44456')
+  rep.connect('tcp://127.0.0.1:44456')
+
+  it('should set tcp nodelay using setsockopt', function (done){
 
     req.setsockopt('NN_TCP','NN_TCP_NODELAY',1).should.equal(0)
 
-    done()
+    setTimeout(done, 50)
+
   })
 
-  it('should get tcp nodelay setting', function (done){
+  it('should get tcp nodelay setting using getsockopt', function (done){
 
     req.getsockopt('NN_TCP','NN_TCP_NODELAY').should.equal(1)
+    rep.getsockopt('NN_TCP','NN_TCP_NODELAY').should.equal(1)
 
     done()
+
   })
 
   it('should return undefined if there was a getsockopt error', function (done){
@@ -31,6 +38,28 @@ describe('nanomsg.sockopts', function() {
     } else {
       throw 'it'
     }
+  })
+
+  it('should get tcp nodelay using the tcpnodelay method', function(done){
+
+    rep.setsockopt('NN_TCP','NN_TCP_NODELAY',0).should.equal(0)
+
+    req.tcpnodelay().should.equal('tcp nodelay: on')
+    rep.tcpnodelay().should.equal('tcp nodelay: off')
+
+    done()
+
+  })
+
+  it('should use tcpnodelay() method to reset and verify', function(done){
+
+    req.tcpnodelay(false).should.equal('tcp nodelay: off')
+    req.tcpnodelay().should.equal('tcp nodelay: off')
+
+    rep.tcpnodelay(true).should.equal('tcp nodelay: on')
+    rep.tcpnodelay().should.equal('tcp nodelay: on')
+
+    done()
   })
 
   it('should set linger', function(done){
