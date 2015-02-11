@@ -80,6 +80,7 @@ function self (s, t, o) {
   this.maxreconn  = maxreconn
   this.sndprio    = sndprio
   this.rcvprio    = rcvprio
+  this.tcpnodelay = tcpnodelay
 
   this.asBuffer   = true
   if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
@@ -95,7 +96,9 @@ function self (s, t, o) {
   }
   if(o.hasOwnProperty('sndprio')) sndprio(o.sndprio)
   if(o.hasOwnProperty('rcvprio')) rcvprio(o.rcvprio)
-
+  if(o.hasOwnProperty('tcpnodelay')) setTimeout(function(){
+    ctx.tcpnodelay(o.tcpnodelay)
+  },50)
 
   if(o.stream){
     this.stream   = require('duplexify')()
@@ -278,6 +281,27 @@ function rcvprio(number){
     var version = 'current lib version: '+ nn.versionstr + '\n'
     var err = 'rcvprio: available in nanomsg beta-0.4 and higher.'
     throw new Error(version + err + ':' +this.type+' rcvprio@'+number+'\n')
+  }
+}
+
+function tcpnodelay(bool){
+  if(arguments.length){
+    if(bool){
+      if(nn.Setsockopt(this.socket, nn.NN_TCP, nn.NN_TCP_NODELAY, 1) > -1)
+        return 'tcp nodelay: on'
+      throw new Error(nn.Err() + ': '+this.type+' nodelay@'+'activing'+'\n')
+    } else {
+      if(nn.Setsockopt(this.socket, nn.NN_TCP, nn.NN_TCP_NODELAY, 0) > -1)
+        return 'tcp nodelay: off'
+      throw new Error(nn.Err() + ': '+this.type+' nodelay@'+'deactiving'+'\n')
+    }
+  } else {
+    switch(nn.Getsockopt(this.socket, nn.NN_TCP, nn.NN_TCP_NODELAY)){
+      case 1: return 'tcp nodelay: on'
+      case 0: return 'tcp nodelay: off'
+      default:
+        throw new Error(nn.Err() + ': '+this.type+' nodelay@'+'getsockopt'+'\n')
+    }
   }
 }
 

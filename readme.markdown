@@ -56,6 +56,7 @@ nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 * `'stream'` *(boolean, default: `false`)*: when `true`, the socket's stream property is a NodeJS Streams 1 and Streams 2 full duplex, meaning `Readable` and `Writeable` compatibility extends from `node v0.10 - v0.12`. The principal stability target is always `iojs streams`, a.k.a. the `readable-stream` module fathered by Isaacs. See example section above or the [stream API docs](https://github.com/reqshark/nanomsg.iojs#a-writeable-and-a-readable-stream-true) below for additional info.
 * `'asBuffer'` *(boolean, default: `true`)*: return the `value` of a received message as a `String` or a NodeJS `Buffer` object. Note that converting from a `Buffer` to a `String` incurs a cost so if you need a `String` (and the `value` can legitimately become a UFT8 string) then you should fetch it as one with `asBuffer: false` and you'll avoid this conversion cost.
 * `'stopBufferOverflow'` *(boolean, default: `false`)*: this is real bad. you try to get a message out and the kernel abort traps your process. this option must be set to true on certain modern kernels. this sucks and will be removed as soon as the `WIP` i/o multiplexing approach is improved and the fix is verified.
+* `'tcpnodelay'` *(boolean, default: `false`)*: see [`socket.tcpnodelay(boolean)`](https://github.com/reqshark/nanomsg.iojs#sockettcpnodelayboolean).
 * `'linger'` *(number, default: `1000`)*: see [`socket.linger(duration)`](https://github.com/reqshark/nanomsg.iojs#socketlingerduration).
 * `'sndbuf'` *(number, default: `128kB`)*: see [`socket.sndbuf(size)`](https://github.com/reqshark/nanomsg.iojs#socketsndbufsize).
 * `'rcvbuf'` *(number, default: `128kB`)*: see [`socket.rcvbuf(size)`](https://github.com/reqshark/nanomsg.iojs#socketrcvbufsize).
@@ -128,7 +129,7 @@ Socket address strings consist of two parts as follows: `transport://address`. T
 # sending and receiving APIs
 Two event mechanisms are available: `EventEmitter` or `Streams`, but in practice there are four. This is because each mechanism applied to the socket has a potential `send` and `recv` operation. Though not every socket is capable of both, most socket types are, and besides: to interface with any one side of the link requires some understanding of the other.
 
-First, the classic `EventEmitter` `send`/`recv` and then, respectively, the `Writeable`/`Readable` streams.
+Lets look at classic `EventEmitter` `send`/`recv` then, respectively, `Writeable`/`Readable`.
 
 **Only `streams` or `events` (not both) are available on the socket**, since it would otherwise consume useless I/O to transmit duplicate event data at once across each mechanism.
 
@@ -152,7 +153,7 @@ socket.on('msg', function (msg) {
 ## a writeable and a readable `{stream: true}`
 
 ### socket.stream
-*(Object, properties: Readable, Writeable)*: the stream property is a full duplex pipeable to/from any consumer. It is not available by default and requires that the option `{stream: true}` be passed along with the socket type at the outset.
+*(Object, properties: Readable, Writeable)*: the stream property is a full duplex pipeable to and from any consumer. It is not available by default and requires that the option `{stream: true}` be passed along with the socket type at the outset.
 
 ### socket.stream.write(msg)
 *(Function, param: String or Buffer)*: A `write()` function is equivalent to `socket.send()` when called directly.
@@ -193,6 +194,20 @@ var msgprocessor = through(function(msg){
 })
 
 stream.pipe(msgprocessor)
+```
+### socket.tcpnodelay(boolean)
+
+*(Function, param: Boolean, default: false)*: When set, disables Nagle’s algorithm. It also disables delaying of TCP acknowledgments. Using this option improves latency at the expense of throughput.
+
+Pass no parameter for current tcp nodelay setting.
+
+```js
+//default
+console.log(socket.tcpnodelay()) //tcp nodelay: off
+
+socket.tcpnodelay(true) //disabling Nagle's algorithm
+
+console.log(socket.tcpnodelay()) //tcp nodelay: on
 ```
 
 ### socket.linger(duration)
