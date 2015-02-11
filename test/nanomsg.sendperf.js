@@ -27,8 +27,7 @@ describe('nanomsg.sendperf', function() {
       }
     })
 
-    while(++recv < 1000000){
-      pub.send('count it')
-    }
+    do pub.send('count it')
+    while(++recv < 1000000)
   })
 })
