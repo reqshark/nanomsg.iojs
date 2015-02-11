@@ -159,24 +159,22 @@ function close() {
 }
 
 function shutdown(addr) {
-  var ret = nn.Shutdown(this.socket, this.how[addr])
-  if(ret < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
-
-  this.how[addr] = 'shut'
-
-  return ret
+  var confirm = this.how[addr][1] + ' endpoint '+ addr + ' shutdown'
+  if(nn.Shutdown(this.socket, this.how[addr][0]) < 0)
+    throw new Error(nn.Err() +': '+this.type+' shutdown@' + addr+'\n')
+  delete this.how[addr]; return confirm
 }
 
 function bind (addr) {
   var eid = nn.Bind( this.socket, addr )
   if(eid < 0) throw new Error(nn.Err() +': '+this.type+' bind@' + addr+'\n')
-  this.how[addr] = eid; return this
+  this.how[addr] = [eid,'bind']; return this
 }
 
 function connect (addr) {
   var eid = nn.Connect( this.socket, addr )
   if(eid < 0) throw new Error(nn.Err() +': '+this.type+' connect@' + addr+'\n')
-  this.how[addr] = eid; return this
+  this.how[addr] = [eid,'connect']; return this
 }
 
 function setsockopt(level, option, value){
