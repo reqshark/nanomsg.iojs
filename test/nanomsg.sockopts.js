@@ -18,7 +18,7 @@ describe('nanomsg.sockopts', function() {
 
     req.setsockopt('NN_TCP','NN_TCP_NODELAY',1).should.equal(0)
 
-    setTimeout(done, 50)
+    setImmediate(done)
 
   })
 

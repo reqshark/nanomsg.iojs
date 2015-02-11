@@ -32,7 +32,8 @@ var sol = {
   rcvtimeo        : nn.NN_RCVTIMEO,
   reconn          : nn.NN_RECONNECT_IVL,
   maxreconn       : nn.NN_RECONNECT_IVL_MAX,
-  sndprio         : nn.NN_SNDPRIO
+  sndprio         : nn.NN_SNDPRIO,
+  tcpnodelay      : nn.NN_TCP_NODELAY
 }
 
 if(nn.NN_VERSION > 3) sol.rcvprio = nn.NN_RCVPRIO
@@ -85,20 +86,8 @@ function self (s, t, o) {
   this.asBuffer   = true
   if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
 
-  //nanomsg sockopts
-  if(o.hasOwnProperty('linger')) linger(o.linger)
-  if(o.hasOwnProperty('sndbuf')) sndbuf(o.sndbuf)
-  if(o.hasOwnProperty('rcvbuf')) rcvbuf(o.rcvbuf)
-  if(o.hasOwnProperty('sndtimeo')) sndtimeo(o.sndtimeo)
-  if(o.hasOwnProperty('rcvtimeo')) rcvtimeo(o.rcvtimeo)
-  if(o.hasOwnProperty('reconn')){
-    reconn(o.reconn); if(o.hasOwnProperty('maxreconn')) maxreconn(o.maxreconn)
-  }
-  if(o.hasOwnProperty('sndprio')) sndprio(o.sndprio)
-  if(o.hasOwnProperty('rcvprio')) rcvprio(o.rcvprio)
-  if(o.hasOwnProperty('tcpnodelay')) setTimeout(function(){
-    ctx.tcpnodelay(o.tcpnodelay)
-  },50)
+  //setsockopts early
+  for(var sokopt in sol) if(o.hasOwnProperty(sokopt)) this[sokopt](o[sokopt])
 
   if(o.stream){
     this.stream   = require('duplexify')()
