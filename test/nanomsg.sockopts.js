@@ -7,8 +7,8 @@ describe('nanomsg.sockopts', function() {
   var req = nano.socket('req')
   var rep = nano.socket('rep')
 
-  req.bind('tcp://127.0.0.1:44449')
-  rep.connect('tcp://127.0.0.1:44449')
+  req.bind('tcp://127.0.0.1:44456')
+  rep.connect('tcp://127.0.0.1:44457')
 
   it('should set tcp nodelay', function (done){
 
