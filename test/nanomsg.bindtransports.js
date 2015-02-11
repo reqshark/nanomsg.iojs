@@ -63,7 +63,12 @@ describe('nanomsg.transports', function() {
     req.on('msg',function(msg){
       msg.should.be.an.instanceOf(Buffer)
       String(msg).should.equal('foo ack bar')
-      done()
+
+      //clean up unix domain socket
+      require('fs').unlink('bar', function(er) {
+        if(er)throw er
+        done()
+      })
     })
 
     rep.on('msg',function(msg){
