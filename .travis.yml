@@ -25,4 +25,4 @@ script:
   - nvm use 0.10 && make && make check
   - nvm use 0.11 && make clean && make && make check
   - nvm use 0.12 && make clean && make && make check
-  - nvm use iojs && make clean && make && make check
+  - travis_retry nvm use iojs && make clean && make && make check
