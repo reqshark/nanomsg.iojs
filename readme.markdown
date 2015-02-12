@@ -1,7 +1,9 @@
-# nanomsg for iøjs
+# nanomsg sockets as javascript streams
 [![Build Status](https://travis-ci.org/reqshark/nanomsg.iojs.svg?branch=master)](https://travis-ci.org/reqshark/nanomsg.iojs) &nbsp;&nbsp;&nbsp;&nbsp; [![npmbadge](https://nodei.co/npm/iojs-nanomsg.png?mini=true)](https://www.npmjs.com/package/iojs-nanomsg)
-
-#### move `strings` or `buffers` by way of `streams` or `EventEmitter`
+* pipe all endpoints together
+* nanomsg.iøjs streams are domain, protocol, and transport agnostic
+* combine sockets in new ways
+* the socket's `pipe()` method is basically a more flexible `zmq_proxy()` or `nn_device()`
 
 # prerequisites
 
@@ -35,12 +37,6 @@ setInterval(function(){
 },100)
 ```
 
-# philosophy: `setsockopts` early
-all new sockets, like `var s = nano.socket('req')`, accept an options param to set the socket's:
-* `send`/`recv` mechanisms: *event listener, `send()`, or a `Readable`/`Writeable` stream*
-* msg formats: get V8's `utf8` `String` or a node `Buffer` on inbound socket `recv()`
-* standard `sockopt` values and other protocol settings
-
 # API
 
 ### nano.socket(type, [options,])
@@ -53,9 +49,6 @@ Starts a new socket. The nanomsg socket can bind or connect to multiple heteroge
 nano.socket('bus','raw') || nano.socket('bus', { fam: 'AF_SP_RAW' } ) //raw
 nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 ```
-* `'stream'` *(boolean, default: `false`)*: when `true`, the socket's stream property is a NodeJS Streams 1 and Streams 2 full duplex, meaning `Readable` and `Writeable` compatibility extends from `node v0.10 - v0.12`. The principal stability target is always `iojs streams`, a.k.a. the `readable-stream` module fathered by Isaacs. See example section above or the [stream API docs](https://github.com/reqshark/nanomsg.iojs#a-writeable-and-a-readable-stream-true) below for additional info.
-* `'asBuffer'` *(boolean, default: `true`)*: return the `value` of a received message as a `String` or a NodeJS `Buffer` object. Note that converting from a `Buffer` to a `String` incurs a cost so if you need a `String` (and the `value` can legitimately become a UFT8 string) then you should fetch it as one with `asBuffer: false` and you'll avoid this conversion cost.
-* `'stopBufferOverflow'` *(boolean, default: `false`)*: this is real bad. you try to get a message out and the kernel abort traps your process. this option must be set to true on certain modern kernels. this sucks and will be removed as soon as the `WIP` i/o multiplexing approach is improved and the fix is verified.
 * `'tcpnodelay'` *(boolean, default: `false`)*: see [`socket.tcpnodelay(boolean)`](https://github.com/reqshark/nanomsg.iojs#sockettcpnodelayboolean).
 * `'linger'` *(number, default: `1000`)*: see [`socket.linger(duration)`](https://github.com/reqshark/nanomsg.iojs#socketlingerduration).
 * `'sndbuf'` *(number, default: `128kB`)*: see [`socket.sndbuf(size)`](https://github.com/reqshark/nanomsg.iojs#socketsndbufsize).
@@ -117,67 +110,29 @@ socket.connect('tcp://127.0.0.1:5555')
 
 *<sub>When connecting over TCP allow `100ms` or more for the operation to complete.</sub>*
 
-### socket addresses
+## sending and receiving: writeable and readable
 
-*(Strings)*
-
-Socket address strings consist of two parts as follows: `transport://address`. The transport specifies the underlying transport protocol to use. The meaning of the address part is specific to the underlying transport protocol.
-* *TCP transport mechanism*: `'tcp://127.0.0.1:65000'` When binding a TCP socket, address of the form `tcp://interface:port` should be used. Port is the TCP port number to use. Interface is either: `IPv4` or `IPv6` address of a local network interface, or DNS name of the remote box. It is possible to use named interfaces like `eth0`. For more info see [nanomsg docs](http://nanomsg.org/v0.5/nn_tcp.7.html).
-* *in-process transport mechanism*: `'inproc://bar'` The `inproc` transport allows messages between threads or modules inside a process. In-process address is an arbitrary case-sensitive string preceded by `inproc://` protocol specifier. All in-process addresses are visible from any module within the process. They are not visible from outside of the process. The overall buffer size for an inproc connection is determined by `rcvbuf` socket option on the receiving end of the connection. `sndbuf` is ignored. In addition to the buffer, one message of arbitrary size will fit into the buffer. That way, even messages larger than the buffer can be transfered via inproc connection.
-* *inter-process transport mechanism*: `'ipc:///tmp/foo.ipc'` The `ipc` transport allows for sending messages between processes within a single box. The nanomsg implementation uses native IPC mechanism provided by the local operating system and the IPC addresses are thus OS-specific. On POSIX-compliant systems, UNIX domain sockets are used and IPC addresses are file references. Note that both relative (`ipc://test.ipc`) and absolute (`ipc:///tmp/test.ipc`) paths may be used. Also note that access rights on the IPC files must be set in such a way that the appropriate applications can actually use them. On Windows, named pipes are used for IPC. The Windows IPC address is an arbitrary case-insensitive string containing any character except for backslash: internally, address `ipc://test` means that named pipe `\\.\pipe\test` will be used.
-
-# sending and receiving APIs
-Two event mechanisms are available: `EventEmitter` or `Streams`, but in practice there are four. This is because each mechanism applied to the socket has a potential `send` and `recv` operation. Though not every socket is capable of both, most socket types are, and besides: to interface with any one side of the link requires some understanding of the other.
-
-Lets look at classic `EventEmitter` `send`/`recv` then, respectively, `Writeable`/`Readable`.
-
-**Only `streams` or `events` (not both) are available on the socket**, since it would otherwise consume useless I/O to transmit duplicate event data at once across each mechanism.
-
-## EventEmitter `{stream: false}`
-
-### socket.send(msg)
-*(Function, param: String or Buffer)*: The `send()` function immediately sends a message `msg` containing the data to any endpoint(s) determined by the particular socket type.
+### socket.write(msg)
+*(Function, param: String or Buffer)*: A `write()` function is equivalent to the `socket.send()` in [node.zeromq](https://github.com/JustinTulloss/zeromq.node) when called directly.
 
 ```js
-socket.send('hello from nanømsg!')
+socket.write('hello from nanømsg!')
 ```
 
-### socket.on(msg,[callback,])
-*(Function, param order: String, Function)*: The `on()` function is an event listener registered with the `nanomsg c lib` that emits `'msg'` events. To receive messages, pass `'msg'` with a callback containing a single data parameter.
-
-```js
-socket.on('msg', function (msg) {
-  console.log(String(msg)) //'hello from nanømsg!'
-})
-```
-## a writeable and a readable `{stream: true}`
-
-### socket.stream
-*(Object, properties: Readable, Writeable)*: the stream property is a full duplex pipeable to and from any consumer. It is not available by default and requires that the option `{stream: true}` be passed along with the socket type at the outset.
-
-### socket.stream.write(msg)
-*(Function, param: String or Buffer)*: A `write()` function is equivalent to `socket.send()` when called directly.
-
-```js
-var stream = socket.stream
-stream.write('hello from nanømsg!')
-```
-
-The `write()` function is automatically invoked as a `Writeable` consumer of some other `Readable` stream. In that case a `pipe()` method can be used to transmit from a readable data source such that the flow distributes to endpoint(s) determined by the particular socket type.
+`write()` is automatically invoked during `Writeable` consumption of some other `Readable` stream. In that case a `pipe()` method can be used to transmit from a readable data source. The flow of data distributes to endpoint(s) determined by the particular socket type.
 
 ```js
 var fs = require('fs')
 var source = fs.createReadStream(__dirname + 'filename.ext')
 
-source.pipe(socket.stream)
+source.pipe(socket)
 ```
 
-### socket.stream.on(data,[callback,])
-*(Function, param order: String, Function)*: The `Readable` stream's `on()` function is an event listener registered with the `nanomsg c lib` that emits `'data'` events. To receive messages, pass `'data'` with a callback containing a single data parameter.
+### socket.on(data, callback)
+*(Function, param order: String, Function)*: The `Readable` stream's `on()` function is an event listener registered with the `nanomsg c lib` that emits `'data'` events. To receive messages, pass the string `'data'` followed a callback containing a single data parameter.
 
 ```js
-var stream = socket.stream
-stream.on('data', function (msg) {
+socket.on('data', function (msg) {
   console.log(String(msg)) //'hello from nanømsg!'
 })
 ```
@@ -186,15 +141,15 @@ the readable stream's `data` event is automatically invoked when piped to a `Wri
 
 ```js
 var through = require('through')
-var stream = socket.stream
 
 var msgprocessor = through(function(msg){
   var str = String(msg); console.log(str) //'hello from nanømsg!'
   this.queue(str + ' and cheers from nanomsg.iojs!')
 })
 
-stream.pipe(msgprocessor)
+socket.pipe(msgprocessor)
 ```
+
 ### socket.tcpnodelay(boolean)
 
 *(Function, param: Boolean, default: false)*: When set, disables Nagle’s algorithm. It also disables delaying of TCP acknowledgments. Using this option improves latency at the expense of throughput.
