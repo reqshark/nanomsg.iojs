@@ -1,3 +1,18 @@
+1.0.0 / 2015-2-12
+==================
+
+* **pipe all endpoints together,**  it's a new API!
+* use `write()` in place of `send()`. `on('data',cb)` replaces `on('msg',cb)`
+* combine sockets in new ways.
+* discovery and development of `pipe()` method as just a flexible `zmq_proxy()` or `nn_device()`
+* sockets inherit from `duplexify`, a fully duplexed transform of the `readable-stream` module.
+* nanomsg.iøjs streams are domain, protocol, and transport agnostic sockets
+* no longer inherit from `EventEmitter`, messages distribute `readable` or `writeable` instead
+* perf tests confirm `Streams` inheritence switch does not impact in any meaningful way
+* discovered earlier `stopBufferOverflow` bug associated with the option of the same name and resolved.
+* `bufferOverflow` was caused by a timeout issue with closing sockets too soon.
+* remove `asBuffer` option in favor of stream encoding conventions that have become idiomatic NodeJS
+
 0.1.1 / 2015-2-10
 ==================
 

@@ -1,7 +1,7 @@
 {
   "name": "iojs-nanomsg",
-  "version": "0.1.2",
-  "description": "nanømsg for iojs",
+  "version": "1.0.0",
+  "description": "nanømsg sockets as javascript streams",
   "dependencies": {
     "bindings": "~1.2.1",
     "nan": "~1.6.2",
