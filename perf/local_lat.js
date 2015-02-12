@@ -14,9 +14,9 @@ var counter = 0;
 var rep = nano.socket('rep');
 rep.bind(bind_to);
 
-rep.on('msg', function (data) {
+rep.on('data', function (data) {
   assert.equal(data.length, message_size, 'message-size did not match');
-  rep.send(data);
+  rep.write(data);
   if (++counter === roundtrip_count){
     setTimeout( function(){
       rep.close();

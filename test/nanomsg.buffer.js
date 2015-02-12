@@ -3,23 +3,18 @@ var should  = require('should')
 
 describe('nanomsg.bufferopt', function() {
 
-  it('should support asBuffer option', function (done){
+  it('should support string encoding', function (done){
 
-    var req   = nano.socket('req',{
-      //the default, so we dont have to set it to true
-      asBuffer:true
-    })
-
-    var rep   = nano.socket('rep',{
-      asBuffer:false
-    })
-
+    var req   = nano.socket('req')
+    var rep   = nano.socket('rep')
     var addr  = 'tcp://127.0.0.1:44443'
+
+    rep.setEncoding('utf8')
 
     req.connect(addr)
     rep.bind(addr)
 
-    req.on('msg', function (msg){
+    req.on('data', function (msg){
 
       msg.should.be.an.instanceOf(Buffer)
 
@@ -28,16 +23,16 @@ describe('nanomsg.bufferopt', function() {
       done()
     })
 
-    rep.on('msg', function (msg){
+    rep.on('data', function (msg){
 
       msg.should.be.an.instanceOf(String)
 
       msg.should.equal('foo')
 
-      rep.send('bar')
+      rep.write('bar')
     })
 
-    req.send('foo')
+    req.write('foo')
 
   })
 

@@ -19,7 +19,7 @@ req.connect(connect_to);
 
 var timer;
 
-req.on('msg', function (data) {
+req.on('data', function (data) {
   if (!timer) {
     console.log('started receiving');
     timer = process.hrtime();
@@ -46,7 +46,7 @@ function finish() {
 }
 
 function send() {
-  req.send(message);
+  req.write(message);
 }
 
 send()

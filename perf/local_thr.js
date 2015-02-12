@@ -16,7 +16,7 @@ sock.bind(bind_to);
 
 var timer;
 
-sock.on('msg', function (data) {
+sock.on('data', function (data) {
   if (!timer) {
     console.log('started receiving');
     timer = process.hrtime();

@@ -12,7 +12,7 @@ describe('nanomsg.shutdown', function() {
     p4      : nano.socket('pub'),
     p5      : nano.socket('pub')
   }
-  var sub   = nano.socket('sub',{asBuffer:false})
+  var sub   = nano.socket('sub')
 
   it('should bind and connect multiple',function(done){
     pubs.p1.bind(addr+1)
@@ -50,16 +50,16 @@ describe('nanomsg.shutdown', function() {
 
     Object.keys(sub.how).length.should.equal(5)
 
-    sub.on('msg', function(msg){
+    sub.on('data', function (msg) {
 
-      if(msg == 'hello from p1'){
-        if(i++ == 10) console.log(sub.shutdown('tcp://127.0.0.1:44451'))
+      if (String(msg) == 'hello from p1') {
+        if (i++ == 10) console.log(sub.shutdown('tcp://127.0.0.1:44451'))
 
         //lets crash this test if we keep getting messages after shutdown
-        if(i > 11) throw 'it'
+        if (i > 11) throw 'it'
 
         //one more msg after calling shutdown is acceptable
-        if(i == 11){
+        if (i == 11) {
           for(var h in sub.how) actives.push(h)
           actives.length.should.equal(4)
           if(actives.length < 5){
@@ -77,11 +77,11 @@ describe('nanomsg.shutdown', function() {
     })
 
     var pubInterval = setInterval(function(){
-      pubs.p1.send('hello from p1')
-      pubs.p2.send('hello from p2')
-      pubs.p3.send('hello from p3')
-      pubs.p4.send('hello from p4')
-      pubs.p5.send('hello from p5')
+      pubs.p1.write('hello from p1')
+      pubs.p2.write('hello from p2')
+      pubs.p3.write('hello from p3')
+      pubs.p4.write('hello from p4')
+      pubs.p5.write('hello from p5')
     },5)
   })
 

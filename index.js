@@ -36,9 +36,7 @@ var sol = {
   tcpnodelay      : nn.NN_TCP_NODELAY
 }
 
-if(nn.NN_VERSION > 3) sol.rcvprio = nn.NN_RCVPRIO
-
-require('util').inherits( self, require('events').EventEmitter )
+if (nn.NN_VERSION > 3) sol.rcvprio = nn.NN_RCVPRIO
 
 module.exports    = {
 
@@ -56,20 +54,26 @@ module.exports    = {
   }
 }
 
+require('util').inherits( self, require('duplexify') )
+
 function self (s, t, o) {
   //error handle
   if(s < 0) throw new Error(nn.Err() + ': ' + t + ' creating socket'+'\n')
 
   var ctx         = this
 
-  this.fam        = o.fam
   this.socket     = s
+  this.fam        = o.fam
   this.type       = t
+  this.how        = {}
+  this.asBuffer   = true
+  if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
+
   this.bind       = bind
   this.connect    = connect
   this.close      = close
   this.shutdown   = shutdown
-  this.how        = {}
+
   this.setsockopt = setsockopt
   this.getsockopt = getsockopt
   this.linger     = linger
@@ -83,22 +87,13 @@ function self (s, t, o) {
   this.rcvprio    = rcvprio
   this.tcpnodelay = tcpnodelay
 
-  this.asBuffer   = true
-  if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
+  this.send       = send
+  this.recv       = recv
 
-  //setsockopts early
   for(var sokopt in sol) if(o.hasOwnProperty(sokopt)) this[sokopt](o[sokopt])
+  for(var p in require('duplexify')()) this[p] = require('duplexify')()[p]
 
-  if(o.stream){
-    this.stream   = require('duplexify')()
-    this.send     = function(msg,next){ nn.Send( s, msg ); next() }
-    this.recv     = function(msg){ return ctx.stream.push(msg) }
-
-    this.stream.setWritable(require('through2')(write, end))
-  } else {
-    this.recv     = function(msg){ return ctx.emit('msg', msg) }
-    this.send     = function(msg){ nn.Send( s, msg ) }
-  }
+  this.setWritable( require('through2') ( write, end ) )
 
   switch(t){
     case 'pub':
@@ -136,10 +131,20 @@ function self (s, t, o) {
   function select_buf(){ if(nn.Multiplexer(s) > 0) ctx.recv(nn.Recv(s)) }
   function select_s_buf(){ if(nn.Multiplexer(s) > 0) ctx.recv(nn.RecvStr(s)) }
 
-  function write(chunk, enc, next) {
-    ctx.send(chunk, next)
+  function send (msg, flush) {
+    nn.Send( s, msg )
+    if (flush) flush()
   }
-  function end(done) {
+
+  function recv (msg) {
+    ctx.push(msg)
+  }
+
+  function write (msg, enc, next) {
+    ctx.send(msg, next)
+  }
+
+  function end (done) {
     ctx.close()
     done()
   }

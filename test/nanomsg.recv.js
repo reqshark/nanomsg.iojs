@@ -11,20 +11,19 @@ describe('nanomsg.recv', function() {
   pub.bind(addr)
   sub.connect(addr)
 
-  it('should have a send method', function(done){
+  it('should have a write method', function (done) {
 
     pub.should.be.an.instanceOf(Object)
-      .with.a.property('send')
+      .with.a.property('write')
       .which.is.a.Function
 
     done()
   })
 
-  it('should have a recv method', function(done){
+  it('should have a readable property', function (done) {
 
     sub.should.be.an.instanceOf(Object)
-      .with.a.property('recv')
-      .which.is.a.Function
+      .with.a.property('readable')
 
     done()
   })
@@ -33,7 +32,7 @@ describe('nanomsg.recv', function() {
 
     var msgs = 0
 
-    sub.on('msg',function(msg){
+    sub.on('data',function (msg) {
 
       msgs++
 
@@ -52,9 +51,9 @@ describe('nanomsg.recv', function() {
 
     })
 
-    pub.send('hello from nanømsg!')
-    pub.send('foo bar')
-    pub.send('barnacle')
+    pub.write('hello from nanømsg!')
+    pub.write('foo bar')
+    pub.write('barnacle')
 
   })
 

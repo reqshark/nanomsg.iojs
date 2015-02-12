@@ -12,9 +12,11 @@ describe('nanomsg.connect', function() {
   var push2 = nano.socket('push')
   var push3 = nano.socket('push')
 
+  //connect pull to all three push sockets
   pull.connect(addr)
   pull.connect(addr2)
   pull.connect(addr3)
+
   push.bind(addr)
   push2.bind(addr2)
   push3.bind(addr3)
@@ -36,7 +38,7 @@ describe('nanomsg.connect', function() {
 
     var msgs = 0
 
-    pull.on('msg', function(msg){
+    pull.on('data', function(msg){
 
       msg = String(msg)
 
@@ -62,9 +64,9 @@ describe('nanomsg.connect', function() {
     })
 
     setImmediate(function(){
-      push.send('hello from one source')
-      push2.send('hello from another source')
-      push3.send('hello from yet another source')
+      push.write('hello from one source')
+      push2.write('hello from another source')
+      push3.write('hello from yet another source')
     })
 
   })
