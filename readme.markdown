@@ -11,30 +11,27 @@ install [`nanomsg c lib`](http://nanomsg.org/development.html) and have `iojs` o
 
 # install
 ```bash
-$ npm i iojs-nanomsg
+$ npm install iojs-nanomsg
 ```
 
 # example
 ```js
 var nano = require('iojs-nanomsg')
-var pub = nano.socket('pub')
-var sub = nano.socket('sub', {
-  stream: true,
-  asBuffer: false
+var pub   = nano.socket('pub'),       push  = nano.socket('push')
+var sub   = nano.socket('sub'),       pull  = nano.socket('pull')
+
+pub.bind('tcp://127.0.0.1:3333');     push.bind('tcp://127.0.0.1:4444')
+sub.connect('tcp://127.0.0.1:3333');  pull.connect('tcp://127.0.0.1:4444')
+
+sub.setEncoding('utf8') //sub socket will get utf8 strings instead of Buffers
+
+sub.on('data', function (msg) {
+  console.log(msg) //'hello from a push socket!'
 })
 
-pub.bind('tcp://127.0.0.1:5555')
-sub.connect('tcp://127.0.0.1:5555')
+pull.pipe(pub) //pipe readable sockets to any writeable socket or stream
 
-var readable = sub.stream
-
-readable.on('data',function(msg){
-  console.log(msg)
-})
-
-setInterval(function(){
-  pub.send('hello from nanømsg!')
-},100)
+setInterval( function(){ push.write('hello from a push socket!') }, 100 )
 ```
 
 # API
@@ -44,10 +41,10 @@ setInterval(function(){
 Starts a new socket. The nanomsg socket can bind or connect to multiple heterogeneous endpoints as well as shutdown any of these established links.
 
 #### `options`
-* `'fam'` *(String, default: `'af_sp'`, or just `'af'` for short)*: determines the domain of the socket. `AF_SP` creates a standard full-blown SP socket. `AF_SP_RAW` is a raw SP socket. Pass `fam` string in lowercase if you don't want to use uppercase. The following strings are acceptable for setting up `raw`: `'raw'`, `'af_sp_raw'`, `'AF_SP_RAW'`. `Raw` sockets omit the end-to-end functionality found in `AF_SP` sockets and thus can be used to implement intermediary devices in SP topologies, see [nanomsg docs](http://nanomsg.org/v0.5/nn_socket.3.html) for additional info. Here's an example setting fam: `AF_SP` or `AF_SP_RAW`, and if fam is the only option, then pass a string like:
+* `'fam'` *(String, default: `'af_sp'`)*: determines the domain of the socket. `AF_SP` creates a standard full-blown SP socket. `AF_SP_RAW` family sockets operate over internal network protocols and interfaces. Raw sockets omit the end-to-end functionality found in `AF_SP` sockets and thus can be used to implement intermediary devices in SP topologies, see [nanomsg docs](http://nanomsg.org/v0.5/nn_socket.3.html) or consult your man page entry `socket(2)` for more info.
 ```js
-nano.socket('bus','raw') || nano.socket('bus', { fam: 'AF_SP_RAW' } ) //raw
-nano.socket('bus', {fam:'af'}) //default AF_SP family socket
+//ex. starting raw sockets
+nano.socket('bus','raw') || nano.socket('bus', { fam: 'AF_SP_RAW' } )
 ```
 * `'tcpnodelay'` *(boolean, default: `false`)*: see [`socket.tcpnodelay(boolean)`](https://github.com/reqshark/nanomsg.iojs#sockettcpnodelayboolean).
 * `'linger'` *(number, default: `1000`)*: see [`socket.linger(duration)`](https://github.com/reqshark/nanomsg.iojs#socketlingerduration).
@@ -63,12 +60,6 @@ nano.socket('bus', {fam:'af'}) //default AF_SP family socket
 ### nano.version
 
 `require('iojs-nanomsg').version` *(Number)*: the libnanomsg beta version installed
-
-### nano.versionstr
-
-`require('iojs-nanomsg').versionstr` *(String)*: revealed in nanomsg beta versioning language
-
-### API available after socket creation:
 
 ### socket.type
 

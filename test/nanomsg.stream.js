@@ -10,7 +10,7 @@ describe('nanomsg.stream', function() {
     var recv = 0
 
     var pub    = nano.socket('pub')
-    var sub    = nano.socket('sub', { stopBufferOverflow:true })
+    var sub    = nano.socket('sub')
     sub.connect('inproc://stream')
     pub.bind('inproc://stream')
 
@@ -35,7 +35,7 @@ describe('nanomsg.stream', function() {
     var backToBuf = through(function(msg){
       msg.should.be.an.instanceOf(Buffer)
       if(recv > 100){
-        pub.close(); sub.close(); clearInterval(publisher)
+        pub.close(); clearInterval(publisher)
         done()
       }
       this.queue(null)
@@ -101,7 +101,13 @@ describe('nanomsg.stream', function() {
     function finish(winner){
       won = true
       console.log('and the winner is: %s!', winner)
-      done()
+
+      //tidy up domain socket
+      require('fs').unlink('pipe', function(er) {
+        if(er)throw er
+        done()
+      })
+
     }
   })
 

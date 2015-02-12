@@ -5,7 +5,7 @@ var semver  = require('semver')
 describe('nanomsg.sendperf', function() {
 
   var pub    = nano.socket('pub')
-  var sub    = nano.socket('sub',{ stopBufferOverflow: true })
+  var sub    = nano.socket('sub')
   var recv    = 0, addr    = 'inproc://whatever'
 
   sub.connect(addr)
@@ -17,7 +17,7 @@ describe('nanomsg.sendperf', function() {
     sub.on('data',function(msg){
 
       if(recv > 99999){
-        sub.close(); pub.close();
+        pub.close()
         recv.should.equal(100000)
         done()
       }

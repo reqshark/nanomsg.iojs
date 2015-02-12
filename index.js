@@ -66,8 +66,6 @@ function self (s, t, o) {
   this.fam        = o.fam
   this.type       = t
   this.how        = {}
-  this.asBuffer   = true
-  if(o.hasOwnProperty('asBuffer')) this.asBuffer = o.asBuffer
 
   this.bind       = bind
   this.connect    = connect
@@ -109,27 +107,11 @@ function self (s, t, o) {
     case 'req':
     case 'rep':
     case 'pull':
-      if(this.asBuffer){
-        //check for a buffer overflow option before i/o multiplexing
-        if(o.hasOwnProperty('stopBufferOverflow')){
-          this.clr = setInterval(select_buf, 0)
-        } else {
-          this.clr = setInterval(select, 0)
-        }
-      } else {
-        if(o.hasOwnProperty('stopBufferOverflow')){
-          this.clr = setInterval(select_s_buf, 0)
-        } else {
-          this.clr = setInterval(select_s, 0)
-        }
-      }
+      this.clr = setInterval(select,0)
       break;
   }
 
   function select(){ while(nn.Multiplexer(s) > 0) ctx.recv(nn.Recv(s)) }
-  function select_s(){ while(nn.Multiplexer(s) > 0) ctx.recv(nn.RecvStr(s)) }
-  function select_buf(){ if(nn.Multiplexer(s) > 0) ctx.recv(nn.Recv(s)) }
-  function select_s_buf(){ if(nn.Multiplexer(s) > 0) ctx.recv(nn.RecvStr(s)) }
 
   function send (msg, flush) {
     nn.Send( s, msg )
