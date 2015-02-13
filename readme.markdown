@@ -80,10 +80,10 @@ socket.shutdown('tcp://127.0.0.1:5555')
 `bind()` (or `connect()`) may be called multiple times on the same socket thus allowing the socket to communicate with multiple heterogeneous endpoints.
 
 ```js
-socket.bind('tcp://127.0.0.1:5555')
+socket.bind('tcp://eth0:5555')
 ```
 
-*<sub>When binding over TCP, allow up to `50ms` for the operation to complete.</sub>*
+*<sub>recommend checking your machine's `ifconfig` first before using a named interface.</sub>*
 
 ### socket.connect(address)
 
@@ -95,9 +95,9 @@ socket.bind('tcp://127.0.0.1:5555')
 socket.connect('tcp://127.0.0.1:5555')
 ```
 
-*<sub>When connecting over TCP allow `100ms` or more for the operation to complete.</sub>*
+*<sub>When connecting over remote TCP allow `100ms` or more depending on round trip time for the operation to complete.</sub>*
 
-#### [.. a note on address strings](docs/address_strings.markdown)
+##### *[a note on address strings](docs/address_strings.markdown)*
 
 ### socket.close()
 
