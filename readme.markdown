@@ -65,10 +65,6 @@ nano.socket('bus','raw') || nano.socket('bus', { fam: 'AF_SP_RAW' } )
 
 *(String)*: Indicates what type of socket you have.
 
-### socket.close()
-
-*(Function)*: Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `linger`.
-
 ### socket.shutdown(address)
 
 *(Function, param: String)*: Removes an endpoint established  by calls to `bind()` or `connect()`. The nanomsg library will try to deliver any outstanding outbound messages to the endpoint for the time specified by `linger`.
@@ -100,6 +96,12 @@ socket.connect('tcp://127.0.0.1:5555')
 ```
 
 *<sub>When connecting over TCP allow `100ms` or more for the operation to complete.</sub>*
+
+#### [.. a note on address strings](docs/address_strings.markdown)
+
+### socket.close()
+
+*(Function)*: Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `linger`.
 
 ## sending and receiving: writeable and readable
 
