@@ -107,11 +107,11 @@ function self (s, t, o) {
     case 'req':
     case 'rep':
     case 'pull':
-      this.clr = setInterval(select,0)
+      this.clr = setInterval( select, 0 )
       break;
   }
 
-  function select(){ while(nn.Multiplexer(s) > 0) ctx.recv(nn.Recv(s)) }
+  function select(){ while ( nn.Multiplexer(s) > 0 ) ctx.recv ( nn.Recv (s) ) }
 
   function send (msg, flush) {
     nn.Send( s, msg )

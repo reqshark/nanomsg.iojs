@@ -12,9 +12,8 @@ before_install:
   - nvm i 0.10 && nvm i 0.11 && nvm i 0.12 && nvm i iojs
   - echo -e "require('fs').writeFile('platform.sh','export PLATFORM=\"'+require('os').platform()+'\"')" >> "check.js"
   - node check && chmod a+x platform.sh && source platform.sh
-  - git clone $NANOMSG
-  - cd nanomsg && ./autogen.sh && ./configure && make
-  - sudo make install
+  - git clone $NANOMSG && cd nanomsg
+  - ./autogen.sh && ./configure && make && sudo make install
   - '[ "$PLATFORM" == "darwin" ] || sudo /sbin/ldconfig'
   - cd ..
 branches:
@@ -22,7 +21,9 @@ branches:
     - master
 language: c
 script:
-  - nvm use 0.10 && make && make check
-  - nvm use 0.11 && make clean && make && make check
-  - nvm use 0.12 && make clean && make && make check
-  - travis_retry nvm use iojs && make clean && make && make check
+  - nvm use 0.10 && make full
+  - nvm use 0.11 && make full
+  - nvm use 0.12 && make full
+  - travis_retry nvm use iojs && make full
+notifications:
+  email: false

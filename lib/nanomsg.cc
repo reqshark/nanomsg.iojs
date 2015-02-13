@@ -104,7 +104,6 @@ exports(v8::Handle<v8::Object> e) {
   T(e, Bind)
   T(e, Send)
   T(e, Recv)
-  T(e, RecvStr)
   T(e, Multiplexer)
   T(e, Setsockopt)
   T(e, Getsockopt)
