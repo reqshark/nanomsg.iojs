@@ -1,31 +1,33 @@
 /*
  * free and unencumbered software released into the public domain.
  */
+
 #if defined NN_HAVE_WINDOWS
-#include <nn.h>
-#include <pubsub.h>
-#include <pipeline.h>
-#include <bus.h>
-#include <pair.h>
-#include <reqrep.h>
-#include <survey.h>
-#include <ipc.h>
-#include <tcp.h>
-#include <inproc.h>
-#include "../windows/nanomsg/src/utils/win.h"
+  #include <nn.h>
+  #include <pubsub.h>
+  #include <pipeline.h>
+  #include <bus.h>
+  #include <pair.h>
+  #include <reqrep.h>
+  #include <survey.h>
+  #include <ipc.h>
+  #include <tcp.h>
+  #include <inproc.h>
+  #include "../windows/nanomsg/src/utils/win.h"
 #else
-#include <nanomsg/nn.h>
-#include <nanomsg/pubsub.h>
-#include <nanomsg/pipeline.h>
-#include <nanomsg/bus.h>
-#include <nanomsg/pair.h>
-#include <nanomsg/reqrep.h>
-#include <nanomsg/survey.h>
-#include <nanomsg/ipc.h>
-#include <nanomsg/tcp.h>
-#include <nanomsg/inproc.h>
-#include <sys/select.h>
+  #include <nanomsg/nn.h>
+  #include <nanomsg/pubsub.h>
+  #include <nanomsg/pipeline.h>
+  #include <nanomsg/bus.h>
+  #include <nanomsg/pair.h>
+  #include <nanomsg/reqrep.h>
+  #include <nanomsg/survey.h>
+  #include <nanomsg/ipc.h>
+  #include <nanomsg/tcp.h>
+  #include <nanomsg/inproc.h>
+  #include <sys/select.h>
 #endif
+
 struct timeval tv;
 
 int getevents (int s){
