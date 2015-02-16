@@ -5,6 +5,12 @@
                 {
                     'target_name': 'windows_nanomsg',
                     'type': 'static_library',
+                    'defines': [
+                      'NN_HAVE_GCC',
+                      'NN_HAVE_SOCKETPAIR',
+                      'NN_HAVE_SEMAPHORE',
+                      'NN_USE_PIPE',
+                    ],
                     'direct_dependent_settings': {
                       'defines': [
                           'NN_HAVE_GCC',

@@ -3,16 +3,16 @@
  */
 
 #if defined NN_HAVE_WINDOWS
-  #include "../windows/nanomsg/src/nn.h>"
-  #include "../windows/nanomsg/src/pubsub.h>"
-  #include "../windows/nanomsg/src/pipeline.h>"
-  #include "../windows/nanomsg/src/bus.h>"
-  #include "../windows/nanomsg/src/pair.h>"
-  #include "../windows/nanomsg/src/reqrep.h>"
-  #include "../windows/nanomsg/src/survey.h>"
-  #include "../windows/nanomsg/src/ipc.h>"
-  #include "../windows/nanomsg/src/tcp.h>"
-  #include "../windows/nanomsg/src/inproc.h>"
+  #include <nn.h>
+  #include <pubsub.h>
+  #include <pipeline.h>
+  #include <bus.h>
+  #include <pair.h>
+  #include <reqrep.h>
+  #include <survey.h>
+  #include <ipc.h>
+  #include <tcp.h>
+  #include <inproc.h>
   #include "../windows/nanomsg/src/utils/win.h"
 #else
   #include <nanomsg/nn.h>
