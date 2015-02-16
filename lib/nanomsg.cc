@@ -7,17 +7,7 @@
 #include "nan.h"
 
 extern "C" {
-  #include <nanomsg/nn.h>
-  #include <nanomsg/pubsub.h>
-  #include <nanomsg/pipeline.h>
-  #include <nanomsg/bus.h>
-  #include <nanomsg/pair.h>
-  #include <nanomsg/reqrep.h>
-  #include <nanomsg/survey.h>
-  #include <nanomsg/ipc.h>
-  #include <nanomsg/tcp.h>
-  #include <nanomsg/inproc.h>
-  #include "getevents.h"
+#include "getevents.h"
 }
 
 #if NN_VERSION_CURRENT < 1
