@@ -1,7 +1,7 @@
-1.0.0 / 2015-2-16
+1.1.0 / 2015-2-16
 ==================
 
-* full windows support
+* windows support
 * remove `RecvStr()` C++ function
 
 1.0.0 / 2015-2-12
