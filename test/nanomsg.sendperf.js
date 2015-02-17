@@ -1,7 +1,5 @@
 var nano = require('..')
-var test = require('tape')
-
-test('nanomsg.sendperf', function(t) {
+require('tape')('nanomsg.sendperf', function(t) {
   t.plan(1)
   t.test('should send a hundred thousand messages',function(t){
     t.plan(1)

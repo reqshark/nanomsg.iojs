@@ -7,14 +7,12 @@ function files(er,fls){
   run()
 
   function run(){
-    if(fls.length-1 > f++){
+    if ( fls.length-1 > f++ ) require('child_process').spawn('node',
 
-      var t = require('child_process').spawn('node',
-        ['test/'+fls[f]] , { stdio:'inherit' } )
-
-      //sequential execution
-      t.on('close', run )
-    }
+                                       //sequential execution
+      ['test/'+fls[f]],{ stdio:'inherit'}).on('close', run ).on('error', err )
   }
 
 }
+
+function err(er){ console.dir(er.stack) }

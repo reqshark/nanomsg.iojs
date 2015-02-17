@@ -1,7 +1,5 @@
 var nano = require('..')
-var test = require('tape')
-
-test('nanomsg.recv', function(t) {
+require('tape')('nanomsg.recv', function(t) {
   t.plan(3)
   t.test('socket\'s write method',function(t){
     t.plan(1)

@@ -2,14 +2,13 @@ os:
   - osx
   - linux
 env:
-  - NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.3-beta"
   - NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.4-beta"
   - NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.5-beta"
   - NANOMSG="git://github.com/nanomsg/nanomsg.git"
 before_install:
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
-  - nvm i 0.10 && nvm i 0.11 && nvm i 0.12 && nvm i iojs
+  - nvm i 0.10 && nvm i 0.12 && nvm i iojs
   - echo -e "require('fs').writeFile('platform.sh','export PLATFORM=\"'+require('os').platform()+'\"')" >> "check.js"
   - node check && chmod a+x platform.sh && source platform.sh
   - git clone $NANOMSG && cd nanomsg
@@ -22,7 +21,6 @@ branches:
 language: c
 script:
   - nvm use 0.10 && make full
-  - nvm use 0.11 && make full
   - nvm use 0.12 && make full
   - travis_retry nvm use iojs && make full
 notifications:

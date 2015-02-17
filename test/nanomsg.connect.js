@@ -1,7 +1,5 @@
 var nano = require('..')
-var test = require('tape')
-
-test('nanomsg.connect', function(t) {
+require('tape')('nanomsg.connect', function(t) {
   t.plan(2)
   t.test('called on a network address',function(t){
     t.plan(1)

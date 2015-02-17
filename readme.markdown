@@ -1,13 +1,13 @@
 # nanømsg streams
 [![Build Status](https://travis-ci.org/reqshark/nanomsg.iojs.svg?branch=master)](https://travis-ci.org/reqshark/nanomsg.iojs) &nbsp;&nbsp;&nbsp;&nbsp; [![Circle CI](https://circleci.com/gh/reqshark/nanomsg.iojs.svg?style=svg)](https://circleci.com/gh/reqshark/nanomsg.iojs) &nbsp;&nbsp;&nbsp;&nbsp; [![npmbadge](https://nodei.co/npm/iojs-nanomsg.png?mini=true)](https://www.npmjs.com/package/iojs-nanomsg)
 * pipe all endpoints together
-* nanomsg.iøjs streams are domain, protocol, and transport agnostic
+* [iøjs streams](https://github.com/substack/stream-handbook) are domain, protocol, and transport agnostic
 * combine sockets in new ways
 * the socket's `pipe()` method is basically a more flexible `zmq_proxy()` or `nn_device()`
 
 # prerequisites
 
-install [`nanomsg c lib`](http://nanomsg.org/development.html) and have `iojs` or `node v0.10 - v0.12`. on unix systems also install `pkg-config`. for windows, you need visual studio and python, i would opt for [anaconda installer](http://continuum.io/downloads) with [gitub powershell](https://windows.github.com/).
+install [`nanomsg c lib`](http://nanomsg.org/development.html) and have `iojs` or `node v0.10 - v0.12`. on unix install `pkg-config`. for windows, you need visual studio and python, i would opt for [anaconda installer](http://continuum.io/downloads) with [gitub powershell](https://windows.github.com/).
 
 # install
 ```bash
