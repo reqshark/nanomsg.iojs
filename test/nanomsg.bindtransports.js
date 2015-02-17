@@ -18,7 +18,7 @@ require('tape')('nanomsg.transports', function(t) {
       t.ok(msg instanceof Buffer, 'msg type is a buffer' )
       t.equal(String(msg), 'foo ack bar', 'verified envelope: foo ack bar')
       rep.close()
-      req.close()
+      t.end()
     })
 
     rep.on('data', function (msg) {
@@ -45,7 +45,7 @@ require('tape')('nanomsg.transports', function(t) {
       t.ok(msg instanceof Buffer, 'a buffer' )
       t.equal(String(msg), 'ack bar foo', 'env: ack bar foo')
       rep.close()
-      req.close()
+      t.end()
     })
 
     rep.on('data', function (msg) {
