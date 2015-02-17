@@ -135,6 +135,12 @@ NAN_METHOD(Recv) {
   NanReturnUndefined();
 }
 
+NAN_METHOD(Sleeper) {
+  NanScope();
+  uv_run(uv_default_loop(), UV_RUN_ONCE);
+  NanReturnUndefined();
+}
+
 extern "C" void
 exports(v8::Handle<v8::Object> e) {
   T(e, Socket)
@@ -147,6 +153,7 @@ exports(v8::Handle<v8::Object> e) {
   T(e, Recv)
   T(e, Setsockopt)
   T(e, Getsockopt)
+  T(e, Sleeper)
 
   // SP address families
   NC(e, AF_SP)

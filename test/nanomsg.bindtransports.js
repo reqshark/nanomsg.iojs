@@ -15,21 +15,24 @@ require('tape')('nanomsg.transports', function(t) {
     req.bind(addr)
 
     req.on('data', function (msg) {
+      console.log(msg)
       t.ok(msg instanceof Buffer, 'msg type is a buffer' )
       t.equal(String(msg), 'foo ack bar', 'verified envelope: foo ack bar')
       rep.close()
-      t.end()
+      req.close()
     })
 
     rep.on('data', function (msg) {
+      console.log(msg)
       t.equal(String(msg), 'sent over tcp', 'verified envelope: sent over tcp')
       rep.send('foo ack bar')
     })
 
     req.write('sent over tcp')
 
-    rep.on('error', err); req.on('error', err)
+    //rep.on('error', err); req.on('error', err)
   })
+
   t.test('inproc',function(t){
 
     t.plan(4)
@@ -45,10 +48,11 @@ require('tape')('nanomsg.transports', function(t) {
       t.ok(msg instanceof Buffer, 'a buffer' )
       t.equal(String(msg), 'ack bar foo', 'env: ack bar foo')
       rep.close()
-      t.end()
+      req.close()
     })
 
     rep.on('data', function (msg) {
+      console.log(msg)
       t.ok(msg instanceof Buffer, 'a buffer' )
       t.equal(String(msg), 'sent over inproc', 'envelope: sent over inproc')
       rep.send('ack bar foo')
@@ -56,7 +60,7 @@ require('tape')('nanomsg.transports', function(t) {
 
     req.write('sent over inproc')
 
-    rep.on('error', err); req.on('error', err)
+    //rep.on('error', err); req.on('error', err)
   })
 
   t.test('bind, connect, send and receive over ipc',function(t){

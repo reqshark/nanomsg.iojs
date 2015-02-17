@@ -4,18 +4,18 @@
 
 var nn            = require('bindings')('nanomsg.node') //should be .iojs
 var sock = {
-  pub             : nn.NN_PUB,
-  sub             : nn.NN_SUB,
-  bus             : nn.NN_BUS,
-  pair            : nn.NN_PAIR,
-  surv            : nn.NN_SURVEYOR,
-  surveyor        : nn.NN_SURVEYOR,
-  resp            : nn.NN_RESPONDENT,
-  respondent      : nn.NN_RESPONDENT,
-  req             : nn.NN_REQ,
-  rep             : nn.NN_REP,
-  pull            : nn.NN_PULL,
-  push            : nn.NN_PUSH
+  pub             : [nn.NN_PUB,         nn.NN_SUB],
+  sub             : [nn.NN_SUB,         nn.NN_PUB],
+  bus             : [nn.NN_BUS,         nn.NN_BUS],
+  pair            : [nn.NN_PAIR,        nn.NN_PAIR],
+  surv            : [nn.NN_SURVEYOR,    nn.NN_RESPONDENT],
+  surveyor        : [nn.NN_SURVEYOR,    nn.NN_RESPONDENT],
+  resp            : [nn.NN_RESPONDENT,  nn.NN_SURVEYOR],
+  respondent      : [nn.NN_RESPONDENT,  nn.NN_SURVEYOR],
+  req             : [nn.NN_REQ,         nn.NN_REP],
+  rep             : [nn.NN_REP,         nn.NN_REQ],
+  pull            : [nn.NN_PULL,        nn.NN_PUSH],
+  push            : [nn.NN_PUSH,        nn.NN_PULL],
 }
 var af = {
   af_sp           : nn.AF_SP,
@@ -51,8 +51,8 @@ module.exports    = {
     if(!opts.hasOwnProperty('fam')) opts.fam = 'af'
 
     //ensure first nanomsg socket is not zero, else disregard it
-    var nns = nn.Socket(af[opts.fam], sock[type])
-    if(nns == 0) return new self(nn.Socket(af[opts.fam],sock[type]), type, opts)
+    var nns = nn.Socket(af[opts.fam], sock[type][0])
+    if(nns == 0) return new self(nn.Socket(af[opts.fam],sock[type][0]), type, opts)
     return new self( nns, type, opts )
   }
 }
@@ -75,6 +75,7 @@ function self (s, t, o) {
   this.connect    = connect
   this.close      = close
   this.shutdown   = shutdown
+  this.unhook     = unhook
 
   this.setsockopt = setsockopt
   this.getsockopt = getsockopt
@@ -88,6 +89,8 @@ function self (s, t, o) {
   this.sndprio    = sndprio
   this.rcvprio    = rcvprio
   this.tcpnodelay = tcpnodelay
+
+  this.sleep      = uvsleeper( function (t, d) { setTimeout(d, t) } )
 
   this.send       = send
   this.recv       = recv
@@ -116,7 +119,6 @@ function self (s, t, o) {
   function recv(msg){
     ctx.push( msg )
     if (!ctx.destroyed) nn.Recv( s, recv )
-    else console.log('breaking the recv loop')
   }
 
   function send (msg, flush) {
@@ -136,7 +138,12 @@ function self (s, t, o) {
 
 function close() {
   this.destroy()
-  nn.Close( this.socket )
+
+  if ( this.type != 'pub' && this.type != 'push' ) this.unhook()
+
+  this.sleep(10)
+
+  this.socket = nn.Close( this.socket )
 }
 
 function shutdown(addr) {
@@ -289,4 +296,33 @@ function setsol(socket, option, value){
 
 function getsol(socket, option){
   return nn.Getsockopt(socket, nn.NN_SOL_SOCKET, sol[option])
+}
+
+function unhook(){
+  var unsocket = nn.Socket(af[this.fam], sock[this.type][1])
+
+  nn.Bind( unsocket, 'inproc://unhook' )
+  nn.Connect( this.socket, 'inproc://unhook' )
+
+  this.sleep(60)
+  return nn.Send( unsocket, 'unhook and close' )
+}
+
+function uvsleeper(fn) {
+
+  return function () {
+    var done = false, err, res
+    fn.apply(this, Array.prototype.slice.apply(arguments).concat(cb))
+
+    while (!done) nn.Sleeper()
+    if (err) throw err
+
+    return res
+
+    function cb (e, r) {
+      err   = e
+      res   = r
+      done  = true
+    }
+  }
 }
