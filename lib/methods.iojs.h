@@ -28,23 +28,4 @@ NAN_METHOD(Send) {
   ret(nn_send (S, input->c_str(), input->length(), 0));
 }
 
-NAN_METHOD(Recv){
-  char *buf = NULL;
-  int len = nn_recv(S, &buf, NN_MSG, 0);
-
-  v8::Local<v8::Value> h = NanNewBufferHandle(len);
-  memcpy(node::Buffer::Data(h), buf, len);
-
-  //dont memory leak on the HEAP
-  nn_freemsg (buf);
-
-  ret(h);
-}
-
-#if (NODE_MAJOR_VERSION < 1)
-NAN_METHOD(Multiplexer){ NanScope(); ret(getevents(S)); }
 NAN_METHOD(Err){ ret(NanNew<String>(nn_strerror(nn_errno()))); }
-#else
-NAN_METHOD(Multiplexer){ ret(getevents(S)); }
-NAN_METHOD(Err){ ret(nn_strerror(nn_errno())); }
-#endif

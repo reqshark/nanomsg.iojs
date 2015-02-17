@@ -84,6 +84,57 @@ NAN_METHOD(Getsockopt) {
   }
 }
 
+class RecvMsg : public NanAsyncWorker {
+  public:
+    RecvMsg(NanCallback *callback, int socket)
+      : NanAsyncWorker(callback), socket(socket) {}
+    ~RecvMsg() {}
+
+    // Executed inside worker-thread.
+    void Execute () { while(getevents(socket) < 1); }
+
+    // Executed when the async work is complete
+    void HandleOKCallback () {
+      NanScope();
+
+      char *buf = NULL;
+      int len = nn_recv(socket, &buf, NN_MSG, 0);
+
+      if (len < 0) {
+
+        Local<Value> argv[] = { NanNew<Number>(len) };
+
+        callback->Call(1, argv);
+
+      } else {
+
+        Local<Value> argv[] = { NanNewBufferHandle(len) };
+        memcpy(node::Buffer::Data(argv[0]), buf, len);
+
+        nn_freemsg (buf);
+
+        callback->Call(1, argv);
+
+      }
+
+    }
+
+  private:
+    int socket;
+};
+
+NAN_METHOD(Recv) {
+  NanScope();
+
+  Local<Function> callback = args[1].As<Function>();
+
+  NanCallback* nanCallback = new NanCallback(callback);
+  RecvMsg* worker = new RecvMsg(nanCallback, S);
+  NanAsyncQueueWorker(worker);
+
+  NanReturnUndefined();
+}
+
 extern "C" void
 exports(v8::Handle<v8::Object> e) {
   T(e, Socket)
@@ -94,11 +145,8 @@ exports(v8::Handle<v8::Object> e) {
   T(e, Bind)
   T(e, Send)
   T(e, Recv)
-  T(e, Multiplexer)
   T(e, Setsockopt)
   T(e, Getsockopt)
-  //T(e, Device)
-  //T(e, Term)
 
   // SP address families
   NC(e, AF_SP)

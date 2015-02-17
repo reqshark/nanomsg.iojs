@@ -48,20 +48,3 @@ NAN_METHOD(Send) {
 
   ret(NanNew<Number>(nn_send (S, input->c_str(), input->length(), 0)));
 }
-
-NAN_METHOD(Recv){
-  NanScope();
-
-  char *buf = NULL;
-  int len = nn_recv(S, &buf, NN_MSG, 0);
-
-  v8::Local<v8::Value> h = NanNewBufferHandle(len);
-  memcpy(node::Buffer::Data(h), buf, len);
-
-  //dont memory leak on the HEAP
-  nn_freemsg (buf);
-
-  ret(h);
-}
-
-NAN_METHOD(Multiplexer){ NanScope(); ret(NanNew<Number>(getevents(S))); }

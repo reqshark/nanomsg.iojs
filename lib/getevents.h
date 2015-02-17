@@ -32,6 +32,8 @@ struct timeval tv;
 
 int getevents (int s){
 
+  if (s == 0) return 1;
+
   size_t fdsz;
   fd_set pollset;
 

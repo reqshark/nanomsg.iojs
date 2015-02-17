@@ -50,13 +50,17 @@ module.exports    = {
     opts = opts || { fam: 'af' }
     if(!opts.hasOwnProperty('fam')) opts.fam = 'af'
 
-    return new self( nn.Socket(af[opts.fam],sock[type]), type, opts)
+    //ensure first nanomsg socket is not zero, else disregard it
+    var nns = nn.Socket(af[opts.fam], sock[type])
+    if(nns == 0) return new self(nn.Socket(af[opts.fam],sock[type]), type, opts)
+    return new self( nns, type, opts )
   }
 }
 
 require('util').inherits( self, require('duplexify') )
 
 function self (s, t, o) {
+
   //error handle
   if(s < 0) throw new Error(nn.Err() + ': ' + t + ' creating socket'+'\n')
 
@@ -90,36 +94,34 @@ function self (s, t, o) {
 
   for(var sokopt in sol) if(o.hasOwnProperty(sokopt)) this[sokopt](o[sokopt])
   for(var p in require('duplexify')()) this[p] = require('duplexify')()[p]
-
   this.setWritable( require('through2') ( write, end ) )
 
   switch(t){
     case 'pub':
     case 'push':
-      break;
+      break
+    case 'pull':
     case 'sub':
-    case 'bus':
     case 'pair':
+    case 'bus':
+    case 'req':
+    case 'rep':
     case 'surv':
     case 'surveyor':
     case 'resp':
-    case 'respondent':
-    case 'req':
-    case 'rep':
-    case 'pull':
-      this.clr = setInterval( select, 0 )
-      break;
+    case 'respondent': nn.Recv( s, recv )
+      break
   }
 
-  function select(){ while ( nn.Multiplexer(s) > 0 ) ctx.recv ( nn.Recv (s) ) }
+  function recv(msg){
+    ctx.push( msg )
+    if (!ctx.destroyed) nn.Recv( s, recv )
+    else console.log('breaking the recv loop')
+  }
 
   function send (msg, flush) {
-    nn.Send( s, msg )
+    nn.Send( s, msg );
     if (flush) flush()
-  }
-
-  function recv (msg) {
-    ctx.push(msg)
   }
 
   function write (msg, enc, next) {
@@ -127,14 +129,14 @@ function self (s, t, o) {
   }
 
   function end (done) {
-    ctx.close()
+    this.destroy()
     done()
   }
 }
 
 function close() {
-  clearInterval(this.clr); this.open = false
-  return nn.Close( this.socket )
+  this.destroy()
+  nn.Close( this.socket )
 }
 
 function shutdown(addr) {
