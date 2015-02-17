@@ -1,3 +1,9 @@
+1.1.9 / 2015-2-17
+==================
+
+* perf improvement with C++ [`RecvMsg : public NanAsyncWorker`](lib/nanomsg.cc) class
+* start using tape for testing
+
 1.1.0 / 2015-2-16
 ==================
 

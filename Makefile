@@ -1,6 +1,6 @@
 .PHONY: clean check test perf bench full
 
-RUN = node test | node_modules/.bin/tap-bail | node_modules/.bin/tap-difflet
+RUN = node test | node_modules/.bin/tap-difflet
 
 ALL:
 	npm i

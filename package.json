@@ -1,34 +1,41 @@
 {
-  "name": "iojs-nanomsg",
-  "version": "1.1.8",
-  "description": "nanømsg sockets as javascript streams",
+  "name":           "iojs-nanomsg",
+  "version":        "1.1.9",
+  "description":    "nanomsg streams for iøjs",
   "dependencies": {
-    "bindings": "~1.2.1",
-    "nan": "~1.6.2",
-    "duplexify":"~3.2.0",
-    "through2":"~0.6.3"
+    "bindings":     "~1.2.1",
+    "duplexify":    "~3.2.0",
+    "nan":          "~1.6.2",
+    "through2":     "~0.6.3"
   },
-  "devDependencies":{
-    "through":"~2.3.6",
-    "mocha":  "~2.1.0",
-    "semver": "~4.1.1",
-    "should": "~4.6.1"
+  "devDependencies": {
+    "through":      "~2.3.6",
+    "tape":         "*",
+    "tap-difflet":  "~0.3.0"
   },
   "repository": {
-    "type": "git",
-    "url": "git://github.com/reqshark/nanomsg.iojs"
+    "type":         "git",
+    "url":          "git://github.com/reqshark/nanomsg.iojs"
   },
   "scripts": {
-    "travis-test": "make check"
+    "travis-test":  "make check",
+    "test":         "node test | tap-difflet"
   },
-  "homepage": "http://msg.pub",
+  "homepage":       "http://msg.pub",
+  "author": {
+    "name":         "Bent Cardan",
+    "email":        "bent@nothingsatisfies.com",
+    "url":          "http://req.link"
+  },
+  "license":        "beerware",
   "keywords": [
-    "nanomsg","native","binding","addon","nn","message","streams","nanømsg"
-  ],
-  "author":{
-    "name":   "Bent Cardan",
-    "email":  "bent@nothingsatisfies.com",
-    "url":    "http://req.link"
-  },
-  "license": "beerware"
+    "nanomsg",
+    "native",
+    "binding",
+    "addon",
+    "nn",
+    "message",
+    "streams",
+    "nanømsg"
+  ]
 }
