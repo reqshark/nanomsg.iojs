@@ -136,14 +136,17 @@ function self (s, t, o) {
   }
 }
 
-function close() {
+function close(fn) {
   this.destroy()
 
-  if ( this.type != 'pub' && this.type != 'push' ) this.unhook()
-
-  this.sleep(10)
-
-  this.socket = nn.Close( this.socket )
+  switch(this.type){
+    case 'pub':
+    case 'push':
+      nn.Close( this.socket )
+      return fn('closing a pub or a push')
+    default:
+      return fn(this.unhook())
+  }
 }
 
 function shutdown(addr) {
@@ -301,10 +304,10 @@ function getsol(socket, option){
 function unhook(){
   var unsocket = nn.Socket(af[this.fam], sock[this.type][1])
 
-  nn.Bind( unsocket, 'inproc://unhook' )
-  nn.Connect( this.socket, 'inproc://unhook' )
+  nn.Bind( unsocket, 'inproc://unhook'+unsocket )
+  nn.Connect( this.socket, 'inproc://unhook'+unsocket )
 
-  this.sleep(60)
+  this.sleep(10)
   return nn.Send( unsocket, 'unhook and close' )
 }
 

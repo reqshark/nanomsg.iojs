@@ -9,10 +9,18 @@ NAN_METHOD(Socket) {
   ret(s);
 }
 
-NAN_METHOD(Close)   { ret(nn_close(S)); }
-NAN_METHOD(Shutdown){ ret(nn_shutdown(S,args[1].integer));}
-NAN_METHOD(Bind)    { utf8 addr(args[1]); ret(nn_bind(S, *addr)); }
-NAN_METHOD(Connect) { utf8 addr(args[1]); ret(nn_connect(S, *addr)); }
+NAN_METHOD(Close)   { ret (nn_close(S)); }
+NAN_METHOD(Shutdown){ ret (nn_shutdown(S, args[1].integer));}
+
+NAN_METHOD(Bind)    {
+  utf8 addr(args[1]);
+  ret(nn_bind(S, *addr));
+}
+
+NAN_METHOD(Connect) {
+  utf8 addr(args[1]);
+  ret(nn_connect(S, *addr));
+}
 
 NAN_METHOD(Send) {
   std::string *input;

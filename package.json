@@ -10,8 +10,8 @@
   },
   "devDependencies": {
     "through":      "~2.3.6",
-    "tape":         "*",
-    "tap-difflet":  "~0.3.0"
+    "tape":         "~3.5.0",
+    "tap-spec":     "~2.2.1"
   },
   "repository": {
     "type":         "git",
@@ -19,7 +19,7 @@
   },
   "scripts": {
     "travis-test":  "make check",
-    "test":         "node test | tap-difflet"
+    "test":         "node test | tap-spec"
   },
   "homepage":       "http://msg.pub",
   "author": {
