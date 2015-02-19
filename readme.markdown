@@ -275,8 +275,8 @@ $ make full
 ```
 on windows:
 ```bash
-$ git submodule update --init
-$ make full
+git submodule update --init
+make full
 ```
 <sub>*disabling node v0.08.x for now... but v0.10 and up should be fine*</sub>
 
