@@ -1,20 +1,13 @@
 var nano = require('..')
-var pub, sub, pair, push, pull, respondent, surveyor, req, rep, bus
 module.exports = function (t) {
 
-  t.test('returns a beta release version', function(t) {
-
-    t.plan(1)
-
-    t.ok(require('..').version < 6, 'beta version:' + require('..').version )
-
-  })
+  var pub, sub, pair, push, pull, respondent, surveyor, req, rep, bus
 
   t.test('socket: NN_PUB', function(t) {
     t.plan(2)
 
     pub = nano.socket('pub')
-    t.equal(s( pub.socket ),        0, 'opened NN_PUB')
+    t.equal(s( pub.socket ), 0, 'opened NN_PUB')
 
     pub.close(function(msg){
       //push and pub sockets should close nearly immediately
@@ -28,7 +21,7 @@ module.exports = function (t) {
     t.plan(2)
 
     sub = nano.socket('sub')
-    t.equal(s( sub.socket ),        0, 'opened NN_SUB')
+    t.equal(s( sub.socket ), 0, 'opened NN_SUB')
 
     sub.close(function(msg){
       // use this callback to understand when the socket is going to close.
@@ -43,7 +36,7 @@ module.exports = function (t) {
     t.plan(2)
 
     pair = nano.socket('pair')
-    t.equal(s( pair.socket ),        0, 'opened NN_PAIR')
+    t.equal(s( pair.socket ), 0, 'opened NN_PAIR')
 
     pair.close(function (msg){
       t.equal(msg, 16, 'closed NN_PAIR')
@@ -55,7 +48,7 @@ module.exports = function (t) {
     t.plan(2)
 
     push = nano.socket('push')
-    t.equal(s( push.socket ),        0, 'opened NN_PUSH')
+    t.equal(s( push.socket ), 0, 'opened NN_PUSH')
 
     push.close(function(msg){
       t.equal(msg,'closing a pub or a push', 'closed NN_PUSH')
@@ -67,7 +60,7 @@ module.exports = function (t) {
     t.plan(2)
 
     pull = nano.socket('pull')
-    t.equal(s( pull.socket ),        0, 'opened NN_PULL')
+    t.equal(s( pull.socket ), 0, 'opened NN_PULL')
 
     pull.close(function(msg){
       t.equal(msg, 16, 'closed NN_PULL')
@@ -78,7 +71,7 @@ module.exports = function (t) {
     t.plan(2)
 
     surveyor = nano.socket('surveyor')
-    t.equal(s( surveyor.socket ),        0, 'opened NN_SURVEYOR')
+    t.equal(s( surveyor.socket ), 0, 'opened NN_SURVEYOR')
 
     surveyor.close(function(msg){
       t.equal(msg, 16, 'closed NN_SURVEYOR')
@@ -90,7 +83,7 @@ module.exports = function (t) {
     t.plan(2)
 
     respondent = nano.socket('respondent')
-    t.equal(s( respondent.socket ),        0, 'opened NN_RESPONDENT')
+    t.equal(s( respondent.socket ), 0, 'opened NN_RESPONDENT')
 
     respondent.close(function(msg){
       t.equal(msg, 16, 'closed NN_RESPONDENT')
@@ -102,7 +95,7 @@ module.exports = function (t) {
     t.plan(2)
 
     req = nano.socket('req')
-    t.equal(s( req.socket ),        0, 'opened NN_REQ')
+    t.equal(s( req.socket ), 0, 'opened NN_REQ')
 
     req.close(function(msg){
       t.equal(msg, 16, 'closed NN_REQ')
@@ -114,7 +107,7 @@ module.exports = function (t) {
     t.plan(2)
 
     rep = nano.socket('rep')
-    t.equal(s( rep.socket ),        0, 'opened NN_REP')
+    t.equal(s( rep.socket ), 0, 'opened NN_REP')
 
     rep.close(function(msg){
       t.equal(msg, 16, 'closed NN_REP')
@@ -125,7 +118,7 @@ module.exports = function (t) {
     t.plan(2)
 
     bus = nano.socket('bus')
-    t.equal(s( bus.socket ),        0, 'opened NN_BUS')
+    t.equal(s( bus.socket ), 0, 'opened NN_BUS')
 
     bus.close(function(msg){
       t.equal(msg, 16, 'closed NN_BUS')

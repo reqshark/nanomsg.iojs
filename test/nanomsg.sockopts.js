@@ -1,13 +1,12 @@
 var nano = require('..')
-var req = nano.socket('req'), rep
-
 module.exports = function (t) {
+
+  var req = nano.socket('req'), rep
+
   t.test('tcp nodelay: opts initializer and setsockopt methods', function(t){
 
     //set tcp nodelay from `socket(type, opts)`
-    rep = nano.socket('rep', {
-      tcpnodelay: true
-    })
+    rep = nano.socket('rep', { tcpnodelay: true })
 
     //set tcp nodelay from native setsockopt()
     t.equal( req.setsockopt('NN_TCP','NN_TCP_NODELAY',1), 0,

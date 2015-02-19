@@ -3,6 +3,14 @@ var through     = require('through')
 
 module.exports  = function (t) {
 
+  t.test('returns a beta release version', function(t) {
+
+    t.plan(1)
+
+    t.ok(require('..').version < 6, 'beta version:' + require('..').version )
+
+  })
+
   var sent      = 0
   var recv      = 0
 

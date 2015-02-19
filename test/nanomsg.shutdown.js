@@ -1,17 +1,15 @@
 var nano = require('..')
-var actives = [], i = 0, msgs = 0
-var pubs  = {
-  p1      : nano.socket('pub'),
-  p2      : nano.socket('pub'),
-  p3      : nano.socket('pub'),
-  p4      : nano.socket('pub'),
-  p5      : nano.socket('pub')
-}
-var sub   = nano.socket('sub')
-
 module.exports = function (t) {
 
-  var addr  = 'tcp://127.0.0.1:4445'
+  var pubs  = {
+    p1      : nano.socket('pub'),
+    p2      : nano.socket('pub'),
+    p3      : nano.socket('pub'),
+    p4      : nano.socket('pub'),
+    p5      : nano.socket('pub')
+  }
+  var sub   = nano.socket('sub')
+  var addr  = 'tcp://127.0.0.1:4445', i = 0
 
   t.test('bind five heterogeneous pub connections to a subscriber',function(t){
 
@@ -34,11 +32,11 @@ module.exports = function (t) {
     sub.on('data', function(msg){
 
       //lets crash and burn if we keep getting messages after shutdown
-      if (msgs > 10) throw 'it'
+      if (i > 10) throw 'it'
 
       switch (msg) {
 
-        case 'hello from p1': if (++msgs == 10) {
+        case 'hello from p1': if (++i == 10) {
 
           t.equal( sub.shutdown(addr+1),
             'connect endpoint tcp://127.0.0.1:44451 shutdown',
@@ -48,7 +46,7 @@ module.exports = function (t) {
 
         } break
 
-        case 'hello from p2': if (msgs == 10) {
+        case 'hello from p2': if (i == 10) {
 
           t.equal( sub.shutdown(addr+2),
             'connect endpoint tcp://127.0.0.1:44452 shutdown',
@@ -58,7 +56,7 @@ module.exports = function (t) {
 
         } break
 
-        case 'hello from p3': if (msgs == 10) {
+        case 'hello from p3': if (i == 10) {
 
           t.equal( sub.shutdown(addr+3),
             'connect endpoint tcp://127.0.0.1:44453 shutdown',
@@ -68,7 +66,7 @@ module.exports = function (t) {
 
         } break
 
-        case 'hello from p4': if (msgs == 10) {
+        case 'hello from p4': if (i == 10) {
 
           t.equal( sub.shutdown(addr+4),
             'connect endpoint tcp://127.0.0.1:44454 shutdown',
@@ -78,7 +76,7 @@ module.exports = function (t) {
 
         } break
 
-        case 'hello from p5': if (msgs == 10) {
+        case 'hello from p5': if (i == 10) {
 
           t.equal( sub.shutdown(addr+5),
             'connect endpoint tcp://127.0.0.1:44455 shutdown',
