@@ -4,7 +4,7 @@ module.exports = function (t) {
     t.plan(1)
     t.ok(require('..').version < 6, 'beta version:' + require('..').version )
   })
-  var pub, sub, pair, push, pull
+  var pub, sub, pair, push, pull, respondent, surveyor, req, rep, bus
   t.test('start socket: NN_PUB',function(t){
     t.plan(1)
     pub = nano.socket('pub')
@@ -64,63 +64,64 @@ module.exports = function (t) {
       t.equal(msg, 16, 'closed NN_PULL')
     })
   })
-//  t.test('open NN_PAIR types',function(t){
-//    var pair         = nano.socket('pair')
-//    t.equal(s( pair.socket ),        0, 'opened NN_PAIR')
-//    pair.close()
-//    t.end()
+//  t.test('start socket: NN_SURVEYOR',function(t){
+//    t.plan(1)
+//    surveyor = nano.socket('surveyor')
+//    t.equal(s( surveyor.socket ),        0, 'opened NN_SURVEYOR')
 //  })
-//  t.test('open NN_PUB NN_SUB types',function(t){
-//    t.plan(2)
-//    var pub         = nano.socket('pub')
-//    var sub         = nano.socket('sub')
-//    t.equal(s( pub.socket ),        0, 'opened NN_PUB')
-//    t.equal(s( sub.socket ),        0, 'opened NN_SUB')
-//    pub.close()
-//    sub.close()
+//  t.test('stop socket: NN_SURVEYOR',function(t){
+//    t.plan(1)
+//    surveyor.close(function(msg){
+//      t.equal(msg, 16, 'closed NN_SURVEYOR')
+//    })
 //  })
-//  t.test('open NN_BUS NN_PAIR types',function(t){
-//    t.plan(2)
-//    var bus         = nano.socket('bus')
-//    var pair        = nano.socket('pair')
-//    t.equal(s( bus.socket ),        0, 'opened NN_BUS')
-//    t.equal(s( pair.socket ),       0, 'opened NN_PAIR')
-//    bus.close()
-//    pair.close()
-//  })
-//  t.test('open NN_REQ NN_REP types',function(t){
-//    t.plan(2)
-//    var req         = nano.socket('req')
-//    var rep         = nano.socket('rep')
+  t.test('start socket: NN_RESPONDENT',function(t){
+    t.plan(1)
+    respondent = nano.socket('respondent')
+    t.equal(s( respondent.socket ),        0, 'opened NN_RESPONDENT')
+  })
+  t.test('stop socket: NN_RESPONDENT',function(t){
+    t.plan(1)
+    respondent.close(function(msg){
+      t.equal(msg, 16, 'closed NN_RESPONDENT')
+    })
+  })
+//  t.test('start socket: NN_REQ',function(t){
+//    t.plan(1)
+//    req = nano.socket('req')
 //    t.equal(s( req.socket ),        0, 'opened NN_REQ')
-//    t.equal(s( rep.socket ),        0, 'opened NN_REP')
-//    req.close()
-//    rep.close()
 //  })
-//  t.test('open NN_PULL NN_PUSH types',function(t){
-//    t.plan(2)
-//    var push        = nano.socket('push')
-//    var pull        = nano.socket('pull')
-//    t.equal(s( push.socket ),       0, 'opened NN_PUSH')
-//    t.equal(s( pull.socket ),       0, 'opened NN_PULL')
-//    push.close()
-//    pull.close()
+//  t.test('stop socket: NN_REQ',function(t){
+//    t.plan(1)
+//    req.close(function(msg){
+//      t.equal(msg, 16, 'closed NN_REQ')
+//    })
 //  })
-
-//  t.test('open NN_RESPONDENT NN_SURVEYOR types',function(t){
-//    t.plan(2)
-//    var respondent  = nano.socket('respondent')
-//    var surveyor    = nano.socket('surveyor')
-//    t.equal(s( respondent.socket ), 0, 'opened NN_RESPONDENT')
-//    t.equal(s( surveyor.socket ),   0, 'opened NN_SURVEYOR')
-//    respondent.close()
-//    surveyor.close()
-//  })
-
-
+  t.test('start socket: NN_REP',function(t){
+    t.plan(1)
+    rep = nano.socket('rep')
+    t.equal(s( rep.socket ),        0, 'opened NN_REP')
+  })
+  t.test('stop socket: NN_REP',function(t){
+    t.plan(1)
+    rep.close(function(msg){
+      t.equal(msg, 16, 'closed NN_REP')
+    })
+  })
+  t.test('start socket: NN_BUS',function(t){
+    t.plan(1)
+    bus = nano.socket('bus')
+    t.equal(s( bus.socket ),        0, 'opened NN_BUS')
+  })
+  t.test('stop socket: NN_BUS',function(t){
+    t.plan(1)
+    bus.close(function(msg){
+      t.equal(msg, 16, 'closed NN_BUS')
+    })
+  })
 }
 
 function s(v){
   if(v > -1) return 0
-  else return -1
+  return -1
 }
