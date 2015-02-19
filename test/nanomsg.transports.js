@@ -3,7 +3,7 @@ module.exports = function (t) {
 
   t.test('tcp',function(t){
 
-    var addr  = 'tcp://127.0.0.1:44449'
+    var addr  = 'tcp://127.0.0.1:44450'
     var push = nano.socket('push')
     var pull = nano.socket('pull')
 
