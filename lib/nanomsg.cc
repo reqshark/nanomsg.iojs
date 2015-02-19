@@ -101,7 +101,7 @@ class RecvMsg : public NanAsyncWorker {
       int len = nn_recv(socket, &buf, NN_MSG, 0);
 
       if (len < 0) {
-        //why does this case occur right when starting rep and surveyor?
+        //why does this case occur right when starting req and surveyor?
         Local<Value> argv[] = { NanNew<Number>(len) };
 
         callback->Call(1, argv);

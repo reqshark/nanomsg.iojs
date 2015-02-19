@@ -117,7 +117,7 @@ function self (s, t, o) {
   }
 
   function recv(msg){
-    //msgs that are -1 is a rep/surveyor issue so break the loop
+    //msgs that are -1 is a req/surveyor issue so break the loop
     if (msg == -1) return
     ctx.push( msg )
     if (!ctx.destroyed) nn.Recv( s, recv )
