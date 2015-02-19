@@ -33,8 +33,10 @@ module.exports = function (t) {
     push.connect(addr)
     pull.bind(addr)
 
+    pull.setEncoding('utf8')
+
     pull.on('data', function (msg) {
-      t.ok(msg instanceof Buffer, 'msg type is a buffer' )
+      t.ok(typeof msg == 'string', 'msg type is a string' )
       t.equal(String(msg), 'sent over inproc', 'verified envelope: over inproc')
 
       push.close()
