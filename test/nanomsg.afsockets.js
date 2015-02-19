@@ -64,17 +64,17 @@ module.exports = function (t) {
       t.equal(msg, 16, 'closed NN_PULL')
     })
   })
-//  t.test('start socket: NN_SURVEYOR',function(t){
-//    t.plan(1)
-//    surveyor = nano.socket('surveyor')
-//    t.equal(s( surveyor.socket ),        0, 'opened NN_SURVEYOR')
-//  })
-//  t.test('stop socket: NN_SURVEYOR',function(t){
-//    t.plan(1)
-//    surveyor.close(function(msg){
-//      t.equal(msg, 16, 'closed NN_SURVEYOR')
-//    })
-//  })
+  t.test('start socket: NN_SURVEYOR',function(t){
+    t.plan(1)
+    surveyor = nano.socket('surveyor')
+    t.equal(s( surveyor.socket ),        0, 'opened NN_SURVEYOR')
+  })
+  t.test('stop socket: NN_SURVEYOR',function(t){
+    t.plan(1)
+    surveyor.close(function(msg){
+      t.equal(msg, 16, 'closed NN_SURVEYOR')
+    })
+  })
   t.test('start socket: NN_RESPONDENT',function(t){
     t.plan(1)
     respondent = nano.socket('respondent')
@@ -86,17 +86,17 @@ module.exports = function (t) {
       t.equal(msg, 16, 'closed NN_RESPONDENT')
     })
   })
-//  t.test('start socket: NN_REQ',function(t){
-//    t.plan(1)
-//    req = nano.socket('req')
-//    t.equal(s( req.socket ),        0, 'opened NN_REQ')
-//  })
-//  t.test('stop socket: NN_REQ',function(t){
-//    t.plan(1)
-//    req.close(function(msg){
-//      t.equal(msg, 16, 'closed NN_REQ')
-//    })
-//  })
+  t.test('start socket: NN_REQ',function(t){
+    t.plan(1)
+    req = nano.socket('req')
+    t.equal(s( req.socket ),        0, 'opened NN_REQ')
+  })
+  t.test('stop socket: NN_REQ',function(t){
+    t.plan(1)
+    req.close(function(msg){
+      t.equal(msg, 16, 'closed NN_REQ')
+    })
+  })
   t.test('start socket: NN_REP',function(t){
     t.plan(1)
     rep = nano.socket('rep')

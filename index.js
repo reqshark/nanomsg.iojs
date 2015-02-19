@@ -103,20 +103,22 @@ function self (s, t, o) {
     case 'pub':
     case 'push':
       break
+    case 'surv':
+    case 'surveyor':
+    case 'rep':
     case 'pull':
     case 'sub':
     case 'pair':
     case 'bus':
     case 'req':
-    case 'rep':
-    case 'surv':
-    case 'surveyor':
     case 'resp':
     case 'respondent': nn.Recv( s, recv )
       break
   }
 
   function recv(msg){
+    //msgs that are -1 is a rep/surveyor issue so break the loop
+    if (msg == -1) return
     ctx.push( msg )
     if (!ctx.destroyed) nn.Recv( s, recv )
   }
@@ -304,10 +306,18 @@ function getsol(socket, option){
 function unhook(){
   var unsocket = nn.Socket(af[this.fam], sock[this.type][1])
 
-  nn.Bind( unsocket, 'inproc://unhook'+unsocket )
-  nn.Connect( this.socket, 'inproc://unhook'+unsocket )
+  nn.Bind( unsocket, 'inproc://unhook' + unsocket )
+  nn.Connect( this.socket, 'inproc://unhook' + unsocket )
 
   this.sleep(10)
+
+  switch(this.type){
+    case 'surv':
+    case 'surveyor':
+    case 'req':
+      nn.Send( this.socket, 'swimming like a fish' )
+      nn.Rcv(unsocket)
+  }
   return nn.Send( unsocket, 'unhook and close' )
 }
 

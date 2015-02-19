@@ -101,7 +101,7 @@ class RecvMsg : public NanAsyncWorker {
       int len = nn_recv(socket, &buf, NN_MSG, 0);
 
       if (len < 0) {
-
+        //why does this case occur right when starting rep and surveyor?
         Local<Value> argv[] = { NanNew<Number>(len) };
 
         callback->Call(1, argv);
@@ -135,6 +135,22 @@ NAN_METHOD(Recv) {
   NanReturnUndefined();
 }
 
+NAN_METHOD(Rcv){
+  NanScope();
+  char *buf = NULL;
+  int len = nn_recv(S, &buf, NN_MSG, 0);
+
+  //null terminate
+  buf[len] = 0;
+
+  v8::Local<v8::Value> str = NanNew<v8::String>(buf, len);
+
+  //dont memory leak
+  nn_freemsg (buf);
+
+  ret(str);
+}
+
 NAN_METHOD(Sleeper) {
   NanScope();
   uv_run(uv_default_loop(), UV_RUN_ONCE);
@@ -151,6 +167,7 @@ exports(v8::Handle<v8::Object> e) {
   T(e, Bind)
   T(e, Send)
   T(e, Recv)
+  T(e, Rcv)
   T(e, Setsockopt)
   T(e, Getsockopt)
   T(e, Sleeper)
