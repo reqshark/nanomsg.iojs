@@ -55,7 +55,7 @@ module.exports  = function (t) {
     pull.pipe(through(function(msg){
       if(++recv > 30000){
 
-        t.equal(recv, 30001, 'piped 30K msgs to a transform stream in '
+        t.equal(recv, 30001, 'piped 30K received msgs to a transform stream in '
           + (Date.now() - start)/1000 + ' seconds')
 
         push.close()

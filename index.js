@@ -149,6 +149,8 @@ function close(fn) {
     case 'push':
       nn.Close( this.socket )
       return fn('closing a pub or a push')
+    case 'pair':
+      return fn(this.unhook(Math.floor(Math.random()*100000000)))
     default:
       return fn(this.unhook())
   }
@@ -306,11 +308,15 @@ function getsol(socket, option){
   return nn.Getsockopt(socket, nn.NN_SOL_SOCKET, sol[option])
 }
 
-function unhook(){
-  var unsocket = nn.Socket(af[this.fam], sock[this.type][1])
+function unhook(random){
 
-  nn.Bind( unsocket, 'inproc://unhook' + unsocket )
-  nn.Connect( this.socket, 'inproc://unhook' + unsocket )
+  var unsocket  = nn.Socket(af[this.fam], sock[this.type][1])
+  var addr      = 'inproc://unhook' + unsocket
+
+  if (random) addr += random
+
+  nn.Bind( unsocket, addr )
+  nn.Connect( this.socket, addr )
 
   this.sleep(10)
 

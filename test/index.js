@@ -9,7 +9,7 @@ function files (er, fs) {
 
   function specRunner (f) {
 
-    tape( f, require ( './' + f ) )
+    tape ( f, require ( './' + f ) )
 
   }
 
