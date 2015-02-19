@@ -99,9 +99,11 @@ socket.connect('tcp://127.0.0.1:5555')
 
 ##### *[a note on address strings](docs/address_strings.markdown)*
 
-### socket.close()
+### socket.close(callback)
 
-*(Function)*: Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `linger`.
+*(Function, param: Function)*: Closes the socket. Any buffered inbound messages that were not yet received by the application will be discarded. The nanomsg library will try to deliver any outstanding outbound messages for the time specified by `linger`.
+
+the callback function fires as soon as the underlying c lib's `nn_close()` operation also fires, so this is when linger starts.
 
 ## sending and receiving: writeable and readable
 
