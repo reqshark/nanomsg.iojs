@@ -60,7 +60,7 @@ module.exports = function (t) {
     sub.pipe(bufToStr).pipe(strToBuf).pipe(backToBuf)
 
   })
-  t.test('pipe 10K msgs over incompatible endpoints, transports and protocols together',function(t){
+  t.test('pipe 10K msgs across incompatible endpoints, transports and protocols',function(t){
 
     var push    = nano.socket ('push')
     var pull    = nano.socket ('pull')
