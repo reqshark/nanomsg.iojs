@@ -2,7 +2,6 @@ os:
   - osx
   - linux
 env:
-  - NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.4-beta"
   - NANOMSG="git://github.com/nanomsg/nanomsg.git -b 0.5-beta"
   - NANOMSG="git://github.com/nanomsg/nanomsg.git"
 before_install:
@@ -20,8 +19,8 @@ branches:
     - master
 language: c
 script:
-  - nvm use 0.10 && make full
-  - nvm use 0.12 && make full
+  - travis_retry nvm use 0.10 && make full
+  - travis_retry nvm use 0.12 && make full
   - travis_retry nvm use iojs && make full
 notifications:
   email: false
