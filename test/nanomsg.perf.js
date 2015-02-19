@@ -42,7 +42,7 @@ module.exports  = function (t) {
     while(++sent < 100000)
   })
 
-  t.test('recv 30K messages', function(t){
+  t.test('recv 10K messages', function(t){
     var addr    = 'tcp://127.0.0.1:44449'
     var push    = nano.socket('push', { tcpnodelay: true })
     var pull    = nano.socket('pull', { tcpnodelay: true })
@@ -53,9 +53,9 @@ module.exports  = function (t) {
     var start = Date.now()
 
     pull.pipe(through(function(msg){
-      if(++recv > 30000){
+      if(++recv > 10000){
 
-        t.equal(recv, 30001, 'piped 30K received msgs to a transform stream in '
+        t.equal(recv, 10001, 'piped 10K received msgs to a transform stream in '
           + (Date.now() - start)/1000 + ' seconds')
 
         push.close()
@@ -73,7 +73,7 @@ module.exports  = function (t) {
     var buf = Buffer('get it')
 
     do push.write(buf)
-    while (--sent > 69999)
+    while (--sent > 89999)
 
   })
 
