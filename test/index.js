@@ -1,3 +1,4 @@
+var tape = require ('tape')
 require ('fs').readdir(__dirname, files )
 
 function files (er, fs) {
@@ -8,7 +9,7 @@ function files (er, fs) {
 
   function specRunner (f) {
 
-    require ('tape') ( f, require ( './' + f ) )
+    tape( f, require ( './' + f ) )
 
   }
 
