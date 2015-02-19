@@ -15,6 +15,7 @@ module.exports  = function (t) {
   var recv      = 0
 
   t.test('send 100K messages',function(t){
+
     var addr    = 'tcp://127.0.0.1:44448'
     var pub     = nano.socket('pub')
     var sub     = nano.socket('sub')
@@ -43,9 +44,10 @@ module.exports  = function (t) {
   })
 
   t.test('recv 10K messages', function(t){
+
     var addr    = 'tcp://127.0.0.1:44449'
-    var push    = nano.socket('push', { tcpnodelay: true })
-    var pull    = nano.socket('pull', { tcpnodelay: true })
+    var push    = nano.socket('push')
+    var pull    = nano.socket('pull')
 
     pull.connect(addr)
     push.bind(addr)
@@ -74,7 +76,6 @@ module.exports  = function (t) {
 
     do push.write(buf)
     while (--sent > 89999)
-
   })
 
 }
