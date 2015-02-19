@@ -19,8 +19,7 @@ rep.on('data', function (data) {
   rep.write(data);
   if (++counter === roundtrip_count){
     setTimeout( function(){
-      rep.close();
-      process.exit(0);
+      process.exit(0)
     }, 1000);
   }
 })

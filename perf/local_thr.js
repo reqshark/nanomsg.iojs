@@ -37,5 +37,5 @@ function finish(){
   console.log('mean throughput: %d [msg/s]', throughput.toFixed(0));
   console.log('mean throughput: %d [Mbit/s]', megabits.toFixed(0));
   console.log('overall time: %d secs and %d nanoseconds', endtime[0], endtime[1]);
-  process.exit(1);
+  sock.close();
 }

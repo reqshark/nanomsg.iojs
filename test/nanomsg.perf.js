@@ -36,8 +36,8 @@ module.exports  = function (t) {
 
   t.test('recv 30K messages', function(t){
     var addr    = 'tcp://127.0.0.1:44449'
-    var push     = nano.socket('push',{ tcpnodelay:true })
-    var pull    = nano.socket('pull',{ tcpnodelay:true})
+    var push    = nano.socket('push', { tcpnodelay: true })
+    var pull    = nano.socket('pull', { tcpnodelay: true })
 
     pull.connect(addr)
     push.bind(addr)
@@ -48,7 +48,7 @@ module.exports  = function (t) {
       if(++recv > 30000){
 
         t.equal(recv, 30001, 'piped 30K msgs to a transform stream in '
-          + (Date.now()-start)/1000 +' seconds')
+          + (Date.now() - start)/1000 + ' seconds')
 
         push.close()
 
