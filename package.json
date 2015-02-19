@@ -1,6 +1,6 @@
 {
   "name":           "iojs-nanomsg",
-  "version":        "1.1.9",
+  "version":        "1.1.10",
   "description":    "nanomsg streams for iøjs",
   "dependencies": {
     "bindings":     "~1.2.1",
@@ -27,7 +27,7 @@
     "email":        "bent@nothingsatisfies.com",
     "url":          "http://req.link"
   },
-  "license":        "beerware",
+  "license":        "martiniware",
   "keywords": [
     "nanomsg",
     "native",
@@ -36,6 +36,8 @@
     "nn",
     "message",
     "streams",
-    "nanømsg"
+    "nanømsg",
+    "msg",
+    "high performance scalability protocol"
   ]
 }
