@@ -139,6 +139,9 @@ function self (s, t, o) {
 }
 
 function close(fn) {
+
+  if (!fn) fn = function(){}
+
   this.destroy()
 
   switch(this.type){
@@ -311,7 +314,7 @@ function unhook(){
 
   this.sleep(10)
 
-  switch(this.type){
+  switch (this.type){
     case 'surv':
     case 'surveyor':
     case 'req':
