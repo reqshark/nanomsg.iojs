@@ -55,10 +55,19 @@ module.exports    = {
     var nns = nn.Socket(af[opts.fam], sock[type][0])
     if(nns == 0) return new self(nn.Socket(af[opts.fam],sock[type][0]), type, opts)
     return new self( nns, type, opts )
-  }
+  },
+
+  thr: function(fn){ return new thr(fn) }
+
 }
 
-require('util').inherits( self, dup)
+inherits( [self,thr], dup );
+
+function thr(fn){
+  this._read = function(n){}
+  this._write = fn
+  dup.call(this)
+}
 
 function self (s, t, o) {
 
@@ -126,7 +135,7 @@ function self (s, t, o) {
   }
 
   this._read = function(n){ }
-  this._write = function(buf, _, next){ nn.Send(s,buf); next() }
+  this._write = function(buf, _, next){ nn.Send(s, buf); next() }
 
   dup.call(this)
 }
@@ -345,4 +354,23 @@ function uvsleeper(fn) {
       done  = true
     }
   }
+}
+
+//https://github.com/iojs/io.js/blob/v1.x/lib/util.js#L620-L630
+function inherits(ctor, superCtor) {
+  if(Array.isArray(ctor))
+    return ctor.forEach(function(ctors){ inherit(ctors, superCtor) });
+  inherit(ctor, superCtor);
+}
+
+function inherit(ctor, superCtor){
+  ctor.super_ = superCtor;
+  ctor.prototype = Object.create(superCtor.prototype, {
+    constructor: {
+      value: ctor,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
 }
