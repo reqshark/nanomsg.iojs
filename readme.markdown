@@ -1,6 +1,6 @@
 # merging this into [node-nanomsg](https://github.com/nickdesaulniers/node-nanomsg)
 
-*I've joined forces [Nick Desaulniers](https://github.com/nickdesaulniers) and the node-nanomsg team. We're maintaining this ongoing work and moved these efforts over there.* <strong>-reqshark 02/24/2015</strong>
+*I've joined forces with [Nick Desaulniers](https://github.com/nickdesaulniers) and the node-nanomsg team. We're maintaining this ongoing work and moved these efforts over there.* <strong>-reqshark 02/24/2015</strong>
 
 # nanømsg streams
 [![Build Status](https://travis-ci.org/reqshark/nanomsg.iojs.svg?branch=master)](https://travis-ci.org/reqshark/nanomsg.iojs) &nbsp;&nbsp;&nbsp;&nbsp; [![Circle CI](https://circleci.com/gh/reqshark/nanomsg.iojs.svg?style=svg)](https://circleci.com/gh/reqshark/nanomsg.iojs) &nbsp;&nbsp;&nbsp;&nbsp; [![npmbadge](https://nodei.co/npm/iojs-nanomsg.png?mini=true)](https://www.npmjs.com/package/iojs-nanomsg)
