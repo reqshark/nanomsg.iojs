@@ -3,6 +3,7 @@
  */
 
 var nn            = require('bindings')('nanomsg.node') //should be .iojs
+var dup           = require('stream').Duplex
 var sock = {
   pub             : [nn.NN_PUB,         nn.NN_SUB],
   sub             : [nn.NN_SUB,         nn.NN_PUB],
@@ -57,7 +58,7 @@ module.exports    = {
   }
 }
 
-require('util').inherits( self, require('duplexify') )
+require('util').inherits( self, dup)
 
 function self (s, t, o) {
 
@@ -92,12 +93,13 @@ function self (s, t, o) {
 
   this.sleep      = uvsleeper( function (t, d) { setTimeout(d, t) } )
 
-  this.send       = send
+  this.send       = function(msg) { nn.Send( s, msg ) }
   this.recv       = recv
 
+  this.destroyed  = false
+  this.destroy    = destroy
+
   for(var sokopt in sol) if(o.hasOwnProperty(sokopt)) this[sokopt](o[sokopt])
-  for(var p in require('duplexify')()) this[p] = require('duplexify')()[p]
-  this.setWritable( require('through2') ( write, end ) )
 
   switch(t){
     case 'pub':
@@ -116,26 +118,17 @@ function self (s, t, o) {
       break
   }
 
-  function recv(msg){
+  function recv (msg){
     //msgs that are -1 is a req/surveyor issue so break the loop
     if (msg == -1) return
     ctx.push( msg )
     if (!ctx.destroyed) nn.Recv( s, recv )
   }
 
-  function send (msg, flush) {
-    nn.Send( s, msg );
-    if (flush) flush()
-  }
+  this._read = function(n){ }
+  this._write = function(buf, _, next){ nn.Send(s,buf); next() }
 
-  function write (msg, enc, next) {
-    ctx.send(msg, next)
-  }
-
-  function end (done) {
-    this.destroy()
-    done()
-  }
+  dup.call(this)
 }
 
 function close(fn) {
@@ -306,6 +299,11 @@ function setsol(socket, option, value){
 
 function getsol(socket, option){
   return nn.Getsockopt(socket, nn.NN_SOL_SOCKET, sol[option])
+}
+
+function destroy(){
+  if (this.destroyed) return;
+  this.destroyed = true
 }
 
 function unhook(random){

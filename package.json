@@ -4,9 +4,7 @@
   "description":    "nanomsg streams for iøjs",
   "dependencies": {
     "bindings":     "~1.2.1",
-    "duplexify":    "~3.2.0",
-    "nan":          "~1.6.2",
-    "through2":     "~0.6.3"
+    "nan":          "~1.6.2"
   },
   "devDependencies": {
     "through":      "~2.3.6",
