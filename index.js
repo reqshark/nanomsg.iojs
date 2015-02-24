@@ -61,7 +61,8 @@ module.exports    = {
 
 }
 
-inherits( [self,thr], dup );
+inherits( self, thr, dup );
+
 
 function thr(fn){
   this._read = function(n){}
@@ -357,10 +358,9 @@ function uvsleeper(fn) {
 }
 
 //https://github.com/iojs/io.js/blob/v1.x/lib/util.js#L620-L630
-function inherits(ctor, superCtor) {
-  if(Array.isArray(ctor))
-    return ctor.forEach(function(ctors){ inherit(ctors, superCtor) });
-  inherit(ctor, superCtor);
+function inherits() {
+  var l = arguments.length-1;
+  while(--l > -1) inherit(arguments[l], arguments[arguments.length-1]);
 }
 
 function inherit(ctor, superCtor){
