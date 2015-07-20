@@ -1,4 +1,4 @@
-# merging this into [node-nanomsg](https://github.com/nickdesaulniers/node-nanomsg)
+# merged into [node-nanomsg](https://github.com/nickdesaulniers/node-nanomsg)
 
 *I've joined forces with [Nick Desaulniers](https://github.com/nickdesaulniers) and the node-nanomsg team. We're maintaining this ongoing work and moved these efforts over there.* <strong>-reqshark 02/24/2015</strong>
 
